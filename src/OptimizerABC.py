@@ -7,7 +7,7 @@ class OptimizerABC(ABC):
     """
 
     @abstractmethod
-    def train(self):
+    def train(self, prev_param, yield_value, itr, experiment_dir):
         """This abstract method should be overide with actual training function
         calls."""
         pass
@@ -19,7 +19,7 @@ class OptimizerABC(ABC):
         pass
 
     @abstractmethod
-    def predict(self):
+    def predict(self, prev_param, yield_value, experiment_dir):
         """This abstract method should be overide with actual predict function calls."""
         pass
 
@@ -38,7 +38,7 @@ class OptimizerABC(ABC):
         pass
 
     @abstractmethod
-    def set_config(self):
+    def set_config(self, experiment_dir, config):
         """This abstract method should be included function calls required for
         genereting initial  configurations and files for optimizer.
         """

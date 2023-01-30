@@ -1,7 +1,7 @@
 import os
 
 from OptimizerABC import OptimizerABC
-from VenvManager import Venv_Manager
+from VenvManager import VenvManager
 
 
 class AMLRO(OptimizerABC):
@@ -12,7 +12,7 @@ class AMLRO(OptimizerABC):
         Also this function activate the AMLRO virtual env.
         """
         pathToScriptDir = os.path.dirname(os.path.realpath(__file__))
-        Venv_m = Venv_Manager(os.path.join(pathToScriptDir, "venv_AMLRO"))
+        Venv_m = VenvManager(os.path.join(pathToScriptDir, "venv_AMLRO"))
         Venv_m.run()
         Venv_m.pip_install_e("../benchmarking")  # this path should be get from labview
         Venv_m.pip_install_e("../amlo")  # this path should be get from labview
@@ -42,7 +42,7 @@ class AMLRO(OptimizerABC):
 
         pathToScriptDir = os.path.dirname(os.path.realpath(__file__))
 
-        Venv_m = Venv_Manager(os.path.join(pathToScriptDir, "venv_AMLRO"))
+        Venv_m = VenvManager(os.path.join(pathToScriptDir, "venv_AMLRO"))
         Venv_m.run()
 
         try:
