@@ -3,8 +3,8 @@ from typing import Any, Dict
 import json
 import os
 
-from pyoptimizer_backend.optimizer_abc import OptimizerABC
-from pyoptimizer_backend.venv_manager import Venv_manager
+from pyoptimizer_backend.OptimizerABC import OptimizerABC
+from pyoptimizer_backend.VenvManager import VenvManager
 
 
 class OptimizerNMSimplex(OptimizerABC):
@@ -14,13 +14,14 @@ class OptimizerNMSimplex(OptimizerABC):
         self.__packages = ["scipy", "benchmarking"]
 
     def check_install(self, install_prefix: str) -> bool:
-        venv_m = Venv_manager(os.path.join(install_prefix, self.venv_name))
+        venv_m = VenvManager(os.path.join(install_prefix, self.venv_name))
 
-        venv_m.run()
+        venv_m.start_venv()
 
         try:
             self._import_deps()
-        except ModuleNotFoundError:
+        except ModuleNotFoundError as e:
+            print(e)
             return False
 
         return True
@@ -28,10 +29,9 @@ class OptimizerNMSimplex(OptimizerABC):
     def install(self, install_prefix: str, local_paths: Dict[str, str] = {}):
         self.__install_prefix = install_prefix
 
-        venv_m = Venv_manager(os.path.join(install_prefix, self.venv_name))
+        venv_m = VenvManager(os.path.join(install_prefix, self.venv_name))
 
-        # TODO: Creates venv???
-        venv_m.run()
+        venv_m.start_venv()
 
         # Install each package
         for package in self.__packages:
@@ -40,6 +40,8 @@ class OptimizerNMSimplex(OptimizerABC):
                 venv_m.pip_install_e(local_paths[package])
             else:
                 venv_m.pip_install(package)
+
+        self._import_deps()
 
     def get_config(self):
         config = [
@@ -50,13 +52,23 @@ class OptimizerNMSimplex(OptimizerABC):
             },
             {
                 "name": "feature_names",
-                "type": list[list],
-                "value": [[]],
+                "type": list,
+                "value": [],
             },
             {
                 "name": "bounds",
                 "type": list[list],
                 "value": [[]],
+            },
+            {
+                "name": "budget",
+                "type": int,
+                "value": 100,
+            },
+            {
+                "name": "param_init",
+                "type": list,
+                "value": [],
             },
             {
                 "name": "xatol",
@@ -79,17 +91,21 @@ class OptimizerNMSimplex(OptimizerABC):
     def set_config(self, experiment_dir: str, config: Dict[str, Any]):
         # TODO: config validation?
 
-        json.dump(config, os.path.join(experiment_dir, "recent_config.json"))
+        output_file = os.path.join(experiment_dir, "recent_config.json")
+
+        with open(output_file, "w") as fout:
+            json.dump(config, fout, indent=4)
 
     def train(self):
         """No training step for this algorithm."""
 
         pass
 
-    def predict(self, prev_param, yield_value, experiment_dir, obj_func = None):
-        config = json.load(os.path.join(experiment_dir, "recent_config.json"))
+    def predict(self, prev_param, yield_value, experiment_dir, obj_func=None):
+        with open(os.path.join(experiment_dir, "recent_config.json")) as fout:
+            config = json.load(fout)
 
-        self.__imports["minimize"](
+        self._imports["minimize"](
             obj_func,
             config["initial_parameters"],
             method="nelder-mead",
@@ -109,13 +125,12 @@ class OptimizerNMSimplex(OptimizerABC):
         return self.__venv_name
 
     def _import_deps(self):
-        """importing all the packages and libries needed for running amlro optimizer
-        """
+        """Import package needed to run the optimizer."""
 
         # import numpy as np
         from scipy.optimize import minimize
 
-        self.__imports = {
+        self._imports = {
             "minimize": minimize,
             # "np": np,
         }
