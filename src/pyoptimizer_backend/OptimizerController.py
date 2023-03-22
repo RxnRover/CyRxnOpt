@@ -5,9 +5,9 @@ def check_install(optimizer_name: str) -> bool:
     return opt.check_install()
 
 
-def install(optimizer_name: str):
+def install(optimizer_name: str, venv):
 
-    opt = get_optimizer(optimizer_name)
+    opt = get_optimizer(optimizer_name, venv)
 
     return opt.install()
 

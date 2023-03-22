@@ -10,8 +10,18 @@ class VenvManager:
         :param virtual_dir: path to the virtual env directory
         :type virtual_dir: Str
         """
-        self.virtual_dir = virtual_dir
-        self.virtual_python = os.path.join(self.virtual_dir, "Scripts", "python.exe")
+        # Decide, based on the operating system, what path to the Python binary
+        # to use. Windows uses <venv>/Scripts/python.exe, while Linux (and Mac,
+        # I think) use <venv>/bin/python.
+        self.__python_bin = (
+            "python.exe" if sys.platform == "win32" else "python"
+        )
+        self.__venv_dir = "Scripts" if sys.platform == "win32" else "bin"
+
+        self.virtual_dir = os.path.abspath(virtual_dir)
+        self.virtual_python = os.path.join(
+            self.virtual_dir, self.__venv_dir, self.__python_bin
+        )
 
     def install_virtual_env(self):
         """Create virtual environment if doesnt exists."""
@@ -19,7 +29,9 @@ class VenvManager:
         if not os.path.exists(self.virtual_python):
             import subprocess
 
-            subprocess.call([sys.executable, "-m", "virtualenv", self.virtual_dir])
+            subprocess.call(
+                [sys.executable, "-m", "virtualenv", self.virtual_dir]
+            )
         else:
             print("found virtual python: " + self.virtual_python)
 
@@ -43,7 +55,14 @@ class VenvManager:
             __import__(package)
         except ModuleNotFoundError:
             subprocess.call(
-                [self.virtual_python, "-m", "pip", "install", package, "--upgrade"]
+                [
+                    self.virtual_python,
+                    "-m",
+                    "pip",
+                    "install",
+                    package,
+                    "--upgrade",
+                ]
             )
 
     def pip_install_e(self, package):
@@ -56,9 +75,10 @@ class VenvManager:
         try:
             __import__(package)
         except ModuleNotFoundError:
-            subprocess.call(
+            test = subprocess.call(
                 [self.virtual_python, "-m", "pip", "install", "-e", package]
             )
+            print(test)
 
     def start_venv(self):
         """Up and running the virtual env manager class or activate the virtual env."""
@@ -67,3 +87,4 @@ class VenvManager:
             self.restart_under_venv()
         else:
             print("Running under virtual environment")
+            # self.restart_under_venv()
