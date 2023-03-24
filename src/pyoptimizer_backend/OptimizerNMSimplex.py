@@ -179,6 +179,7 @@ class OptimizerNMSimplex(OptimizerABC):
             method="Nelder-Mead",
             bounds=bounds,
             options={
+                "maxiter": config["budget"],
                 "xatol": config["xatol"],
                 "disp": config["display"],
             },
