@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any, Dict, List
 
 
 class OptimizerABC(ABC):
@@ -7,9 +8,24 @@ class OptimizerABC(ABC):
     """
 
     @abstractmethod
-    def train(self, prev_param, yield_value, itr, experiment_dir):
+    def train(
+        self,
+        prev_param: List[Any],
+        yield_value: float,
+        itr: int,
+        experiment_dir: str,
+    ):
         """This abstract method should be overide with actual training function
-        calls."""
+        calls.
+        :param prev_param: experimental parameter combination for previous experiment
+        :type prev_param: list[any]
+        :param yield_value: experimental yield
+        :type yield_value: float
+        :param itr: experimental cycle number for training
+        :type itr: int
+        :param experiment_dir: experimental directory for saving data files
+        :type experiment_dir: str
+        """
         pass
 
     @abstractmethod
@@ -19,8 +35,17 @@ class OptimizerABC(ABC):
         pass
 
     @abstractmethod
-    def predict(self, prev_param, yield_value, experiment_dir):
-        """This abstract method should be overide with actual predict function calls."""
+    def predict(
+        self, prev_param: List[Any], yield_value: float, experiment_dir: str
+    ):
+        """This abstract method should be overide with actual predict function calls.
+        :param prev_param: experimental parameter combination for previous experiment
+        :type prev_param: list[any]
+        :param yield_value: experimental yield
+        :type yield_value: float
+        :param experiment_dir: experimental directory for saving data files
+        :type experiment_dir: str
+        """
         pass
 
     @abstractmethod
@@ -38,8 +63,12 @@ class OptimizerABC(ABC):
         pass
 
     @abstractmethod
-    def set_config(self, experiment_dir, config):
+    def set_config(self, experiment_dir: str, config: Dict):
         """This abstract method should be included function calls required for
         genereting initial  configurations and files for optimizer.
+        :param experiment_dir: experimental directory for saving data files
+        :type experiment_dir: str
+        :param config: configuration dict which required for initializing AMLRO
+        :type config: dict
         """
         pass

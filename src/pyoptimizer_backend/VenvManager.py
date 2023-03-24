@@ -35,7 +35,12 @@ class VenvManager:
         else:
             print("found virtual python: " + self.virtual_python)
 
-    def is_venv(self):
+    def is_venv(self) -> bool:
+        """This function checking  whether virtual environment exists or not
+
+        :return: boolean parameter for virtual env directory existence
+        :rtype: bool
+        """
         return sys.prefix == self.virtual_dir
 
     def restart_under_venv(self):
