@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import Any, Dict, List
 
 from pyoptimizer_backend.OptimizerABC import OptimizerABC
 
@@ -9,7 +9,11 @@ from pyoptimizer_backend.OptimizerABC import OptimizerABC
 class OptimizerAmlro(OptimizerABC):
     # overidding methods
     def __init__(self, venv=None):
-        """initializing optimizer AMLRO object"""
+        """initializing optimizer AMLRO object
+
+        :param venv: Virtual envirement class object, defaults to None
+        :type venv: VenvManager, optional
+        """
         self._imports = {}
         self._venv = venv
 
@@ -18,15 +22,11 @@ class OptimizerAmlro(OptimizerABC):
          the nessary packages for AMLRO.
         Also this function activate the AMLRO virtual env.
         """
-        # pathToScriptDir = os.path.dirname(os.path.abspath(__file__))
-        # Venv_m = VenvManager(os.path.join(pathToScriptDir, "venv_AMLRO"))
-        # Venv_m.start_venv()
-        # print(Venv_m.is_venv())
-        # Venv_m.start_venv()
+
         self._venv.pip_install(
             "git+https://github.com/RxnRover/benchmarking.git"
         )  # this path should be get from labview
-        # Venv_m.pip_install("numpy")
+
         self._venv.pip_install_e(
             "../../../amlo"
         )  # this path should be get from labview
@@ -53,7 +53,7 @@ class OptimizerAmlro(OptimizerABC):
             "pd": pd,
         }
 
-    def check_install(self):
+    def check_install(self) -> bool:
         """checking whether amlro virtual env install or not
 
         :return: boolean veriable for virtual env installation check.
@@ -74,7 +74,14 @@ class OptimizerAmlro(OptimizerABC):
 
         return True
 
-    def train(self, prev_param, yield_value, itr, experiment_dir, config):
+    def train(
+        self,
+        prev_param: List[Any],
+        yield_value: float,
+        itr: int,
+        experiment_dir: str,
+        config: Dict,
+    ) -> List[Any]:
         """generate initial training dataset needed for AMLRO model training.
 
         :param prev_param: experimental parameter combination for previous experiment
@@ -85,6 +92,8 @@ class OptimizerAmlro(OptimizerABC):
         :type itr: int
         :param experiment_dir: experimental directory for saving data files
         :type experiment_dir: str
+        :param config: Initial reaction feature configurations
+        :type config: Dict
         :return: next parameter combination for next experimental cycle.
         :rtype: list
         """
@@ -111,7 +120,13 @@ class OptimizerAmlro(OptimizerABC):
         )
         return next_parameters
 
-    def predict(self, prev_param, yield_value, experiment_dir, config):
+    def predict(
+        self,
+        prev_param: List[Any],
+        yield_value: float,
+        experiment_dir: str,
+        config: Dict,
+    ) -> List[Any]:
         """prediction of next best combination of parameters and
          traning machine learning model from last experimental data for active learning.
 
@@ -121,6 +136,8 @@ class OptimizerAmlro(OptimizerABC):
         :type yield_value: float
         :param experiment_dir: experimental directory for saving data files
         :type experiment_dir: str
+        :param config: Initial reaction feature configurations
+        :type config: Dict
         :return: best predicted parameter combination
         :rtype: list
         """
@@ -142,7 +159,13 @@ class OptimizerAmlro(OptimizerABC):
         )
         return best_combo
 
-    def get_config(self):
+    def get_config(self) -> Dict:
+        """This function will return the configurations which need to initialize a
+        optimizer
+
+        :return: configuration dictionary
+        :rtype: Dict
+        """
         config = {
             {
                 "Name": "continuous Feature_Count",
@@ -177,7 +200,7 @@ class OptimizerAmlro(OptimizerABC):
         }
         return config
 
-    def set_config(self, experiment_dir, config):
+    def set_config(self, experiment_dir: str, config: Dict):
         """Generate all the nessasry data files
 
         :param experiment_dir: experimental directory for saving data files
