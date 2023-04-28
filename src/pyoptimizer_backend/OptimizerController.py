@@ -2,30 +2,35 @@ from typing import Any, Dict, List
 
 from pyoptimizer_backend.OptimizerAmlro import OptimizerAmlro
 from pyoptimizer_backend.OptimizerNMSimplex import OptimizerNMSimplex
+from pyoptimizer_backend.VenvManager import VenvManager
 
 
-def check_install(optimizer_name: str) -> bool:
+def check_install(optimizer_name: str, venv: VenvManager = "") -> bool:
     """This method will call to the actual check install function
     from given optimizer class.
 
     :param optimizer_name: Name of the given optimizer algorithm
     :type optimizer_name: str
+    :param venv: VenvManager object of the environment with the optimizer
+                 installation
+    :type venv: VenvManager
     :return: calling the check install function
     :rtype: bool
     """
 
-    opt = get_optimizer(optimizer_name)
+    opt = get_optimizer(optimizer_name, venv)
 
     return opt.check_install()
 
 
-def install(optimizer_name: str, venv):
+def install(optimizer_name: str, venv: VenvManager = ""):
     """This method will call to the actual install function
     from given optimizer class.
 
     :param optimizer_name: Name of the given optimizer algorithm
     :type optimizer_name: str
-    :param venv: Virtual envirement class object
+    :param venv: VenvManager object of the environment with the optimizer
+                 installation
     :type venv: VenvManager
     :return: calling the install function
     :rtype: none
@@ -43,6 +48,7 @@ def train(
     itr: int,
     experiment_dir: str,
     config: Dict,
+    venv: VenvManager = "",
 ) -> List[Any]:
     """This method will call to the actual train function
     from given optimizer class.
@@ -59,11 +65,14 @@ def train(
     :type experiment_dir: str
     :param config: Initial reaction feature configurations
     :type config: Dict
+    :param venv: VenvManager object of the environment with the optimizer
+                 installation
+    :type venv: VenvManager
     :return: Calling the train function it will return next training parameters.
     :rtype: List[Any]
     """
 
-    opt = get_optimizer(optimizer_name)
+    opt = get_optimizer(optimizer_name, venv)
 
     opt.check_install()
     return opt.train(prev_param, yield_value, itr, experiment_dir, config)
@@ -75,6 +84,7 @@ def predict(
     yield_value: float,
     experiment_dir: str,
     config: Dict,
+    venv: VenvManager = "",
 ) -> List[Any]:
     """This method will call to the actual predict function
     from given optimizer class.
@@ -89,30 +99,36 @@ def predict(
     :type experiment_dir: str
     :param config: Initial reaction feature configurations
     :type config: Dict
+    :param venv: VenvManager object of the environment with the optimizer
+                 installation
+    :type venv: VenvManager
     :return: Calling the train function it will return predicted parameter combination
     :rtype: List[Any]
     """
 
-    opt = get_optimizer(optimizer_name)
+    opt = get_optimizer(optimizer_name, venv)
 
     return opt.predict(prev_param, yield_value, experiment_dir)
 
 
-def get_config(optimizer_name: str) -> Dict:
+def get_config(optimizer_name: str, venv: VenvManager = "") -> Dict:
     """This method will call to the actual get config function
     from given optimizer class.
 
     :param optimizer_name: Name of the given optimizer algorithm
     :type optimizer_name: str
+    :param venv: VenvManager object of the environment with the optimizer
+                 installation
+    :type venv: VenvManager
     :return: calling the check install function
     :rtype: Dict
     """
-    opt = get_optimizer(optimizer_name)
+    opt = get_optimizer(optimizer_name, venv)
 
     return opt.get_config()
 
 
-def set_config(optimizer_name: str, config: Dict):
+def set_config(optimizer_name: str, config: Dict, venv: VenvManager = ""):
     """This method will call to the actual set config function
     from given optimizer class.
 
@@ -120,29 +136,32 @@ def set_config(optimizer_name: str, config: Dict):
     :type optimizer_name: str
     :param config: Initial reaction feature configurations
     :type config: Dict
+    :param venv: VenvManager object of the environment with the optimizer
+                 installation
+    :type venv: VenvManager
     :return: Calling the set config function
     :rtype: none
     """
-    opt = get_optimizer(optimizer_name)
+    opt = get_optimizer(optimizer_name, venv)
 
     return opt.set_config()
 
 
-def get_optimizer(optimizer_name):
+def get_optimizer(optimizer_name, venv: VenvManager = ""):
     """This function generate the class object for requested optimkzer algorithm
 
     :param optimizer_name: Name of the given optimizer algorithm
     :type optimizer_name: str
+    :param venv: VenvManager object of the environment with the optimizer
+                 installation
+    :type venv: VenvManager
     :return: optimizer object veriable
     :rtype: class object
     """
 
     if optimizer_name == "AMLRO":
-        # calling the AMLRO optmizer class inherite from optimizer ABC
-        Optimizer = OptimizerAmlro()
-        print("AMLRO")
-        # return Optimizer
+        optimizer = OptimizerAmlro(venv)
     if optimizer_name == "NMSimplex":
-        Optimizer = OptimizerNMSimplex()
+        optimizer = OptimizerNMSimplex(venv)
 
-    return Optimizer
+    return optimizer
