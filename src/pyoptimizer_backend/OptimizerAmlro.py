@@ -168,11 +168,6 @@ class OptimizerAmlro(OptimizerABC):
         """
         config = {
             {
-                "Name": "continuous Feature_Count",
-                "Type": int,
-                "value": 0,
-            },
-            {
                 "Name": "continuous Feature_Names",
                 "Type": List[str],
                 "value": [""],
@@ -196,6 +191,11 @@ class OptimizerAmlro(OptimizerABC):
                 "Name": "categorical Feature_Bounds",
                 "Type": List[List[str]],
                 "value": [[]],
+            },
+            {
+                "Name": "budget",
+                "Type": int,
+                "value": 100,
             },
         }
         return config
