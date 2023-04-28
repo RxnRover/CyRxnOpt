@@ -25,7 +25,7 @@ class VenvManager:
 
     def install_virtual_env(self):
         """Create virtual environment if doesnt exists."""
-        self.pip_install("virtualenv")
+        
         if not os.path.exists(self.virtual_python):
             import subprocess
 
@@ -84,6 +84,28 @@ class VenvManager:
                 [self.virtual_python, "-m", "pip", "install", "-e", package]
             )
             print(test)
+
+    def pip_install_r(self, filename):
+        """Installs package requirements from a "requirements.txt"-style file.
+
+        :param filename: Requirements file to use
+        :type filename: str
+        """
+
+        # Read each line of the requirements file and install the packages
+        with open(filename, "r") as fin:
+            lines = fin.readlines()
+
+            for line in lines:
+
+                if line.startswith("-e"):
+                    package = line.replace("-e", "").strip()
+                    self.pip_install_e(package)
+
+                else:
+                    package = line
+                    self.pip_install(package)
+
 
     def start_venv(self):
         """Up and running the virtual env manager class or activate the virtual env."""
