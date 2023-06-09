@@ -86,6 +86,7 @@ def predict(
     experiment_dir: str,
     config: Dict,
     venv: VenvManager = "",
+    obj_func=None,
 ) -> List[Any]:
     """This method will call to the actual predict function
     from given optimizer class.
@@ -103,6 +104,8 @@ def predict(
     :param venv: VenvManager object of the environment with the optimizer
                  installation
     :type venv: VenvManager
+    :param obj_func: Objective function needed to optimize
+    :type config: function
     :return: Calling the train function it will return predicted parameter combination
     :rtype: List[Any]
     """
