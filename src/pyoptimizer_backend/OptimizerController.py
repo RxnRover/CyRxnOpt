@@ -112,7 +112,14 @@ def predict(
 
     opt = get_optimizer(optimizer_name, venv)
 
-    return opt.predict(prev_param, yield_value, experiment_dir, config)
+    try:
+        result = opt.predict(
+            prev_param, yield_value, experiment_dir, config, obj_func=obj_func
+        )
+    except TypeError:
+        result = opt.predict(prev_param, yield_value, experiment_dir, config)
+
+    return result
 
 
 def get_config(optimizer_name: str, venv: VenvManager = "") -> Dict:

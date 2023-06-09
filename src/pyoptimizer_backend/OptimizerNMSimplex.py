@@ -19,6 +19,7 @@ class OptimizerNMSimplex(OptimizerABC):
         :type venv: pyoptimizer_backend.VenvManager, optional
         """
 
+        self._imports = {}  # Populated in self._import_deps()
         self.__venv = venv
 
     def check_install(self) -> bool:
@@ -72,6 +73,8 @@ class OptimizerNMSimplex(OptimizerABC):
                  and information about which values are allowed/defaulted.
         :rtype: List[Dict[str, Any]]
         """
+
+        self._import_deps()
 
         config = [
             {
@@ -129,6 +132,8 @@ class OptimizerNMSimplex(OptimizerABC):
         :type config: Dict[str, Any]
         """
 
+        self._import_deps()
+
         # TODO: config validation should be performed
 
         output_file = os.path.join(experiment_dir, "recent_config.json")
@@ -147,6 +152,7 @@ class OptimizerNMSimplex(OptimizerABC):
         prev_param: List[Any],
         yield_value: float,
         experiment_dir: str,
+        config: Dict[str, Any],
         obj_func=None,
     ) -> None:
         """Find the desired optimum of the provided objective function.
@@ -162,6 +168,9 @@ class OptimizerNMSimplex(OptimizerABC):
         :param obj_func: Objective function to optimize, defaults to None
         :type obj_func: function, optional
         """
+
+        self._import_deps()
+
         # Load the config file
         with open(os.path.join(experiment_dir, "recent_config.json")) as fout:
             config = json.load(fout)
