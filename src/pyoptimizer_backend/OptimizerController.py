@@ -1,6 +1,7 @@
 from typing import Any, Dict, List
 
 from pyoptimizer_backend.OptimizerAmlro import OptimizerAmlro
+from pyoptimizer_backend.OptimizerEDBOp import OptimizerEBDOp
 from pyoptimizer_backend.OptimizerNMSimplex import OptimizerNMSimplex
 from pyoptimizer_backend.VenvManager import VenvManager
 
@@ -108,7 +109,7 @@ def predict(
 
     opt = get_optimizer(optimizer_name, venv)
 
-    return opt.predict(prev_param, yield_value, experiment_dir)
+    return opt.predict(prev_param, yield_value, experiment_dir, config)
 
 
 def get_config(optimizer_name: str, venv: VenvManager = "") -> Dict:
@@ -128,7 +129,12 @@ def get_config(optimizer_name: str, venv: VenvManager = "") -> Dict:
     return opt.get_config()
 
 
-def set_config(optimizer_name: str, config: Dict, venv: VenvManager = ""):
+def set_config(
+    optimizer_name: str,
+    config: Dict,
+    experiment_dir: str,
+    venv: VenvManager = "",
+):
     """This method will call to the actual set config function
     from given optimizer class.
 
@@ -144,7 +150,7 @@ def set_config(optimizer_name: str, config: Dict, venv: VenvManager = ""):
     """
     opt = get_optimizer(optimizer_name, venv)
 
-    return opt.set_config()
+    return opt.set_config(experiment_dir, config)
 
 
 def get_optimizer(optimizer_name, venv: VenvManager = ""):
@@ -159,9 +165,16 @@ def get_optimizer(optimizer_name, venv: VenvManager = ""):
     :rtype: class object
     """
 
-    if optimizer_name == "AMLRO":
+    if optimizer_name == "amlro":
         optimizer = OptimizerAmlro(venv)
-    if optimizer_name == "NMSimplex":
+    elif optimizer_name == "edbop":
+        optimizer = OptimizerEBDOp(venv)
+    elif optimizer_name == "NMSimplex":
         optimizer = OptimizerNMSimplex(venv)
+
+    else:
+        raise RuntimeError(
+            "Invalid optimizer name given: {}".format(optimizer_name)
+        )
 
     return optimizer

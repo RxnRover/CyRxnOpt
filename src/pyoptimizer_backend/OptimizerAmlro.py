@@ -97,6 +97,7 @@ class OptimizerAmlro(OptimizerABC):
         :return: next parameter combination for next experimental cycle.
         :rtype: list
         """
+        self._import_deps()
 
         training_set_path = os.path.join(
             experiment_dir, "training_set_file.txt"
@@ -141,6 +142,7 @@ class OptimizerAmlro(OptimizerABC):
         :return: best predicted parameter combination
         :rtype: list
         """
+        self._import_deps()
 
         training_set_path = os.path.join(
             experiment_dir, "training_set_file.txt"
@@ -208,6 +210,10 @@ class OptimizerAmlro(OptimizerABC):
         :param config: configuration dict which required for initializing AMLRO
         :type config: dict
         """
+        self._import_deps()
+
+        if not os.path.exists(experiment_dir):
+            os.makedirs(experiment_dir)
 
         full_combo_list = self._imports[
             "generate_combos"
@@ -218,12 +224,15 @@ class OptimizerAmlro(OptimizerABC):
         )
         full_combo_df = self._imports["pd"].DataFrame(full_combo_list)
         training_combo_df = full_combo_df.sample(20)
-        feature_names_list = self._imports["np"].concatenate(
-            (
-                config["continuous"]["feature_names"],
-                config["categorical"]["feature_names"],
+        if bool(config["categorical"]):
+            feature_names_list = self._imports["np"].concatenate(
+                (
+                    config["continuous"]["feature_names"],
+                    config["categorical"]["feature_names"],
+                )
             )
-        )
+        else:
+            feature_names_list = config["continuous"]["feature_names"]
         full_combo_df.columns = feature_names_list
 
         print(len(full_combo_list))
