@@ -83,12 +83,12 @@ class OptimizerNMSimplex(OptimizerABC):
                 "value": ["min", "max"],
             },
             {
-                "name": "feature_names",
+                "name": "continuous_feature_names",
                 "type": list,
                 "value": [],
             },
             {
-                "name": "bounds",
+                "name": "continuous_feature_bounds",
                 "type": list[list],
                 "value": [[]],
             },
@@ -179,7 +179,12 @@ class OptimizerNMSimplex(OptimizerABC):
         param_init = tuple(config["param_init"])
 
         # Convert bounds list to sequence of tuples
-        bounds = tuple([tuple(bound_list) for bound_list in config["bounds"]])
+        bounds = tuple(
+            [
+                tuple(bound_list)
+                for bound_list in config["continuous_feature_bounds"]
+            ]
+        )
 
         # Call the minimization function
         result = self._imports["minimize"](
