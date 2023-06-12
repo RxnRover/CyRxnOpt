@@ -107,6 +107,7 @@ class OptimizerAmlro(OptimizerABC):
             experiment_dir, "training_combo_file.txt"
         )
 
+        # training step
         next_parameters = self._imports[
             "training_set_generator"
         ].generate_training_data(
@@ -152,6 +153,7 @@ class OptimizerAmlro(OptimizerABC):
         )
         full_combo_path = os.path.join(experiment_dir, "full_combo_file.txt")
 
+        # prediction step
         best_combo = self._imports["optimizer_main"].get_optimized_parameters(
             training_set_path,
             training_set_decoded_path,
@@ -267,6 +269,8 @@ class OptimizerAmlro(OptimizerABC):
             experiment_dir, "training_set_decoded_file.txt"
         )
 
+        # writting the reaction conditions for
+        # training dataset into files(encoded and decoded versions)
         with open(training_set_path, "w") as file_object:
             # file_object.write("####" + "\n")
             feature_names = ",".join([str(elem) for elem in feature_names_list])

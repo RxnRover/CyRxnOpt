@@ -68,8 +68,12 @@ class OptimizerEBDOp(OptimizerABC):
             os.makedirs(experiment_dir)
 
         filename = "my_optimization.csv"
-        config = self.config_translate(config)
+        config = self.config_translate(
+            config
+        )  # get reaction scope configurations
+        # from general config file
 
+        # generate reaction scope for EDBOp
         self._imports["EDBOplus"]().generate_reaction_scope(
             components=config["reaction_components"],
             directory=experiment_dir,
@@ -77,6 +81,7 @@ class OptimizerEBDOp(OptimizerABC):
             check_overwrite=False,
         )
 
+        # initialize the edbop optimization file will be use for prediction
         self._imports["EDBOplus"]().run(
             directory=experiment_dir,
             filename=filename,  # Previously generated scope.
@@ -192,8 +197,12 @@ class OptimizerEBDOp(OptimizerABC):
         """
         filename = "my_optimization.csv"
 
-        config = self.config_translate(config)
+        config = self.config_translate(
+            config
+        )  # get reaction scope configurations
+        # from general config file
 
+        # reading optimization file with reaction conditions
         df_edbo = self._imports["pd"].read_csv(
             os.path.join(experiment_dir, filename)
         )
@@ -204,6 +213,7 @@ class OptimizerEBDOp(OptimizerABC):
             df_edbo.loc[0, config["objectives"][0]] = yield_value
             df_edbo.to_csv(os.path.join(experiment_dir, filename), index=False)
 
+        # running the edbop prediction
         self._imports["EDBOplus"]().run(
             directory=experiment_dir,
             filename=filename,  # Previously generated scope.
@@ -218,6 +228,8 @@ class OptimizerEBDOp(OptimizerABC):
             init_sampling_method="cvtsampling",  # initialization method.
         )
 
+        # after one cycle of prediction again read the reaction condition file to
+        #  getting the next reaction condition.
         df_edbo = self._imports["pd"].read_csv(
             os.path.join(experiment_dir, filename)
         )
