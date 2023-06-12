@@ -3,12 +3,10 @@ from typing import Any, Dict, List
 
 from pyoptimizer_backend.OptimizerABC import OptimizerABC
 
-# from pyoptimizer_backend.VenvManager import VenvManager
-
 
 class OptimizerAmlro(OptimizerABC):
     # overidding methods
-    def __init__(self, venv=None):
+    def __init__(self, venv=None) -> None:
         """initializing optimizer AMLRO object
 
         :param venv: Virtual envirement class object, defaults to None
@@ -17,7 +15,7 @@ class OptimizerAmlro(OptimizerABC):
         self._imports = {}
         self._venv = venv
 
-    def install(self):
+    def install(self) -> None:
         """installing the virtual env for AMLRO optimizer and install all
          the nessary packages for AMLRO.
         Also this function activate the AMLRO virtual env.
@@ -33,7 +31,7 @@ class OptimizerAmlro(OptimizerABC):
         self._import_deps()
         self.check_install()
 
-    def _import_deps(self):
+    def _import_deps(self) -> None:
         """importing all the packages and libries needed for running amlro optimizer"""
         import numpy as np
         import pandas as pd
@@ -108,6 +106,7 @@ class OptimizerAmlro(OptimizerABC):
         training_combo_path = os.path.join(
             experiment_dir, "training_combo_file.txt"
         )
+
         next_parameters = self._imports[
             "training_set_generator"
         ].generate_training_data(
@@ -119,6 +118,7 @@ class OptimizerAmlro(OptimizerABC):
             yield_value,
             itr,
         )
+
         return next_parameters
 
     def predict(
@@ -151,6 +151,7 @@ class OptimizerAmlro(OptimizerABC):
             experiment_dir, "training_set_decoded_file.txt"
         )
         full_combo_path = os.path.join(experiment_dir, "full_combo_file.txt")
+
         best_combo = self._imports["optimizer_main"].get_optimized_parameters(
             training_set_path,
             training_set_decoded_path,
@@ -159,6 +160,7 @@ class OptimizerAmlro(OptimizerABC):
             prev_param,
             yield_value,
         )
+
         return best_combo
 
     def get_config(self) -> Dict:
@@ -170,27 +172,27 @@ class OptimizerAmlro(OptimizerABC):
         """
         config = {
             {
-                "Name": "continuous Feature_Names",
+                "Name": "continuous_feature_names",
                 "Type": List[str],
                 "value": [""],
             },
             {
-                "Name": "continuous Feature_Bounds",
+                "Name": "continuous_feature_bounds",
                 "Type": List[List[float]],
                 "value": [[]],
             },
             {
-                "Name": "continuous Feature_resoultions",
+                "Name": "continuous_feature_resoultions",
                 "Type": List[float],
                 "value": [],
             },
             {
-                "Name": "categorical Feature_Names",
+                "Name": "categorical_feature_names",
                 "Type": List[str],
                 "value": [""],
             },
             {
-                "Name": "categorical Feature_Bounds",
+                "Name": "categorical_feature_values",
                 "Type": List[List[str]],
                 "value": [[]],
             },
@@ -199,10 +201,20 @@ class OptimizerAmlro(OptimizerABC):
                 "Type": int,
                 "value": 100,
             },
+            {
+                "Name": "objectives",
+                "Type": List[str],
+                "value": [""],
+            },
+            {
+                "Name": "objective_mode",
+                "Type": List[str],
+                "value": [""],
+            },
         }
         return config
 
-    def set_config(self, experiment_dir: str, config: Dict):
+    def set_config(self, experiment_dir: str, config: Dict) -> None:
         """Generate all the nessasry data files
 
         :param experiment_dir: experimental directory for saving data files
@@ -224,6 +236,7 @@ class OptimizerAmlro(OptimizerABC):
         )
         full_combo_df = self._imports["pd"].DataFrame(full_combo_list)
         training_combo_df = full_combo_df.sample(20)
+
         if bool(config["categorical"]):
             feature_names_list = self._imports["np"].concatenate(
                 (
@@ -233,6 +246,7 @@ class OptimizerAmlro(OptimizerABC):
             )
         else:
             feature_names_list = config["continuous"]["feature_names"]
+
         full_combo_df.columns = feature_names_list
 
         print(len(full_combo_list))
@@ -242,6 +256,7 @@ class OptimizerAmlro(OptimizerABC):
         training_combo_path = os.path.join(
             experiment_dir, "training_combo_file.txt"
         )
+
         full_combo_df.to_csv(full_combo_path, index=False)
         training_combo_df.to_csv(training_combo_path, index=False)
 
@@ -251,10 +266,12 @@ class OptimizerAmlro(OptimizerABC):
         training_set_decoded_path = os.path.join(
             experiment_dir, "training_set_decoded_file.txt"
         )
+
         with open(training_set_path, "w") as file_object:
             # file_object.write("####" + "\n")
             feature_names = ",".join([str(elem) for elem in feature_names_list])
             file_object.write(feature_names + ",Yield" + "\n")
+
         with open(training_set_decoded_path, "w") as file_object:
             # file_object.write("####" + "\n")
             feature_names = ",".join([str(elem) for elem in feature_names_list])
