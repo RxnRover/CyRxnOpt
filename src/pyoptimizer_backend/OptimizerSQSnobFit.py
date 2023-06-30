@@ -9,7 +9,7 @@ from pyoptimizer_backend.VenvManager import VenvManager
 class OptimizerSQSnobFit(OptimizerABC):
     # Private static data member to list dependency packages required
     # by this class
-    __packages = ["SQSnobFit"]
+    _packages = ["SQSnobFit"]
 
     def __init__(self, venv: VenvManager = None) -> None:
         """Optimizer class for the SQSnobFit algorithm from the
