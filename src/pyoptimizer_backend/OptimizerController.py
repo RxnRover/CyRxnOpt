@@ -24,7 +24,9 @@ def check_install(optimizer_name: str, venv: VenvManager = "") -> bool:
     return opt.check_install()
 
 
-def install(optimizer_name: str, venv: VenvManager = ""):
+def install(
+    optimizer_name: str, venv: VenvManager = "", local_paths: dict = {}
+):
     """This method will call to the actual install function
     from given optimizer class.
 
@@ -39,7 +41,7 @@ def install(optimizer_name: str, venv: VenvManager = ""):
 
     opt = get_optimizer(optimizer_name, venv)
 
-    return opt.install()
+    return opt.install(local_paths=local_paths)
 
 
 def train(

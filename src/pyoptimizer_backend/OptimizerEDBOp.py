@@ -1,60 +1,25 @@
 import os
+import random
 from typing import Any, Dict, List
 
 from pyoptimizer_backend.OptimizerABC import OptimizerABC
+from pyoptimizer_backend.VenvManager import VenvManager
 
 
 class OptimizerEBDOp(OptimizerABC):
+    # Private static data member to list dependency packages required
+    # by this class
+    _packages = ["benchmarking", "edboplus", "pandas", "pyoptimizer_backend"]
+
     # overidding methods
-    def __init__(self, venv=None) -> None:
+    def __init__(self, venv: VenvManager = None) -> None:
         """initializing optimizer EDBO+ object
 
         :param venv: Virtual envirement class object, defaults to None
         :type venv: VenvManager, optional
         """
-        self._imports = {}
-        self._venv = venv
 
-    def install(self) -> None:
-        """installing the virtual env for EDBO+ optimizer and install all
-         the nessary packages for EDBO+.
-        Also this function activate the EDBO+ virtual env.
-        """
-
-        self._venv.pip_install(
-            "git+https://github.com/RxnRover/benchmarking.git"
-        )  # this path should be get from labview
-        self._venv.pip_install("pandas")
-        self._venv.pip_install_e(
-            "../../../edboplus-main"
-        )  # this path should be get from labview
-        self._venv.pip_install_e("../../../pyoptimizer_backend")
-        # self._import_deps()
-        self.check_install()
-
-    def _import_deps(self) -> None:
-        """importing all the packages and libries needed for running amlro optimizer"""
-
-        import numpy as np
-        import pandas as pd
-        from edbo.plus.optimizer_botorch import EDBOplus
-
-        self._imports = {"EDBOplus": EDBOplus, "np": np, "pd": pd}
-
-    def check_install(self) -> bool:
-        """checking whether edbo+ virtual env install or not
-
-        :return: boolean veriable for virtual env installation check.
-        :rtype: boolean
-        """
-
-        try:
-            self._import_deps()
-            print("check")
-        except ModuleNotFoundError:
-            return False
-
-        return True
+        super(OptimizerEBDOp, self).__init__(venv)
 
     def set_config(self, experiment_dir: str, config: Dict) -> None:
         """Generate all the nessasry data files
@@ -92,7 +57,8 @@ class OptimizerEBDOp(OptimizerABC):
             batch=1,  # Number of experiments in parallel that
             # we want to perform in this round.
             columns_features="all",  # features to be included in the model.
-            init_sampling_method="cvtsampling",  # initialization method.
+            init_sampling_method="seed",  # initialization method.
+            seed=random.randint(0, 2**32 - 1),
         )
 
     def get_config(self):
@@ -207,6 +173,9 @@ class OptimizerEBDOp(OptimizerABC):
             os.path.join(experiment_dir, filename)
         )
 
+        # TODO: Writing the entire dataframe of shape (2085136, 6),
+        #       12,510,816 elements: 8.674756252000407 sec. This can probably
+        #       be optimized quite a bit
         if len(prev_param) != 0:
             # [df_edbo.loc[0,config['objectives'][i]] =
             # yield_value[i] for i in range(len(yield_value))]
@@ -225,7 +194,8 @@ class OptimizerEBDOp(OptimizerABC):
             batch=1,  # Number of experiments in parallel that
             # we want to perform in this round.
             columns_features="all",  # features to be included in the model.
-            init_sampling_method="cvtsampling",  # initialization method.
+            init_sampling_method="seed",  # initialization method.
+            seed=random.randint(0, 2**32 - 1),
         )
 
         # after one cycle of prediction again read the reaction condition file to
@@ -235,7 +205,7 @@ class OptimizerEBDOp(OptimizerABC):
         )
 
         next_combo = df_edbo.iloc[:1].values.tolist()
-        print(next_combo)
+        print("Next combo:", next_combo)
 
         return next_combo
 
@@ -277,3 +247,14 @@ class OptimizerEBDOp(OptimizerABC):
         }
 
         return edbo_config
+
+    def _import_deps(self) -> None:
+        """importing all the packages and libries needed for running amlro
+        optimizer
+        """
+
+        import numpy as np
+        import pandas as pd
+        from edbo.plus.optimizer_botorch import EDBOplus
+
+        self._imports = {"EDBOplus": EDBOplus, "np": np, "pd": pd}

@@ -9,7 +9,7 @@ from pyoptimizer_backend.VenvManager import VenvManager
 class OptimizerNMSimplex(OptimizerABC):
     # Private static data member to list dependency packages required
     # by this class
-    __packages = ["scipy"]
+    _packages = ["scipy"]
 
     def __init__(self, venv: VenvManager = None) -> None:
         """Optimizer class for the Nelder-Mead Simplex algorithm from the
@@ -19,52 +19,7 @@ class OptimizerNMSimplex(OptimizerABC):
         :type venv: pyoptimizer_backend.VenvManager, optional
         """
 
-        self._imports = {}  # Populated in self._import_deps()
-        self.__venv = venv
-
-    def check_install(self) -> bool:
-        """Check if the installation for this optimizer exists or not.
-
-        :return: Whether the optimizer is installed (True) or not (False).
-        :rtype: bool
-        """
-
-        # Attempt to import all of the packages this optimizer depends
-        # on. If this import fails, we consider the optimizer to not
-        # be installed or to have a broken install.
-        try:
-            self._import_deps()
-        except ModuleNotFoundError as e:
-            # Printing the exception so the user knows what went wrong
-            print(e)
-            return False
-
-        return True
-
-    def install(self, local_paths: Dict[str, str] = {}) -> None:
-        """Install the dependencies required for this optimizer class.
-
-        The list of packages to be installed can be checked with
-
-        .. code-block:: python
-
-           print(OptimizerNMSimplex.dependencies)
-
-        :param local_paths: Local paths to the packages to be installed,
-                            defaults to {}
-        :type local_paths: Dict[str, str], optional
-        """
-
-        # Install each package
-        for package in self.__packages:
-            # Install from local path if one is given
-            if package in local_paths:
-                self.__venv.pip_install_e(local_paths[package])
-            else:
-                self.__venv.pip_install(package)
-
-        # Import the packages after they were installed
-        self._import_deps()
+        super().__init__(venv)
 
     def get_config(self) -> List[Dict[str, Any]]:
         """Get the configuration options available for this optimizer.
@@ -200,16 +155,6 @@ class OptimizerNMSimplex(OptimizerABC):
         )
 
         return result
-
-    @property
-    def dependencies() -> List[str]:
-        """This is a static property to print the dependencies required
-        by this class.
-
-        :return: List of dependency package names
-        :rtype: List[str]
-        """
-        return OptimizerNMSimplex.__packages
 
     def _import_deps(self) -> None:
         """Import package needed to run the optimizer."""

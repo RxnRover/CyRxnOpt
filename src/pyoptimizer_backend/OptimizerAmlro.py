@@ -5,6 +5,10 @@ from pyoptimizer_backend.OptimizerABC import OptimizerABC
 
 
 class OptimizerAmlro(OptimizerABC):
+    # Private static data member to list dependency packages required
+    # by this class
+    _packages = ["amlro", "benchmarking", "numpy"]
+
     # overidding methods
     def __init__(self, venv=None) -> None:
         """initializing optimizer AMLRO object
@@ -12,65 +16,8 @@ class OptimizerAmlro(OptimizerABC):
         :param venv: Virtual envirement class object, defaults to None
         :type venv: VenvManager, optional
         """
-        self._imports = {}
-        self._venv = venv
 
-    def install(self) -> None:
-        """installing the virtual env for AMLRO optimizer and install all
-         the nessary packages for AMLRO.
-        Also this function activate the AMLRO virtual env.
-        """
-
-        self._venv.pip_install(
-            "git+https://github.com/RxnRover/benchmarking.git"
-        )  # this path should be get from labview
-
-        self._venv.pip_install_e(
-            "../../../amlo"
-        )  # this path should be get from labview
-        self._import_deps()
-        self.check_install()
-
-    def _import_deps(self) -> None:
-        """importing all the packages and libries needed for running amlro optimizer"""
-        import numpy as np
-        import pandas as pd
-        from amlro import (
-            generate_combos,
-            optimizer,
-            optimizer_main,
-            training_set_generator,
-        )
-
-        self._imports = {
-            "generate_combos": generate_combos,
-            "training_set_generator": training_set_generator,
-            "optimizer": optimizer,
-            "optimizer_main": optimizer_main,
-            "np": np,
-            "pd": pd,
-        }
-
-    def check_install(self) -> bool:
-        """checking whether amlro virtual env install or not
-
-        :return: boolean veriable for virtual env installation check.
-        :rtype: boolean
-        """
-
-        # pathToScriptDir = os.path.dirname(os.path.realpath(__file__))
-        # print(pathToScriptDir)
-
-        # Venv_m = VenvManager(os.path.join(pathToScriptDir, "venv_AMLRO"))
-        # Venv_m.start_venv()
-
-        try:
-            self._import_deps()
-            print("check")
-        except ModuleNotFoundError:
-            return False
-
-        return True
+        super(OptimizerAmlro, self).__init__(venv)
 
     def train(
         self,
@@ -280,3 +227,23 @@ class OptimizerAmlro(OptimizerABC):
             # file_object.write("####" + "\n")
             feature_names = ",".join([str(elem) for elem in feature_names_list])
             file_object.write(feature_names + ",Yield" + "\n")
+
+    def _import_deps(self) -> None:
+        """importing all the packages and libries needed for running amlro optimizer"""
+        import numpy as np
+        import pandas as pd
+        from amlro import (
+            generate_combos,
+            optimizer,
+            optimizer_main,
+            training_set_generator,
+        )
+
+        self._imports = {
+            "generate_combos": generate_combos,
+            "training_set_generator": training_set_generator,
+            "optimizer": optimizer,
+            "optimizer_main": optimizer_main,
+            "np": np,
+            "pd": pd,
+        }

@@ -10,6 +10,7 @@ class VenvManager:
         :param virtual_dir: path to the virtual env directory
         :type virtual_dir: Str
         """
+
         # Decide, based on the operating system, what path to the Python binary
         # to use. Windows uses <venv>/Scripts/python.exe, while Linux (and Mac,
         # I think) use <venv>/bin/python.
@@ -25,7 +26,7 @@ class VenvManager:
 
     def install_virtual_env(self):
         """Create virtual environment if doesnt exists."""
-        
+
         if not os.path.exists(self.virtual_python):
             import subprocess
 
@@ -97,7 +98,6 @@ class VenvManager:
             lines = fin.readlines()
 
             for line in lines:
-
                 if line.startswith("-e"):
                     package = line.replace("-e", "").strip()
                     self.pip_install_e(package)
@@ -105,7 +105,6 @@ class VenvManager:
                 else:
                     package = line
                     self.pip_install(package)
-
 
     def start_venv(self):
         """Up and running the virtual env manager class or activate the virtual env."""
