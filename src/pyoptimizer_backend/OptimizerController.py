@@ -4,6 +4,7 @@ from pyoptimizer_backend.OptimizerAmlro import OptimizerAmlro
 from pyoptimizer_backend.OptimizerEDBOp import OptimizerEBDOp
 from pyoptimizer_backend.OptimizerNMSimplex import OptimizerNMSimplex
 from pyoptimizer_backend.OptimizerNMSimplexLMFit import OptimizerNMSimplexLMFit
+from pyoptimizer_backend.OptimizerSQSnobFit import OptimizerSQSnobFit
 from pyoptimizer_backend.VenvManager import VenvManager
 
 
@@ -186,6 +187,8 @@ def get_optimizer(optimizer_name, venv: VenvManager = ""):
         optimizer = OptimizerNMSimplex(venv)
     elif optimizer_name == "NMSimplexLMFit":
         optimizer = OptimizerNMSimplexLMFit(venv)
+    elif optimizer_name == "SQSnobFit":
+        optimizer = OptimizerSQSnobFit(venv)
     else:
         raise RuntimeError(
             "Invalid optimizer name given: {}".format(optimizer_name)
