@@ -141,10 +141,9 @@ class NestedVenv(venv.EnvBuilder):
         try:
             __import__(package)
         except ModuleNotFoundError:
-            test = subprocess.call(
+            subprocess.call(
                 [self.virtual_python, "-m", "pip", "install", "-e", package]
             )
-            print(test)
 
     def pip_install_r(self, filename):
         """Installs package requirements from a "requirements.txt"-style file.

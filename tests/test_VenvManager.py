@@ -144,3 +144,40 @@ class TestNestedVenv(unittest.TestCase):
         venv.activate()
 
         self.assertTrue(venv.is_primary())
+
+    def test_pip_install_numpy(self):
+        """This test attempts to install the 'numpy' package from online
+        using 'pip'.
+        """
+
+        venv = NestedVenv(self.venv_path)
+
+        venv.create()
+        venv.activate()
+
+        venv.pip_install("numpy")
+
+    def test_pip_install_e(self):
+        """This test attempts to self-install this package into a new
+        virtual environment using 'pip install -e .'.
+        """
+
+        venv = NestedVenv(self.venv_path)
+
+        venv.create()
+        venv.activate()
+
+        venv.pip_install_e(".")
+
+    def test_pip_install_r(self):
+        """This test attempts to self-install this package's requirements.txt
+        file into a new virtual environment using
+        'pip install -r requirements'.
+        """
+
+        venv = NestedVenv(self.venv_path)
+
+        venv.create()
+        venv.activate()
+
+        venv.pip_install_r("requirements.txt")
