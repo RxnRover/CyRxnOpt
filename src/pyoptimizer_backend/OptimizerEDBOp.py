@@ -1,4 +1,6 @@
+import csv
 import os
+import shutil
 from typing import Any, Dict, List
 
 from pyoptimizer_backend.OptimizerABC import OptimizerABC
@@ -26,20 +28,28 @@ class OptimizerEBDOp(OptimizerABC):
         )  # this path should be get from labview
         self._venv.pip_install("pandas")
         self._venv.pip_install_e(
-            "../../../edboplus-main"
+            "../../../edboplus-imp"
         )  # this path should be get from labview
         self._venv.pip_install_e("../../../pyoptimizer_backend")
+        self._venv.pip_install_e("../../../datatools")
         # self._import_deps()
         self.check_install()
 
     def _import_deps(self) -> None:
         """importing all the packages and libries needed for running amlro optimizer"""
 
+        import random
+
         import numpy as np
         import pandas as pd
         from edbo.plus.optimizer_botorch import EDBOplus
 
-        self._imports = {"EDBOplus": EDBOplus, "np": np, "pd": pd}
+        self._imports = {
+            "EDBOplus": EDBOplus,
+            "np": np,
+            "pd": pd,
+            "random": random,
+        }
 
     def check_install(self) -> bool:
         """checking whether edbo+ virtual env install or not
@@ -92,7 +102,9 @@ class OptimizerEBDOp(OptimizerABC):
             batch=1,  # Number of experiments in parallel that
             # we want to perform in this round.
             columns_features="all",  # features to be included in the model.
-            init_sampling_method="cvtsampling",  # initialization method.
+            # init_sampling_method="cvtsampling",  # initialization method.
+            init_sampling_method="seed",  # initialization method.
+            seed=self._imports["random"].randint(0, 1000000),
         )
 
     def get_config(self):
@@ -196,22 +208,33 @@ class OptimizerEBDOp(OptimizerABC):
         :rtype: list
         """
         filename = "my_optimization.csv"
+        result_filename = "training_set_file.txt"
 
         config = self.config_translate(
             config
         )  # get reaction scope configurations
         # from general config file
 
-        # reading optimization file with reaction conditions
+        #  reading optimization file with reaction conditions
         df_edbo = self._imports["pd"].read_csv(
             os.path.join(experiment_dir, filename)
         )
 
         if len(prev_param) != 0:
             # [df_edbo.loc[0,config['objectives'][i]] =
-            # yield_value[i] for i in range(len(yield_value))]
+            # #yield_value[i] for i in range(len(yield_value))]
             df_edbo.loc[0, config["objectives"][0]] = yield_value
             df_edbo.to_csv(os.path.join(experiment_dir, filename), index=False)
+            parameters = (
+                ",".join([str(elem) for elem in prev_param])
+                + ","
+                + str(yield_value)
+            )
+            # print(parameters)
+            self.write_results(
+                os.path.join(experiment_dir, result_filename), parameters
+            )
+            # self.write_results_edbop(experiment_dir, filename, config,yield_value)
 
         # running the edbop prediction
         self._imports["EDBOplus"]().run(
@@ -257,7 +280,7 @@ class OptimizerEBDOp(OptimizerABC):
             increment = config["continuous"]["resolutions"][i]
 
             values = self._imports["np"].arange(
-                low_bound, upper_bound, increment
+                low_bound, upper_bound + increment, increment
             )
 
             reaction_components[
@@ -277,3 +300,47 @@ class OptimizerEBDOp(OptimizerABC):
         }
 
         return edbo_config
+
+    def write_results_edbop(
+        self, experiment_dir, filename, config, yield_value
+    ):
+        # Define the input and temporary output file paths
+        input_file = os.path.join(experiment_dir, filename)
+        temp_file = "temp_file.csv"
+
+        # Define the new value to be updated
+        new_value = yield_value
+
+        # Open the input file and temporary output file
+        with open(input_file, "r") as file, open(
+            temp_file, "w", newline=""
+        ) as temp:
+            reader = csv.reader(file)
+            writer = csv.writer(temp)
+
+            # Iterate over each row in the input file
+            for i, row in enumerate(reader):
+                if i == 0:
+                    value = config["objectives"][
+                        0
+                    ]  # column name of objective function
+                    try:
+                        index = row.index(value)
+                        print(f"The index of '{value}' is: {index}")
+                    except ValueError:
+                        print(
+                            f"The value '{value}' isnt found in the objective function"
+                        )
+                # Check if it's the second row (index 1)
+                if i == 1:
+                    # Update the value in the second column (index 1)
+                    row[index] = new_value
+                # Write the row to the temporary file
+                writer.writerow(row)
+
+        # Replace the original file with the updated file
+        shutil.move(temp_file, input_file)
+
+    def write_results(self, file_path: str, parameters: str) -> None:
+        with open(file_path, "a+") as file_object:
+            file_object.write(parameters + "\n")
