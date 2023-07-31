@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
 
-from pyoptimizer_backend.VenvManager import VenvManager
+from pyoptimizer_backend.NestedVenv import NestedVenv
 
 
 class OptimizerABC(ABC):
@@ -13,11 +13,11 @@ class OptimizerABC(ABC):
     # by this class. This should be overwritten in children.
     _packages = []
 
-    def __init__(self, venv: VenvManager = None) -> None:
+    def __init__(self, venv: NestedVenv = None) -> None:
         """Instantiates general Optimizer properties.
 
         :param venv: Virtual environment manager to use, defaults to None
-        :type venv: pyoptimizer_backend.VenvManager, optional
+        :type venv: pyoptimizer_backend.NestedVenv, optional
         """
 
         self._imports = {}  # Populated in self._import_deps()
