@@ -1,15 +1,14 @@
 import os
 import subprocess
 import sys
-import venv
 
 
-class NestedVenv(venv.EnvBuilder):
-    def __init__(self, virtual_dir: str):
+class VenvManager:
+    def __init__(self, virtual_dir):
         """initializing the virtual environment directory
 
         :param virtual_dir: path to the virtual env directory
-        :type virtual_dir: str
+        :type virtual_dir: Str
         """
 
         # Decide, based on the operating system, what path to the Python binary
@@ -25,90 +24,31 @@ class NestedVenv(venv.EnvBuilder):
             self.virtual_dir, self.__venv_dir, self.__python_bin
         )
 
-        # Call the EnvBuilder constructor
-        super().__init__(
-            system_site_packages=False,
-            clear=True,
-            symlinks=False,
-            upgrade=False,
-            with_pip=True,
-            prompt=None,
-            upgrade_deps=True,
-        )
+    def install_virtual_env(self):
+        """Create virtual environment if doesnt exists."""
 
-    def activate(self):
-        """Activates the current virtual environment as the primary virtual
-        environment. If the venv is active but not primary, it will be
-        reactivated as the primary venv.
+        if not os.path.exists(self.virtual_python):
+            import subprocess
 
-        :raises RuntimeError: The virtual environment does not exist.
-        """
-
-        # Deactivate the virtual environment if it was already active
-        self.deactivate()
-
-        if os.path.exists(self.virtual_dir):
-            env_path = os.environ["PATH"].split(":")
-            env_path.insert(0, self.virtual_dir)
+            subprocess.call(
+                [sys.executable, "-m", "virtualenv", self.virtual_dir]
+            )
         else:
-            raise RuntimeError("Virtual environment has not been created yet!")
+            print("found virtual python: " + self.virtual_python)
 
-        os.environ["PATH"] = ":".join(env_path)
+    def is_venv(self) -> bool:
+        """This function checking  whether virtual environment exists or not
 
-    def create(self):
-        """Creates the virtual environment at the given location."""
-
-        super().create(self.virtual_dir)
-
-    def deactivate(self):
-        """Deactivates the virtual environment regardless of if it is the
-        primary virtual environment.
-        """
-
-        # Do nothing if the virtual environment is not active
-        if not self.is_active:
-            return  # pramga: no qa
-
-        env_path = os.environ["PATH"].split(":")
-
-        # Remove all instances of the virtual environment from the path
-        env_path = [path for path in env_path if path != self.virtual_dir]
-
-        os.environ["PATH"] = ":".join(env_path)
-
-    def is_active(self) -> bool:
-        """Checks if the virtual environment is active or not.
-
-        This checks if the virtual environment path is in the PATH
-        environment variable or not.
-
-        :return: Whether the venv is active (True) or not (False).
+        :return: boolean parameter for virtual env directory existence
         :rtype: bool
         """
+        return sys.prefix == self.virtual_dir
 
-        env_path = os.environ["PATH"].split(":")
-
-        return self.virtual_dir in env_path
-
-    def is_primary(self) -> bool:
-        """Checks if the virtual environment is the primary active
-        virtual environment.
-
-        This checks if the virtual environment path is the first entry
-        in the PATH environment variable. This menas its packages
-        will be found first.
-
-        TODO: Recognize other virtual environments to ensure we are
-              the first virtual environment without needing to be the
-              first element in the PATH environment variable.
-
-        :return: Whether the venv is primary (True) or not (False).
-        :rtype: bool
-        """
-
-        env_path = os.environ["PATH"].split(":")
-
-        return env_path[0] == self.virtual_dir
+    def restart_under_venv(self):
+        """Restarting the installed virtual env's."""
+        print("Restarting under virtual environment " + self.virtual_dir)
+        subprocess.call([self.virtual_python, __file__] + sys.argv[1:])
+        # exit(0)
 
     def pip_install(self, package):
         """installing the packages to the running virtual env using
@@ -141,9 +81,10 @@ class NestedVenv(venv.EnvBuilder):
         try:
             __import__(package)
         except ModuleNotFoundError:
-            subprocess.call(
+            test = subprocess.call(
                 [self.virtual_python, "-m", "pip", "install", "-e", package]
             )
+            print(test)
 
     def pip_install_r(self, filename):
         """Installs package requirements from a "requirements.txt"-style file.
@@ -164,3 +105,12 @@ class NestedVenv(venv.EnvBuilder):
                 else:
                     package = line
                     self.pip_install(package)
+
+    def start_venv(self):
+        """Up and running the virtual env manager class or activate the virtual env."""
+        if not self.is_venv():
+            self.install_virtual_env()
+            self.restart_under_venv()
+        else:
+            print("Running under virtual environment")
+            # self.restart_under_venv()
