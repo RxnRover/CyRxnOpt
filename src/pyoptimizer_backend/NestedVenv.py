@@ -61,6 +61,8 @@ class NestedVenv(venv.EnvBuilder):
             # added by this virtual environment
             # self._prior_site_packages = site.getsitepackages()
 
+            # TODO: This adds the site to the end of sys.path. It should
+            #       go before any other venv site paths to be the primary venv.
             # Activates the virtual environment, adding it to sys.path
             site.addsitedir(self.site_packages)
             # NOTE: This sitedir stuff is from the SO answer here:
