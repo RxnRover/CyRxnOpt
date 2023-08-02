@@ -251,18 +251,57 @@ class NestedVenv(venv.EnvBuilder):
         # Get the original, full PATH variable
         og_env_path = os.environ["PATH"]
         print("og_env_path:", og_env_path)
+        og_sys_path = sys.path
+        print("og_sys_path:", og_sys_path)
+
+        # Remove other virtual environment site-packages paths temporarily
+        for path in reversed(sys.path):
+            if "site-packages" in path:
+                sys.path.remove(path)
+            else:
+                break
 
         # Replace the PATH variable with only the virtual environment
         os.environ["PATH"] = self._bin_dir
+        sys.path.append(self.site_packages)
 
-        print('Temporary os.environ["PATH"]:', os.environ["PATH"])
+        importlib.invalidate_caches()
+
+        og_sys_modules = sys.modules
+
+        venv_modules = []
+
+        loaded_package_modules = [key for key, value in sys.modules.items()]
+        for pkg in loaded_package_modules:
+            try:
+                # If the spec is None, skip the entry
+                if importlib.util.find_spec(pkg) is None:
+                    continue
+            # Sometimes a ValueError is raised if no .__spec__ member
+            # is found
+            except ValueError:
+                continue
+
+            # Check if valid packages associated with the package by
+            # checking if the first part of the module path matches.
+            # For example, "numpy.random.mtrand" would match when searching
+            # for package "numpy".
+            if package == pkg.split(".")[0]:
+                sys.modules.pop(pkg)
+
+                venv_modules.append(pkg)
 
         try:
-            __import__(package)
+            importlib.import_module(package)
         except ModuleNotFoundError:
             package_found = False
 
         os.environ["PATH"] = og_env_path
+        sys.path = og_sys_path
+
+        importlib.invalidate_caches()
+
+        sys.modules = og_sys_modules
 
         return package_found
 
