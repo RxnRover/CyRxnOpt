@@ -250,9 +250,9 @@ class NestedVenv(venv.EnvBuilder):
 
         # Get the original, full PATH variable
         og_env_path = os.environ["PATH"]
-        print("og_env_path:", og_env_path)
+        # print("og_env_path:", og_env_path)
         og_sys_path = sys.path
-        print("og_sys_path:", og_sys_path)
+        # print("og_sys_path:", og_sys_path)
 
         # Remove other virtual environment site-packages paths temporarily
         for path in reversed(sys.path):
