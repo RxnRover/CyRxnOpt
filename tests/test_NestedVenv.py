@@ -161,7 +161,7 @@ class TestNestedVenv(unittest.TestCase):
 
     def test_pip_install_e(self):
         """This test attempts to self-install this package into a new
-        virtual environment using 'pip install -e .'.
+        virtual environment using an editable install.
         """
 
         venv = NestedVenv(self.venv_path)
@@ -169,21 +169,14 @@ class TestNestedVenv(unittest.TestCase):
         venv.create()
         venv.activate()
 
-        venv.pip_install_e(os.path.abspath("."))
-        print()
+        venv.pip_install_e(os.path.abspath("tests/test_assets/test_project"))
 
-        # print("sys.path:", sys.path)
-
-        check_package = venv.check_package("pyoptimizer_backend")
-        print("check_package:", check_package)
-        # print("sys.path:", sys.path)
-
-        self.assertTrue(venv.check_package("pyoptimizer_backend"))
+        self.assertTrue(venv.check_package("numpy", "1.24.0"))
 
     def test_pip_install_r(self):
         """This test attempts to self-install this package's requirements.txt
         file into a new virtual environment using
-        'pip install -r requirements'.
+        'pip install -r requirements.txt'.
         """
 
         venv = NestedVenv(self.venv_path)
