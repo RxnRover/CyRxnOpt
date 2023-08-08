@@ -239,12 +239,15 @@ class TestNestedVenv(unittest.TestCase):
         venv1.pip_install("numpy==1.25")
         venv2.pip_install("numpy==1.24")
 
+        self.assertTrue(venv1.check_package("numpy", "1.25.0"))
+        self.assertTrue(venv2.check_package("numpy", "1.24.0"))
+
         import numpy
 
-        self.assertEqual(numpy.__version__, "1.25.0")
+        self.assertEqual(numpy.__version__, "1.24.0")
 
         venv1.deactivate()
 
         import numpy
 
-        print(numpy.__version__, "1.24.0")
+        print(numpy.__version__, "1.25.0")
