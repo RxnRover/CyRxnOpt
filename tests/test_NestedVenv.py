@@ -8,7 +8,7 @@ from pyoptimizer_backend.NestedVenv import NestedVenv
 class TestNestedVenv(unittest.TestCase):
     def setUp(self) -> None:
         self.parent_venv_path = "tmp"
-        self.venv_path = os.path.join(self.parent_venv_path, "test_venv")
+        self.venv_path = os.path.join(self.parent_venv_path, "test_venv_")
 
         # Append the test ID so each venv is separate
         self.venv_path += self.id()
