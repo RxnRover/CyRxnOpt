@@ -1,7 +1,6 @@
+import copy
 import importlib
 import importlib.util
-
-# import inspect
 import os
 import site
 import subprocess
@@ -43,6 +42,10 @@ class NestedVenv(venv.EnvBuilder):
         :raises RuntimeError: The virtual environment does not exist.
         """
 
+        # Return early if already active
+        if self.is_active():
+            return
+
         # # Deactivate the virtual environment if it was already active
         # self.deactivate()
 
@@ -59,7 +62,7 @@ class NestedVenv(venv.EnvBuilder):
             # Determine available modules before activating this, then
             # available packages afterward to diff what packages were
             # added by this virtual environment
-            # self._prior_site_packages = site.getsitepackages()
+            self._prior_site_packages = site.getsitepackages()
 
             # TODO: This adds the site to the end of sys.path. It should
             #       go before any other venv site paths to be the primary venv.
@@ -71,6 +74,14 @@ class NestedVenv(venv.EnvBuilder):
             #       https://github.com/dcreager/virtualenv/blob/master/virtualenv_support/activate_this.py
             #
             # Docs for site: https://docs.python.org/3/library/site.html
+
+            # Move the site package to the front of the sys.path so it is
+            # picked up first
+            # print("sys.path:", sys.path)
+            # tmp_site_packages = sys.path.pop(-1)
+            # print("tmp_site_packages:", tmp_site_packages)
+            # sys.path.insert(0, tmp_site_packages)
+            # print("sys.path:", sys.path)
         else:
             raise RuntimeError("Virtual environment has not been created yet!")
 
@@ -239,7 +250,7 @@ class NestedVenv(venv.EnvBuilder):
                     package = line
                     self.pip_install(package)
 
-    def check_package(self, package: str) -> bool:
+    def check_package(self, package: str, version: str = "") -> bool:
         # TODO: Should this be allowed even if the venv is inactive at
         #       the time of calling? I think it can still be checked without
         #       affecting anything, so I am allowing it on inactive venvs
@@ -250,9 +261,7 @@ class NestedVenv(venv.EnvBuilder):
 
         # Get the original, full PATH variable
         og_env_path = os.environ["PATH"]
-        # print("og_env_path:", og_env_path)
-        og_sys_path = sys.path
-        # print("og_sys_path:", og_sys_path)
+        og_sys_path = copy.deepcopy(sys.path)
 
         # Remove other virtual environment site-packages paths temporarily
         for path in reversed(sys.path):
@@ -292,8 +301,20 @@ class NestedVenv(venv.EnvBuilder):
                 venv_modules.append(pkg)
 
         try:
-            importlib.import_module(package)
+            print("Attempting import of", package)
+            module = importlib.import_module(package)
+
+            # TODO: This version checking could be much more complex
+            #       to allow for the full versioning syntax that pip can use.
+            #       For example, a user could specify version ">=1.25" instead
+            #       of only matching a specific version.
+            if version != "":
+                print("Checking if version matches:", version)
+                print("module.__version__:", module.__version__)
+                package_found = True if module.__version__ == version else False
+            print("Import succeeded.")
         except ModuleNotFoundError:
+            print("Import failed.")
             package_found = False
 
         os.environ["PATH"] = og_env_path

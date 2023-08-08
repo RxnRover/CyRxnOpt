@@ -170,6 +170,13 @@ class TestNestedVenv(unittest.TestCase):
         venv.activate()
 
         venv.pip_install_e(os.path.abspath("."))
+        print()
+
+        # print("sys.path:", sys.path)
+
+        check_package = venv.check_package("pyoptimizer_backend")
+        print("check_package:", check_package)
+        # print("sys.path:", sys.path)
 
         self.assertTrue(venv.check_package("pyoptimizer_backend"))
 
@@ -184,9 +191,11 @@ class TestNestedVenv(unittest.TestCase):
         venv.create()
         venv.activate()
 
-        venv.pip_install_r(os.path.abspath("requirements.txt"))
+        venv.pip_install_r(
+            os.path.abspath("tests/test_assets/requirements.txt")
+        )
 
-        self.assertTrue(venv.check_package("pyoptimizer_backend"))
+        self.assertTrue(venv.check_package("numpy", "1.24.0"))
 
     def test_pip_install_numpy_first_of_two_venvs(self):
         venv1 = NestedVenv(self.venv_path)
