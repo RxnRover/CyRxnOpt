@@ -129,13 +129,12 @@ class NestedVenv(venv.EnvBuilder):
         # Attempt to reimport modules from other venvs
         for pkg in venv_modules:
             try:
-                module = importlib.import_module(pkg)
+                importlib.import_module(pkg)
                 # __import__(pkg)
                 # import pkg
                 # importlib.reload(pkg)
                 # reset_module(pkg)
                 print("Successfully reimported:", pkg)
-                print("Module:", module)
             except ModuleNotFoundError:
                 print("Failed to reimport:", pkg)
                 continue
@@ -309,8 +308,6 @@ class NestedVenv(venv.EnvBuilder):
             #       For example, a user could specify version ">=1.25" instead
             #       of only matching a specific version.
             if version != "":
-                print("Checking if version matches:", version)
-                print("module.__version__:", module.__version__)
                 package_found = True if module.__version__ == version else False
             print("Import succeeded.")
         except ModuleNotFoundError:

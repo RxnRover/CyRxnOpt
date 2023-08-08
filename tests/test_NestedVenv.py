@@ -36,6 +36,16 @@ class TestNestedVenv(unittest.TestCase):
         # Shouldn't throw an exception
         venv.activate()
 
+    def test_activate_when_active(self):
+        venv = NestedVenv(self.venv_path)
+        venv.create()
+
+        # Shouldn't throw an exception
+        venv.activate()
+
+        # Also shouldn't throw an exception
+        venv.activate()
+
     def test_activate_two_venvs(self):
         venv1 = NestedVenv(self.venv_path)
         venv2 = NestedVenv(self.venv_path + "_2")
@@ -171,6 +181,7 @@ class TestNestedVenv(unittest.TestCase):
 
         venv.pip_install_e(os.path.abspath("tests/test_assets/test_project"))
 
+        # self.assertTrue(venv.check_package("test_project"))
         self.assertTrue(venv.check_package("numpy", "1.24.0"))
 
     def test_pip_install_r(self):
@@ -188,7 +199,9 @@ class TestNestedVenv(unittest.TestCase):
             os.path.abspath("tests/test_assets/requirements.txt")
         )
 
+        # self.assertTrue(venv.check_package("test_project"))
         self.assertTrue(venv.check_package("numpy", "1.24.0"))
+        self.assertTrue(venv.check_package("requests", "2.31.0"))
 
     def test_pip_install_numpy_first_of_two_venvs(self):
         venv1 = NestedVenv(self.venv_path)
