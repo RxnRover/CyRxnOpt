@@ -56,6 +56,8 @@ class OptimizerABC(ABC):
         :type local_paths: Dict[str, str], optional
         """
 
+        self.__venv.deactivate()
+
         # Install each package
         for package in self._packages:
             # Install from local path if one is given
@@ -63,6 +65,8 @@ class OptimizerABC(ABC):
                 self.__venv.pip_install_e(local_paths[package])
             else:
                 self.__venv.pip_install(package)
+
+        self.__venv.activate()
 
         # Import the packages after they were installed
         self._import_deps()
