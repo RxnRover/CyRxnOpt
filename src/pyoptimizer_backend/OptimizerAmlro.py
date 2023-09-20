@@ -175,10 +175,6 @@ class OptimizerAmlro(OptimizerABC):
     def set_config(self, experiment_dir: str, config: Dict[str, Any]):
         """Generate all the necessary data files based on the given config.
 
-        The key for each option must match the corresponding "name" field
-        and the value type must match the one assigned in the "type" field
-        from `get_config()`
-
         :param experiment_dir: Experimental directory for saving data files.
         :type experiment_dir: str
         :param config: Configuration settings defined from `get_config()`.
@@ -212,9 +208,6 @@ class OptimizerAmlro(OptimizerABC):
 
         full_combo_df.columns = feature_names_list
 
-        print(len(full_combo_list))
-        print(len(training_combo_df))
-
         full_combo_path = os.path.join(experiment_dir, "full_combo_file.txt")
         training_combo_path = os.path.join(
             experiment_dir, "training_combo_file.txt"
@@ -230,15 +223,13 @@ class OptimizerAmlro(OptimizerABC):
             experiment_dir, "training_set_decoded_file.txt"
         )
 
-        # writting the reaction conditions for
-        # training dataset into files(encoded and decoded versions)
+        # Write the reaction conditions for training dataset into files
+        # (encoded and decoded versions)
         with open(training_set_path, "w") as file_object:
-            # file_object.write("####" + "\n")
             feature_names = ",".join([str(elem) for elem in feature_names_list])
             file_object.write(feature_names + ",Yield" + "\n")
 
         with open(training_set_decoded_path, "w") as file_object:
-            # file_object.write("####" + "\n")
             feature_names = ",".join([str(elem) for elem in feature_names_list])
             file_object.write(feature_names + ",Yield" + "\n")
 
