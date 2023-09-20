@@ -1,5 +1,4 @@
 import os
-import shutil
 import unittest
 
 from pyoptimizer_backend.NestedVenv import NestedVenv
@@ -13,14 +12,17 @@ class TestNestedVenv(unittest.TestCase):
         # Append the test ID so each venv is separate
         self.venv_path += self.id()
 
+        # List of venvs created in the test
+        self.venvs = []
+
         return super().setUp()
 
     def tearDown(self) -> None:
-        if os.path.exists(self.venv_path):
-            shutil.rmtree(self.venv_path)
+        # This serves as a test for venv.delete()
+        for venv in self.venvs:
+            venv.delete()
 
-        if os.path.exists(self.venv_path + "_2"):
-            shutil.rmtree(self.venv_path + "_2")
+            self.assertTrue(not os.path.exists(venv.prefix))
 
         return super().tearDown()
 
@@ -31,6 +33,7 @@ class TestNestedVenv(unittest.TestCase):
 
     def test_activate_with_venv_created(self):
         venv = NestedVenv(self.venv_path)
+        self.venvs.append(venv)
         venv.create()
 
         # Shouldn't throw an exception
@@ -38,6 +41,7 @@ class TestNestedVenv(unittest.TestCase):
 
     def test_activate_when_active(self):
         venv = NestedVenv(self.venv_path)
+        self.venvs.append(venv)
         venv.create()
 
         # Shouldn't throw an exception
@@ -49,6 +53,8 @@ class TestNestedVenv(unittest.TestCase):
     def test_activate_two_venvs(self):
         venv1 = NestedVenv(self.venv_path)
         venv2 = NestedVenv(self.venv_path + "_2")
+        self.venvs.append(venv1)
+        self.venvs.append(venv2)
 
         # Created first, will not be primary
         venv1.create()
@@ -68,6 +74,8 @@ class TestNestedVenv(unittest.TestCase):
     def test_activate_two_venvs_then_deactivate_first(self):
         venv1 = NestedVenv(self.venv_path)
         venv2 = NestedVenv(self.venv_path + "_2")
+        self.venvs.append(venv1)
+        self.venvs.append(venv2)
 
         # Created first, will not be primary
         venv1.create()
@@ -88,14 +96,18 @@ class TestNestedVenv(unittest.TestCase):
 
     def test_create_with_no_prior_creation(self):
         venv = NestedVenv(self.venv_path)
+        self.venvs.append(venv)
 
         venv.create()
 
         self.assertTrue(os.path.exists(self.venv_path))
         self.assertTrue(os.path.exists(venv.python))
 
+        venv.delete()
+
     def test_create_when_dir_exists(self):
         venv = NestedVenv(self.venv_path)
+        self.venvs.append(venv)
 
         # Create the directory beforehand
         os.makedirs(self.venv_path)
@@ -108,6 +120,7 @@ class TestNestedVenv(unittest.TestCase):
 
     def test_create_twice(self):
         venv = NestedVenv(self.venv_path)
+        self.venvs.append(venv)
 
         venv.create()
         venv.create()
@@ -117,6 +130,7 @@ class TestNestedVenv(unittest.TestCase):
 
     def test_deactivate_not_active(self):
         venv = NestedVenv(self.venv_path)
+        self.venvs.append(venv)
 
         self.assertFalse(venv.is_active())
 
@@ -127,6 +141,7 @@ class TestNestedVenv(unittest.TestCase):
 
     def test_is_active_not_active(self):
         venv = NestedVenv(self.venv_path)
+        self.venvs.append(venv)
 
         # No venv has been created or activated
 
@@ -134,6 +149,7 @@ class TestNestedVenv(unittest.TestCase):
 
     def test_is_active(self):
         venv = NestedVenv(self.venv_path)
+        self.venvs.append(venv)
 
         venv.create()
         venv.activate()
@@ -147,13 +163,57 @@ class TestNestedVenv(unittest.TestCase):
 
         self.assertFalse(venv.is_primary())
 
-    def test_is_primary(self):
+    def test_is_primary_only_venv(self):
         venv = NestedVenv(self.venv_path)
+        self.venvs.append(venv)
 
         venv.create()
         venv.activate()
 
         self.assertTrue(venv.is_primary())
+
+        venv.deactivate()
+
+        self.assertFalse(venv.is_primary())
+
+    def test_is_primary_two_venvs(self):
+        venv1 = NestedVenv(self.venv_path)
+        venv2 = NestedVenv(self.venv_path + "_2")
+        self.venvs.append(venv1)
+        self.venvs.append(venv2)
+
+        venv1.create()
+        venv2.create()
+
+        # neither venv is active
+        self.assertFalse(venv1.is_primary())
+        self.assertFalse(venv2.is_primary())
+
+        # venv1 is the only active
+        venv1.activate()
+        self.assertTrue(venv1.is_primary())
+        self.assertFalse(venv2.is_primary())
+
+        # venv1 and venv2 are active, venv2 should be primary
+        venv2.activate()
+        self.assertFalse(venv1.is_primary())
+        self.assertTrue(venv2.is_primary())
+
+        # only venv2 is active
+        venv1.deactivate()
+        self.assertFalse(venv1.is_primary())
+        self.assertTrue(venv2.is_primary())
+
+        # venv1 and venv2 active again, but venv2 should be primary
+        venv1.activate()
+        self.assertTrue(venv1.is_primary())
+        self.assertFalse(venv2.is_primary())
+
+        # neither venv is active
+        venv1.deactivate()
+        venv2.deactivate()
+        self.assertFalse(venv1.is_primary())
+        self.assertFalse(venv2.is_primary())
 
     def test_pip_install_numpy(self):
         """This test attempts to install the 'numpy' package from online
@@ -161,6 +221,7 @@ class TestNestedVenv(unittest.TestCase):
         """
 
         venv = NestedVenv(self.venv_path)
+        self.venvs.append(venv)
 
         venv.create()
         venv.activate()
@@ -175,6 +236,7 @@ class TestNestedVenv(unittest.TestCase):
         """
 
         venv = NestedVenv(self.venv_path)
+        self.venvs.append(venv)
 
         venv.create()
         venv.activate()
@@ -191,6 +253,7 @@ class TestNestedVenv(unittest.TestCase):
         """
 
         venv = NestedVenv(self.venv_path)
+        self.venvs.append(venv)
 
         venv.create()
         venv.activate()
@@ -206,6 +269,8 @@ class TestNestedVenv(unittest.TestCase):
     def test_pip_install_numpy_first_of_two_venvs(self):
         venv1 = NestedVenv(self.venv_path)
         venv2 = NestedVenv(self.venv_path + "_2")
+        self.venvs.append(venv1)
+        self.venvs.append(venv2)
 
         # Created first, will not be primary
         venv1.create()
@@ -227,6 +292,8 @@ class TestNestedVenv(unittest.TestCase):
     def test_pip_install_numpy_two_versions(self):
         venv1 = NestedVenv(self.venv_path)
         venv2 = NestedVenv(self.venv_path + "_2")
+        self.venvs.append(venv1)
+        self.venvs.append(venv2)
 
         # Created first, will not be primary
         venv1.create()
