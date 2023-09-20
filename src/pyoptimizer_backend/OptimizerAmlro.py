@@ -121,7 +121,7 @@ class OptimizerAmlro(OptimizerABC):
         :return: configuration dictionary
         :rtype: Dict
         """
-        config = {
+        config = [
             {
                 "Name": "continuous_feature_names",
                 "Type": List[str],
@@ -162,7 +162,7 @@ class OptimizerAmlro(OptimizerABC):
                 "Type": List[str],
                 "value": [""],
             },
-        }
+        ]
         return config
 
     def set_config(self, experiment_dir: str, config: Dict) -> None:
