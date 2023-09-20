@@ -123,43 +123,43 @@ class OptimizerAmlro(OptimizerABC):
         """
         config = [
             {
-                "Name": "continuous_feature_names",
-                "Type": List[str],
+                "name": "continuous_feature_names",
+                "type": List[str],
                 "value": [""],
             },
             {
-                "Name": "continuous_feature_bounds",
-                "Type": List[List[float]],
+                "name": "continuous_feature_bounds",
+                "type": List[List[float]],
                 "value": [[]],
             },
             {
-                "Name": "continuous_feature_resoultions",
-                "Type": List[float],
+                "name": "continuous_feature_resoultions",
+                "type": List[float],
                 "value": [],
             },
             {
-                "Name": "categorical_feature_names",
-                "Type": List[str],
+                "name": "categorical_feature_names",
+                "type": List[str],
                 "value": [""],
             },
             {
-                "Name": "categorical_feature_values",
-                "Type": List[List[str]],
+                "name": "categorical_feature_values",
+                "type": List[List[str]],
                 "value": [[]],
             },
             {
-                "Name": "budget",
-                "Type": int,
+                "name": "budget",
+                "type": int,
                 "value": 100,
             },
             {
-                "Name": "objectives",
-                "Type": List[str],
+                "name": "objectives",
+                "type": List[str],
                 "value": [""],
             },
             {
-                "Name": "objective_mode",
-                "Type": List[str],
+                "name": "objective_mode",
+                "type": List[str],
                 "value": [""],
             },
         ]
