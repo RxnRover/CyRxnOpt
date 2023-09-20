@@ -2,6 +2,7 @@ import copy
 import importlib
 import importlib.util
 import os
+import shutil
 import site
 import subprocess
 import sys
@@ -138,6 +139,12 @@ class NestedVenv(venv.EnvBuilder):
             except ModuleNotFoundError:
                 print("Failed to reimport:", pkg)
                 continue
+
+    def delete(self):
+        self.deactivate()
+
+        if os.path.exists(self.prefix):
+            shutil.rmtree(self.prefix)
 
     def is_active(self) -> bool:
         """Checks if the virtual environment is active or not.
