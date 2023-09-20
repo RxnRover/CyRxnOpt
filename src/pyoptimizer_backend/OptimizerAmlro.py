@@ -172,14 +172,19 @@ class OptimizerAmlro(OptimizerABC):
 
         return config
 
-    def set_config(self, experiment_dir: str, config: Dict) -> None:
-        """Generate all the nessasry data files
+    def set_config(self, experiment_dir: str, config: Dict[str, Any]):
+        """Generate all the necessary data files based on the given config.
 
-        :param experiment_dir: experimental directory for saving data files
+        The key for each option must match the corresponding "name" field
+        and the value type must match the one assigned in the "type" field
+        from `get_config()`
+
+        :param experiment_dir: Experimental directory for saving data files.
         :type experiment_dir: str
-        :param config: configuration dict which required for initializing AMLRO
-        :type config: dict
+        :param config: Configuration settings defined from `get_config()`.
+        :type config: Dict[str, Any]
         """
+
         self._import_deps()
 
         if not os.path.exists(experiment_dir):
