@@ -7,7 +7,7 @@ from pyoptimizer_backend.OptimizerABC import OptimizerABC
 class OptimizerAmlro(OptimizerABC):
     # Private static data member to list dependency packages required
     # by this class
-    _packages = ["amlro", "benchmarking", "numpy"]
+    _packages = ["amlro", "benchmarking", "numpy", "pandas"]
 
     # overidding methods
     def __init__(self, venv=None) -> None:
