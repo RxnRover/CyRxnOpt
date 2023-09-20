@@ -11,21 +11,12 @@ from pyoptimizer_backend.OptimizerAmlro import OptimizerAmlro
 
 class TestOptimizerAmlro(unittest.TestCase):
     def setUp(self) -> None:
-        self.parent_venv_path = "tmp"
-        self.venv_path = os.path.join(self.parent_venv_path, "test_venv_")
-
-        # Append the test ID so each venv is separate
-        self.venv_path += self.id()
-
-        # Used to collect venvs created in a test
-        self.venvs = []
+        self.test_prefix = os.path.join("tmp", self.id())
+        self.venv_path = os.path.join(self.test_prefix, "venv_amlro")
 
         return super().setUp()
 
     def tearDown(self) -> None:
-        for venv in self.venvs:
-            venv.delete()
-
         return super().tearDown()
 
     def test_get_config(self):
@@ -44,4 +35,23 @@ class TestOptimizerAmlro(unittest.TestCase):
 
         validate_config_description(self, result)
 
-        venv.delete()
+    def test_set_config(self):
+        venv = NestedVenv(self.venv_path)
+        venv.create()
+        venv.activate()
+
+        opt = OptimizerAmlro(venv)
+        opt.install()
+
+        config = {
+            "continuous_feature_names": ["f1", "f2"],
+            "continuous_feature_bounds": [[-1, 1], [-5, 5]],
+            "continuous_feature_resolutions": [1, 5, 1],
+            "categorical_feature_names": ["f3"],
+            "categorical_feature_values": [["a", "b", "c"]],
+            "budget": 10,
+            "objectives": ["yield"],
+            "objective_mode": "min",
+        }
+
+        opt.set_config(self.test_prefix, config)
