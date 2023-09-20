@@ -114,13 +114,14 @@ class OptimizerAmlro(OptimizerABC):
 
         return best_combo
 
-    def get_config(self) -> Dict:
-        """This function will return the configurations which need to initialize a
-        optimizer
+    def get_config(self) -> List[Dict[str, Any]]:
+        """This function will return the configurations which are needed
+        to initialize an optimizer through `set_config()`.
 
-        :return: configuration dictionary
-        :rtype: Dict
+        :return: Configuration option descriptions.
+        :rtype: List[Dict[str, Any]]
         """
+
         config = [
             {
                 "name": "continuous_feature_names",
@@ -163,6 +164,12 @@ class OptimizerAmlro(OptimizerABC):
                 "value": [""],
             },
         ]
+        # TODO: Budget should be constrained to numbers greater than
+        #       zero once that format is solidified.
+        # TODO: Should the value of this "config" variable be moved into
+        #       a JSON file to make it easier to modify without changing
+        #       the code?
+
         return config
 
     def set_config(self, experiment_dir: str, config: Dict) -> None:

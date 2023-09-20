@@ -68,9 +68,44 @@ class OptimizerABC(ABC):
         self._import_deps()
 
     @abstractmethod
-    def get_config(self):
+    def get_config(self) -> List[Dict[str, Any]]:
         """This abstract method should be included function calls for returning
         all the initial configuration requires for optimizer.
+
+        The configuration descriptions returned by this function are
+        dictionaries with three keys, "name", "type", and "value":
+
+        - "name" will contain the name for the config option in snake_case,
+          with "continuous_" or "categorical_" prepended to the name if two
+          versions of the option are needed for continuous and categorical
+          variables.
+        - "type" will contain the Python type annotation describing the type
+          to use for this option (for translating to strictly typed languages)
+        - "value" will provide the default value of the option.
+        - "range" is optional and used to specify the allowed range for
+          numbers or to constrain what options a string input can accept.
+          For example, a description of an option for the optimization
+          direction could be::
+
+             {
+                 "name": "optimization_direction",
+                 "type": str,
+                 "value": "min",
+                 "range": ["min", "max"]
+             }
+        - "description" is an optional description of the purpose of a config
+          option, along with any caveats that may come with it.
+
+        .. TODO::
+
+           Think about how to define number bounds in only one direction,
+           like saying "this integer must be >0 or >=0.
+
+        .. TODO::
+
+           Write a page in the documentation describing this, as well as
+           expected mappings to traditional user interface widgets, like text
+           inputs, combo boxes, and number sliders.
         """
 
         pass
