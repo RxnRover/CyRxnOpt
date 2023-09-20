@@ -160,8 +160,9 @@ class OptimizerAmlro(OptimizerABC):
             },
             {
                 "name": "objective_mode",
-                "type": List[str],
-                "value": [""],
+                "type": str,
+                "value": "min",
+                "range": ["min", "max"],
             },
         ]
         # TODO: Budget should be constrained to numbers greater than
