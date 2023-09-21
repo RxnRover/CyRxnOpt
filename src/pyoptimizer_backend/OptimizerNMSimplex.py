@@ -99,6 +99,7 @@ class OptimizerNMSimplex(OptimizerABC):
             json.dump(config, fout, indent=4)
 
     def train(
+        self,
         optimizer_name: str,
         prev_param: List[Any],
         yield_value: float,
