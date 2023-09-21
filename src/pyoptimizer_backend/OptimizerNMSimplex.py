@@ -144,7 +144,10 @@ class OptimizerNMSimplex(OptimizerABC):
 
         # Convert bounds list to sequence of tuples
         bounds = tuple(
-            [tuple(bound_list) for bound_list in config["continuous"]["bounds"]]
+            [
+                tuple(bound_list)
+                for bound_list in config["continuous_feature_bounds"]
+            ]
         )
 
         # Call the minimization function
