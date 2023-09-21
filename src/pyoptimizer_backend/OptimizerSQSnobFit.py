@@ -139,7 +139,7 @@ class OptimizerSQSnobFit(OptimizerABC):
 
         # Convert bounds list to sequence of tuples
         # bounds = tuple([tuple(bound_list) for bound_list in config["bounds"]])
-        bounds = config["continuous"]["bounds"]
+        bounds = config["continuous_feature_bounds"]
 
         print("budget: {}".format(config["budget"]))
 
