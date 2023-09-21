@@ -179,13 +179,15 @@ def get_optimizer(optimizer_name, venv: NestedVenv = ""):
     :rtype: class object
     """
 
+    optimizer_name = optimizer_name.lower()
+
     if optimizer_name == "amlro":
         optimizer = OptimizerAmlro(venv)
     elif optimizer_name == "edbop":
         optimizer = OptimizerEBDOp(venv)
-    elif optimizer_name == "NMSimplex":
+    elif optimizer_name == "nmsimplex":
         optimizer = OptimizerNMSimplex(venv)
-    elif optimizer_name == "SQSnobFit":
+    elif optimizer_name == "sqsnobfit":
         optimizer = OptimizerSQSnobFit(venv)
     else:
         raise RuntimeError(
