@@ -141,8 +141,6 @@ class OptimizerSQSnobFit(OptimizerABC):
         # bounds = tuple([tuple(bound_list) for bound_list in config["bounds"]])
         bounds = config["continuous_feature_bounds"]
 
-        print("budget: {}".format(config["budget"]))
-
         options = {
             "minfcall": None,
             "maxmp": None,
