@@ -99,6 +99,7 @@ class OptimizerSQSnobFit(OptimizerABC):
         itr: int,
         experiment_dir: str,
         config: Dict,
+        obj_func=None,
     ) -> None:
         """No training step for this algorithm."""
 

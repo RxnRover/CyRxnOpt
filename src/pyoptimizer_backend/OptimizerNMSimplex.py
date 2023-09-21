@@ -105,7 +105,6 @@ class OptimizerNMSimplex(OptimizerABC):
         itr: int,
         experiment_dir: str,
         config: Dict,
-        venv: NestedVenv = "",
     ) -> None:
         """No training step for this algorithm."""
 
