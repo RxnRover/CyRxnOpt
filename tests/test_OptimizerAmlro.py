@@ -10,24 +10,36 @@ from pyoptimizer_backend.OptimizerAmlro import OptimizerAmlro
 
 
 class TestOptimizerAmlro(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.base_prefix = "tmp"
+        cls.venv_path = os.path.join(cls.base_prefix, "venv_amlro")
+
+        # Create common venv to save time
+        cls.venv = NestedVenv(cls.venv_path)
+
+        # Always recreate the venv to start with a clean slate for testing
+        cls.venv.create()
+        cls.venv.activate()
+
+        opt = OptimizerAmlro(cls.venv)
+
+        # This test will fail if this throws an error
+        opt.install()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.venv.delete()
+
     def setUp(self) -> None:
-        self.test_prefix = os.path.join("tmp", self.id())
-        self.venv_path = os.path.join(self.test_prefix, "venv_amlro")
+        self.test_prefix = os.path.join(self.base_prefix, self.id())
+
+        self.venv.activate()
 
         return super().setUp()
 
     def tearDown(self) -> None:
         return super().tearDown()
-
-    def test_install(self):
-        venv = NestedVenv(self.venv_path)
-        venv.create()
-        venv.activate()
-
-        opt = OptimizerAmlro(venv)
-
-        # This test will fail if this throws an error
-        opt.install()
 
     def test_get_config(self):
         """This test checks that a config of the correct format was provided,
@@ -35,22 +47,14 @@ class TestOptimizerAmlro(unittest.TestCase):
         description.
         """
 
-        venv = NestedVenv(self.venv_path)
-        venv.create()
-        venv.activate()
-
-        opt = OptimizerAmlro(venv)
+        opt = OptimizerAmlro(self.venv)
 
         result = opt.get_config()
 
         validate_config_description(self, result)
 
     def test_set_config(self):
-        venv = NestedVenv(self.venv_path)
-        venv.create()
-        venv.activate()
-
-        opt = OptimizerAmlro(venv)
+        opt = OptimizerAmlro(self.venv)
         opt.install()
 
         config = {
@@ -66,12 +70,25 @@ class TestOptimizerAmlro(unittest.TestCase):
 
         opt.set_config(self.test_prefix, config)
 
-    def test__validate_config_complete_config(self):
-        venv = NestedVenv(self.venv_path)
-        venv.create()
-        venv.activate()
+        # Make sure that all files were created
+        full_combo_file = os.path.join(self.test_prefix, "full_combo_file.txt")
+        training_combo_file = os.path.join(
+            self.test_prefix, "training_combo_file.txt"
+        )
+        training_set_decoded_file = os.path.join(
+            self.test_prefix, "training_set_decoded_file.txt"
+        )
+        training_set_file = os.path.join(
+            self.test_prefix, "training_set_file.txt"
+        )
 
-        opt = OptimizerAmlro(venv)
+        self.assertTrue(os.path.exists(full_combo_file))
+        self.assertTrue(os.path.exists(training_combo_file))
+        self.assertTrue(os.path.exists(training_set_decoded_file))
+        self.assertTrue(os.path.exists(training_set_file))
+
+    def test__validate_config_complete_config(self):
+        opt = OptimizerAmlro(self.venv)
         opt.install()
 
         config = {
@@ -88,11 +105,7 @@ class TestOptimizerAmlro(unittest.TestCase):
         opt._validate_config(config)
 
     def test__validate_config_continuous_config(self):
-        venv = NestedVenv(self.venv_path)
-        venv.create()
-        venv.activate()
-
-        opt = OptimizerAmlro(venv)
+        opt = OptimizerAmlro(self.venv)
         opt.install()
 
         config = {
@@ -105,11 +118,7 @@ class TestOptimizerAmlro(unittest.TestCase):
         opt._validate_config(config)
 
     def test__validate_config_categorical_config(self):
-        venv = NestedVenv(self.venv_path)
-        venv.create()
-        venv.activate()
-
-        opt = OptimizerAmlro(venv)
+        opt = OptimizerAmlro(self.venv)
         opt.install()
 
         config = {
@@ -119,3 +128,48 @@ class TestOptimizerAmlro(unittest.TestCase):
         }
 
         opt._validate_config(config)
+
+    def test__validate_config_missing_parts(self):
+        opt = OptimizerAmlro(self.venv)
+        opt.install()
+
+        config_no_names = {
+            "continuous_feature_bounds": [[-1, 1], [-5, 5]],
+            "continuous_feature_resolutions": [1, 5, 1],
+            "categorical_feature_values": [["a", "b", "c"]],
+            "budget": 10,
+        }
+
+        self.assertRaises(RuntimeError, opt._validate_config, config_no_names)
+
+        config_no_continuous_feature_bounds_or_res = {
+            "continuous_feature_names": ["f1", "f2"],
+            "budget": 10,
+        }
+
+        self.assertRaises(
+            RuntimeError,
+            opt._validate_config,
+            config_no_continuous_feature_bounds_or_res,
+        )
+
+        config_no_categorical_feature_values = {
+            "categorical_feature_names": ["f3"],
+            "budget": 10,
+        }
+
+        self.assertRaises(
+            RuntimeError,
+            opt._validate_config,
+            config_no_categorical_feature_values,
+        )
+
+        config_no_budget = {
+            "continuous_feature_names": ["f1", "f2"],
+            "continuous_feature_bounds": [[-1, 1], [-5, 5]],
+            "continuous_feature_resolutions": [1, 5, 1],
+            "categorical_feature_names": ["f3"],
+            "categorical_feature_values": [["a", "b", "c"]],
+        }
+
+        self.assertRaises(RuntimeError, opt._validate_config, config_no_budget)

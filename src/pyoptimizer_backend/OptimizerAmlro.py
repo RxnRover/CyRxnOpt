@@ -193,6 +193,21 @@ class OptimizerAmlro(OptimizerABC):
         if not os.path.exists(experiment_dir):
             os.makedirs(experiment_dir)
 
+        # Add extra entries that AMLRO will understand
+        config["continuous"] = {}
+        config["categorical"] = {}
+        config["continuous"]["feature_names"] = config[
+            "continuous_feature_names"
+        ]
+        config["continuous"]["bounds"] = config["continuous_feature_bounds"]
+        config["continuous"]["resolutions"] = config[
+            "continuous_feature_resolutions"
+        ]
+        config["categorical"]["feature_names"] = config[
+            "categorical_feature_names"
+        ]
+        config["categorical"]["values"] = config["categorical_feature_values"]
+
         full_combo_list = self._imports[
             "generate_combos"
         ].generate_uniform_grid(config)
