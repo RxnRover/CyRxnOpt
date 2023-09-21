@@ -135,9 +135,9 @@ class NestedVenv(venv.EnvBuilder):
                 # import pkg
                 # importlib.reload(pkg)
                 # reset_module(pkg)
-                print("Successfully reimported:", pkg)
+                # print("Successfully reimported:", pkg)
             except ModuleNotFoundError:
-                print("Failed to reimport:", pkg)
+                # print("Failed to reimport:", pkg)
                 continue
 
     def delete(self):
