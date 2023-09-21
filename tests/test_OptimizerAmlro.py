@@ -19,6 +19,16 @@ class TestOptimizerAmlro(unittest.TestCase):
     def tearDown(self) -> None:
         return super().tearDown()
 
+    def test_install(self):
+        venv = NestedVenv(self.venv_path)
+        venv.create()
+        venv.activate()
+
+        opt = OptimizerAmlro(venv)
+
+        # This test will fail if this throws an error
+        opt.install()
+
     def test_get_config(self):
         """This test checks that a config of the correct format was provided,
         but does not try to validate the actual values of each config
@@ -55,3 +65,57 @@ class TestOptimizerAmlro(unittest.TestCase):
         }
 
         opt.set_config(self.test_prefix, config)
+
+    def test__validate_config_complete_config(self):
+        venv = NestedVenv(self.venv_path)
+        venv.create()
+        venv.activate()
+
+        opt = OptimizerAmlro(venv)
+        opt.install()
+
+        config = {
+            "continuous_feature_names": ["f1", "f2"],
+            "continuous_feature_bounds": [[-1, 1], [-5, 5]],
+            "continuous_feature_resolutions": [1, 5, 1],
+            "categorical_feature_names": ["f3"],
+            "categorical_feature_values": [["a", "b", "c"]],
+            "budget": 10,
+            "objectives": ["yield"],
+            "objective_mode": "min",
+        }
+
+        opt._validate_config(config)
+
+    def test__validate_config_continuous_config(self):
+        venv = NestedVenv(self.venv_path)
+        venv.create()
+        venv.activate()
+
+        opt = OptimizerAmlro(venv)
+        opt.install()
+
+        config = {
+            "continuous_feature_names": ["f1", "f2"],
+            "continuous_feature_bounds": [[-1, 1], [-5, 5]],
+            "continuous_feature_resolutions": [1, 5, 1],
+            "budget": 10,
+        }
+
+        opt._validate_config(config)
+
+    def test__validate_config_categorical_config(self):
+        venv = NestedVenv(self.venv_path)
+        venv.create()
+        venv.activate()
+
+        opt = OptimizerAmlro(venv)
+        opt.install()
+
+        config = {
+            "categorical_feature_names": ["f3"],
+            "categorical_feature_values": [["a", "b", "c"]],
+            "budget": 10,
+        }
+
+        opt._validate_config(config)

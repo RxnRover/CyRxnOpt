@@ -7,7 +7,11 @@ from pyoptimizer_backend.OptimizerABC import OptimizerABC
 class OptimizerAmlro(OptimizerABC):
     # Private static data member to list dependency packages required
     # by this class
-    _packages = ["amlro", "benchmarking", "numpy", "pandas"]
+    _packages = [
+        "git+ssh://git@github.com/RxnRover/amlo",
+        "numpy",
+        "pandas",
+    ]
 
     # overidding methods
     def __init__(self, venv=None) -> None:
@@ -184,6 +188,8 @@ class OptimizerAmlro(OptimizerABC):
 
         self._import_deps()
 
+        self._validate_config(config)
+
         if not os.path.exists(experiment_dir):
             os.makedirs(experiment_dir)
 
@@ -197,15 +203,15 @@ class OptimizerAmlro(OptimizerABC):
         full_combo_df = self._imports["pd"].DataFrame(full_combo_list)
         training_combo_df = full_combo_df.sample(20)
 
-        if bool(config["categorical"]):
+        if bool(config["categorical_feature_names"]):
             feature_names_list = self._imports["np"].concatenate(
                 (
-                    config["continuous"]["feature_names"],
-                    config["categorical"]["feature_names"],
+                    config["continuous_feature_names"],
+                    config["categorical_feature_names"],
                 )
             )
         else:
-            feature_names_list = config["continuous"]["feature_names"]
+            feature_names_list = config["continuous_feature_names"]
 
         full_combo_df.columns = feature_names_list
 
@@ -253,3 +259,53 @@ class OptimizerAmlro(OptimizerABC):
             "np": np,
             "pd": pd,
         }
+
+    def _validate_config(self, config):
+        # Make sure that feature names are provided
+        if (
+            "continuous_feature_names" not in config
+            and "categorical_feature_names" not in config
+        ):
+            raise RuntimeError(
+                (
+                    "Either 'continuous_feature_names' or "
+                    "'categorical_feature_names' must be provided in the "
+                    "configuration."
+                )
+            )
+
+        # Make sure all continuous feature descriptors were provided
+        if "continuous_feature_names" in config:
+            no_bounds = False
+            no_resolutions = False
+            msg = "'continuous_feature_names' was provided, but "
+
+            if "continuous_feature_bounds" not in config:
+                no_bounds = True
+                msg += "'continuous_feature_bounds' "
+            if "continuous_feature_resolutions" not in config:
+                no_resolutions = True
+                if no_bounds:
+                    msg += "and "
+                msg += "'continuous_feature_resolutions' "
+
+            if no_bounds and no_resolutions:
+                msg += "were "
+            else:
+                msg += "was "
+
+            msg += "not."
+
+            if no_bounds or no_resolutions:
+                raise RuntimeError(msg)
+
+        # Make sure all categorical feature descriptors were provided
+        if "categorical_feature_names" in config:
+            msg = "'categorical_feature_names' was provided, but "
+
+            if "categorical_feature_values" not in config:
+                msg += "'categorical_feature_values' was not."
+                raise RuntimeError(msg)
+
+        if "budget" not in config:
+            raise RuntimeError("'budget' must be provided in the config.")
