@@ -138,7 +138,7 @@ class OptimizerAmlro(OptimizerABC):
                 "value": [[]],
             },
             {
-                "name": "continuous_feature_resoultions",
+                "name": "continuous_feature_resolutions",
                 "type": List[float],
                 "value": [],
             },
@@ -163,7 +163,7 @@ class OptimizerAmlro(OptimizerABC):
                 "value": [""],
             },
             {
-                "name": "objective_mode",
+                "name": "direction",
                 "type": str,
                 "value": "min",
                 "range": ["min", "max"],

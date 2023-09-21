@@ -81,7 +81,7 @@ class OptimizerEBDOp(OptimizerABC):
                 "value": [[]],
             },
             {
-                "Name": "continuous_feature_resoultions",
+                "Name": "continuous_feature_resolutions",
                 "Type": List[float],
                 "value": [],
             },
