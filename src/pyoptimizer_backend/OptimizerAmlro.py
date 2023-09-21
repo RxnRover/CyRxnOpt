@@ -130,12 +130,12 @@ class OptimizerAmlro(OptimizerABC):
             {
                 "name": "continuous_feature_names",
                 "type": List[str],
-                "value": [""],
+                "value": [],
             },
             {
                 "name": "continuous_feature_bounds",
                 "type": List[List[float]],
-                "value": [[]],
+                "value": [],
             },
             {
                 "name": "continuous_feature_resolutions",
@@ -145,12 +145,12 @@ class OptimizerAmlro(OptimizerABC):
             {
                 "name": "categorical_feature_names",
                 "type": List[str],
-                "value": [""],
+                "value": [],
             },
             {
                 "name": "categorical_feature_values",
                 "type": List[List[str]],
-                "value": [[]],
+                "value": [],
             },
             {
                 "name": "budget",
@@ -160,7 +160,7 @@ class OptimizerAmlro(OptimizerABC):
             {
                 "name": "objectives",
                 "type": List[str],
-                "value": [""],
+                "value": ["yield"],
             },
             {
                 "name": "direction",
@@ -194,19 +194,30 @@ class OptimizerAmlro(OptimizerABC):
             os.makedirs(experiment_dir)
 
         # Add extra entries that AMLRO will understand
-        config["continuous"] = {}
-        config["categorical"] = {}
-        config["continuous"]["feature_names"] = config[
-            "continuous_feature_names"
-        ]
-        config["continuous"]["bounds"] = config["continuous_feature_bounds"]
-        config["continuous"]["resolutions"] = config[
-            "continuous_feature_resolutions"
-        ]
-        config["categorical"]["feature_names"] = config[
-            "categorical_feature_names"
-        ]
-        config["categorical"]["values"] = config["categorical_feature_values"]
+        if (
+            "continuous_feature_names" in config
+            and len(config["continuous_feature_names"]) > 0
+        ):
+            config["continuous"] = {}
+            config["continuous"]["feature_names"] = config[
+                "continuous_feature_names"
+            ]
+            config["continuous"]["bounds"] = config["continuous_feature_bounds"]
+            config["continuous"]["resolutions"] = config[
+                "continuous_feature_resolutions"
+            ]
+
+        if (
+            "categorical_feature_names" in config
+            and len(config["categorical_feature_names"]) > 0
+        ):
+            config["categorical"] = {}
+            config["categorical"]["feature_names"] = config[
+                "categorical_feature_names"
+            ]
+            config["categorical"]["values"] = config[
+                "categorical_feature_values"
+            ]
 
         full_combo_list = self._imports[
             "generate_combos"
