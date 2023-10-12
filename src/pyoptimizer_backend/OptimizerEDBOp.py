@@ -21,46 +21,6 @@ class OptimizerEBDOp(OptimizerABC):
 
         super(OptimizerEBDOp, self).__init__(venv)
 
-    def set_config(self, experiment_dir: str, config: Dict) -> None:
-        """Generate all the nessasry data files
-
-        :param experiment_dir: experimental directory for saving data files
-        :type experiment_dir: str
-        :param config: configuration dict which required for initializing edbo+
-        :type config: dict
-        """
-        if not os.path.exists(experiment_dir):
-            os.makedirs(experiment_dir)
-
-        filename = "my_optimization.csv"
-        config = self.config_translate(
-            config
-        )  # get reaction scope configurations
-        # from general config file
-
-        # generate reaction scope for EDBOp
-        self._imports["EDBOplus"]().generate_reaction_scope(
-            components=config["reaction_components"],
-            directory=experiment_dir,
-            filename=filename,
-            check_overwrite=False,
-        )
-
-        # initialize the edbop optimization file will be use for prediction
-        self._imports["EDBOplus"]().run(
-            directory=experiment_dir,
-            filename=filename,  # Previously generated scope.
-            objectives=config["objectives"],  # ['yield', 'ee', 'side_product'],
-            # Objectives to be optimized.
-            objective_mode=config["objective_mode"],  # ['max', 'max', 'min'],
-            # Maximize yield and ee but minimize side_product.
-            batch=1,  # Number of experiments in parallel that
-            # we want to perform in this round.
-            columns_features="all",  # features to be included in the model.
-            init_sampling_method="seed",  # initialization method.
-            seed=random.randint(0, 2**32 - 1),
-        )
-
     def get_config(self):
         """This function will return the configurations which need to initialize a
         optimizer
@@ -113,6 +73,46 @@ class OptimizerEBDOp(OptimizerABC):
         }
 
         return config
+
+    def set_config(self, experiment_dir: str, config: Dict) -> None:
+        """Generate all the nessasry data files
+
+        :param experiment_dir: experimental directory for saving data files
+        :type experiment_dir: str
+        :param config: configuration dict which required for initializing edbo+
+        :type config: dict
+        """
+        if not os.path.exists(experiment_dir):
+            os.makedirs(experiment_dir)
+
+        filename = "my_optimization.csv"
+        config = self.config_translate(
+            config
+        )  # get reaction scope configurations
+        # from general config file
+
+        # generate reaction scope for EDBOp
+        self._imports["EDBOplus"]().generate_reaction_scope(
+            components=config["reaction_components"],
+            directory=experiment_dir,
+            filename=filename,
+            check_overwrite=False,
+        )
+
+        # initialize the edbop optimization file will be use for prediction
+        self._imports["EDBOplus"]().run(
+            directory=experiment_dir,
+            filename=filename,  # Previously generated scope.
+            objectives=config["objectives"],  # ['yield', 'ee', 'side_product'],
+            # Objectives to be optimized.
+            objective_mode=config["objective_mode"],  # ['max', 'max', 'min'],
+            # Maximize yield and ee but minimize side_product.
+            batch=1,  # Number of experiments in parallel that
+            # we want to perform in this round.
+            columns_features="all",  # features to be included in the model.
+            init_sampling_method="seed",  # initialization method.
+            seed=random.randint(0, 2**32 - 1),
+        )
 
     def train(
         self,
