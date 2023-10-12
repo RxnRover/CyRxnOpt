@@ -173,3 +173,7 @@ class TestOptimizerAmlro(unittest.TestCase):
         }
 
         self.assertRaises(RuntimeError, opt._validate_config, config_no_budget)
+
+    # TODO: check_install test
+
+    # TODO: call train and predict tests
