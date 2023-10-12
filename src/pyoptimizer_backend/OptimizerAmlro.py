@@ -1,6 +1,7 @@
 import os
 from typing import Any, Dict, List
 
+from pyoptimizer_backend.NestedVenv import NestedVenv
 from pyoptimizer_backend.OptimizerABC import OptimizerABC
 
 
@@ -14,7 +15,7 @@ class OptimizerAmlro(OptimizerABC):
     ]
 
     # overidding methods
-    def __init__(self, venv=None) -> None:
+    def __init__(self, venv: NestedVenv = None) -> None:
         """initializing optimizer AMLRO object
 
         :param venv: Virtual envirement class object, defaults to None
