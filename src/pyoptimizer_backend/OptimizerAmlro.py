@@ -23,102 +23,6 @@ class OptimizerAmlro(OptimizerABC):
 
         super(OptimizerAmlro, self).__init__(venv)
 
-    def train(
-        self,
-        prev_param: List[Any],
-        yield_value: float,
-        itr: int,
-        experiment_dir: str,
-        config: Dict,
-        obj_func=None,
-    ) -> List[Any]:
-        """generate initial training dataset needed for AMLRO model training.
-
-        :param prev_param: experimental parameter combination for previous experiment
-        :type prev_param: list
-        :param yield_value: experimental yield
-        :type yield_value: float
-        :param itr: experimental cycle number for training
-        :type itr: int
-        :param experiment_dir: experimental directory for saving data files
-        :type experiment_dir: str
-        :param config: Initial reaction feature configurations
-        :type config: Dict
-        :return: next parameter combination for next experimental cycle.
-        :rtype: list
-        """
-        self._import_deps()
-
-        training_set_path = os.path.join(
-            experiment_dir, "training_set_file.txt"
-        )
-        training_set_decoded_path = os.path.join(
-            experiment_dir, "training_set_decoded_file.txt"
-        )
-        training_combo_path = os.path.join(
-            experiment_dir, "training_combo_file.txt"
-        )
-
-        # training step
-        next_parameters = self._imports[
-            "training_set_generator"
-        ].generate_training_data(
-            training_set_path,
-            training_set_decoded_path,
-            training_combo_path,
-            config,
-            prev_param,
-            yield_value,
-            itr,
-        )
-
-        return next_parameters
-
-    def predict(
-        self,
-        prev_param: List[Any],
-        yield_value: float,
-        experiment_dir: str,
-        config: Dict,
-        obj_func=None,
-    ) -> List[Any]:
-        """prediction of next best combination of parameters and
-         traning machine learning model from last experimental data for active learning.
-
-        :param prev_param: experimental parameter combination for previous experiment
-        :type prev_param: list
-        :param yield_value: experimental yield
-        :type yield_value: float
-        :param experiment_dir: experimental directory for saving data files
-        :type experiment_dir: str
-        :param config: Initial reaction feature configurations
-        :type config: Dict
-        :return: best predicted parameter combination
-        :rtype: list
-        """
-
-        self._import_deps()
-
-        training_set_path = os.path.join(
-            experiment_dir, "training_set_file.txt"
-        )
-        training_set_decoded_path = os.path.join(
-            experiment_dir, "training_set_decoded_file.txt"
-        )
-        full_combo_path = os.path.join(experiment_dir, "full_combo_file.txt")
-
-        # prediction step
-        best_combo = self._imports["optimizer_main"].get_optimized_parameters(
-            training_set_path,
-            training_set_decoded_path,
-            full_combo_path,
-            config,
-            prev_param,
-            yield_value,
-        )
-
-        return best_combo
-
     def get_config(self) -> List[Dict[str, Any]]:
         """This function will return the configurations which are needed
         to initialize an optimizer through `set_config()`.
@@ -273,6 +177,102 @@ class OptimizerAmlro(OptimizerABC):
         with open(training_set_decoded_path, "w") as file_object:
             feature_names = ",".join([str(elem) for elem in feature_names_list])
             file_object.write(feature_names + ",Yield" + "\n")
+
+    def train(
+        self,
+        prev_param: List[Any],
+        yield_value: float,
+        itr: int,
+        experiment_dir: str,
+        config: Dict,
+        obj_func=None,
+    ) -> List[Any]:
+        """generate initial training dataset needed for AMLRO model training.
+
+        :param prev_param: experimental parameter combination for previous experiment
+        :type prev_param: list
+        :param yield_value: experimental yield
+        :type yield_value: float
+        :param itr: experimental cycle number for training
+        :type itr: int
+        :param experiment_dir: experimental directory for saving data files
+        :type experiment_dir: str
+        :param config: Initial reaction feature configurations
+        :type config: Dict
+        :return: next parameter combination for next experimental cycle.
+        :rtype: list
+        """
+        self._import_deps()
+
+        training_set_path = os.path.join(
+            experiment_dir, "training_set_file.txt"
+        )
+        training_set_decoded_path = os.path.join(
+            experiment_dir, "training_set_decoded_file.txt"
+        )
+        training_combo_path = os.path.join(
+            experiment_dir, "training_combo_file.txt"
+        )
+
+        # training step
+        next_parameters = self._imports[
+            "training_set_generator"
+        ].generate_training_data(
+            training_set_path,
+            training_set_decoded_path,
+            training_combo_path,
+            config,
+            prev_param,
+            yield_value,
+            itr,
+        )
+
+        return next_parameters
+
+    def predict(
+        self,
+        prev_param: List[Any],
+        yield_value: float,
+        experiment_dir: str,
+        config: Dict,
+        obj_func=None,
+    ) -> List[Any]:
+        """prediction of next best combination of parameters and
+         traning machine learning model from last experimental data for active learning.
+
+        :param prev_param: experimental parameter combination for previous experiment
+        :type prev_param: list
+        :param yield_value: experimental yield
+        :type yield_value: float
+        :param experiment_dir: experimental directory for saving data files
+        :type experiment_dir: str
+        :param config: Initial reaction feature configurations
+        :type config: Dict
+        :return: best predicted parameter combination
+        :rtype: list
+        """
+
+        self._import_deps()
+
+        training_set_path = os.path.join(
+            experiment_dir, "training_set_file.txt"
+        )
+        training_set_decoded_path = os.path.join(
+            experiment_dir, "training_set_decoded_file.txt"
+        )
+        full_combo_path = os.path.join(experiment_dir, "full_combo_file.txt")
+
+        # prediction step
+        best_combo = self._imports["optimizer_main"].get_optimized_parameters(
+            training_set_path,
+            training_set_decoded_path,
+            full_combo_path,
+            config,
+            prev_param,
+            yield_value,
+        )
+
+        return best_combo
 
     def _import_deps(self) -> None:
         """importing all the packages and libries needed for running amlro optimizer"""
