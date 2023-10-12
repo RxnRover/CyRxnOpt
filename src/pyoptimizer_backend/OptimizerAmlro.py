@@ -96,6 +96,7 @@ class OptimizerAmlro(OptimizerABC):
         :return: best predicted parameter combination
         :rtype: list
         """
+
         self._import_deps()
 
         training_set_path = os.path.join(
@@ -194,11 +195,11 @@ class OptimizerAmlro(OptimizerABC):
             os.makedirs(experiment_dir)
 
         # Add extra entries that AMLRO will understand
+        config["continuous"] = {}
         if (
             "continuous_feature_names" in config
             and len(config["continuous_feature_names"]) > 0
         ):
-            config["continuous"] = {}
             config["continuous"]["feature_names"] = config[
                 "continuous_feature_names"
             ]
@@ -206,18 +207,25 @@ class OptimizerAmlro(OptimizerABC):
             config["continuous"]["resolutions"] = config[
                 "continuous_feature_resolutions"
             ]
+        else:
+            config["continuous"]["feature_names"] = []
+            config["continuous"]["bounds"] = []
+            config["continuous"]["resolutions"] = []
 
+        config["categorical"] = {}
         if (
             "categorical_feature_names" in config
             and len(config["categorical_feature_names"]) > 0
         ):
-            config["categorical"] = {}
             config["categorical"]["feature_names"] = config[
                 "categorical_feature_names"
             ]
             config["categorical"]["values"] = config[
                 "categorical_feature_values"
             ]
+        else:
+            config["categorical"]["feature_names"] = []
+            config["categorical"]["values"] = []
 
         full_combo_list = self._imports[
             "generate_combos"
