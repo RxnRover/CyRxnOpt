@@ -9,7 +9,7 @@ from pyoptimizer_backend.OptimizerABC import OptimizerABC
 class OptimizerEDBOp(OptimizerABC):
     # Private static data member to list dependency packages required
     # by this class
-    _packages = ["benchmarking", "edboplus", "pandas", "pyoptimizer_backend"]
+    _packages = ["benchmarking", "edboplus", "pandas"]
 
     # overidding methods
     def __init__(self, venv: NestedVenv = None) -> None:
