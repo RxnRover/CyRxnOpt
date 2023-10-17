@@ -176,6 +176,56 @@ class OptimizerABC(ABC):
 
         pass
 
+    def _validate_config(self, config):
+        # Make sure that feature names are provided
+        if (
+            "continuous_feature_names" not in config
+            and "categorical_feature_names" not in config
+        ):
+            raise RuntimeError(
+                (
+                    "Either 'continuous_feature_names' or "
+                    "'categorical_feature_names' must be provided in the "
+                    "configuration."
+                )
+            )
+
+        # Make sure all continuous feature descriptors were provided
+        if "continuous_feature_names" in config:
+            no_bounds = False
+            no_resolutions = False
+            msg = "'continuous_feature_names' was provided, but "
+
+            if "continuous_feature_bounds" not in config:
+                no_bounds = True
+                msg += "'continuous_feature_bounds' "
+            if "continuous_feature_resolutions" not in config:
+                no_resolutions = True
+                if no_bounds:
+                    msg += "and "
+                msg += "'continuous_feature_resolutions' "
+
+            if no_bounds and no_resolutions:
+                msg += "were "
+            else:
+                msg += "was "
+
+            msg += "not."
+
+            if no_bounds or no_resolutions:
+                raise RuntimeError(msg)
+
+        # Make sure all categorical feature descriptors were provided
+        if "categorical_feature_names" in config:
+            msg = "'categorical_feature_names' was provided, but "
+
+            if "categorical_feature_values" not in config:
+                msg += "'categorical_feature_values' was not."
+                raise RuntimeError(msg)
+
+        if "budget" not in config:
+            raise RuntimeError("'budget' must be provided in the config.")
+
     @property
     def dependencies(self) -> List[str]:
         """This is a static property to print the dependencies required
