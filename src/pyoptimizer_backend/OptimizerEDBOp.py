@@ -6,7 +6,7 @@ from pyoptimizer_backend.NestedVenv import NestedVenv
 from pyoptimizer_backend.OptimizerABC import OptimizerABC
 
 
-class OptimizerEBDOp(OptimizerABC):
+class OptimizerEDBOp(OptimizerABC):
     # Private static data member to list dependency packages required
     # by this class
     _packages = ["benchmarking", "edboplus", "pandas", "pyoptimizer_backend"]
@@ -19,7 +19,7 @@ class OptimizerEBDOp(OptimizerABC):
         :type venv: NestedVenv, optional
         """
 
-        super(OptimizerEBDOp, self).__init__(venv)
+        super(OptimizerEDBOp, self).__init__(venv)
 
     def get_config(self):
         """This function will return the configurations which need to initialize a
