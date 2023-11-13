@@ -197,6 +197,7 @@ class OptimizerEDBOp(OptimizerABC):
             columns_features="all",  # features to be included in the model.
             init_sampling_method="seed",  # initialization method.
             seed=random.randint(0, 2**32 - 1),
+            write_extra_data=False,
         )
 
         # after one cycle of prediction again read the reaction condition file to
@@ -224,6 +225,7 @@ class OptimizerEDBOp(OptimizerABC):
 
         # If the keys are returned as they were given in `get_config` then
         # translate them to the format that works here
+        config["continuous"] = {}
         if (
             "continuous_feature_names" in config
             and len(config["continuous_feature_names"]) > 0
@@ -237,7 +239,12 @@ class OptimizerEDBOp(OptimizerABC):
             config["continuous"]["resolutions"] = config[
                 "continuous_feature_resolutions"
             ]
+        else:
+            config["continuous"]["feature_names"] = []
+            config["continuous"]["bounds"] = []
+            config["continuous"]["resolutions"] = []
 
+        config["categorical"] = {}
         if (
             "categorical_feature_names" in config
             and len(config["categorical_feature_names"]) > 0
@@ -250,6 +257,9 @@ class OptimizerEDBOp(OptimizerABC):
             config["categorical"]["values"] = config[
                 "categorical_feature_values"
             ]
+        else:
+            config["categorical"]["feature_names"] = []
+            config["categorical"]["values"] = []
 
         for i in range(len(config["continuous"]["feature_names"])):
             low_bound = config["continuous"]["bounds"][i][0]
@@ -264,7 +274,7 @@ class OptimizerEDBOp(OptimizerABC):
                 config["continuous"]["feature_names"][i]
             ] = values
 
-        if bool(config["categorical"]):
+        if bool(config["categorical"]["feature_names"]):
             for i in range(len(config["categorical"]["feature_names"])):
                 reaction_components[
                     config["categorical"]["feature_names"][i]
