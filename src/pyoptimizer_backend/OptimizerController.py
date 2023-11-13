@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 
 from pyoptimizer_backend.NestedVenv import NestedVenv
 from pyoptimizer_backend.OptimizerAmlro import OptimizerAmlro
-from pyoptimizer_backend.OptimizerEDBOp import OptimizerEBDOp
+from pyoptimizer_backend.OptimizerEDBOp import OptimizerEDBOp
 from pyoptimizer_backend.OptimizerNMSimplex import OptimizerNMSimplex
 from pyoptimizer_backend.OptimizerSQSnobFit import OptimizerSQSnobFit
 
@@ -184,7 +184,7 @@ def get_optimizer(optimizer_name, venv: NestedVenv = ""):
     if optimizer_name == "amlro":
         optimizer = OptimizerAmlro(venv)
     elif optimizer_name == "edbop":
-        optimizer = OptimizerEBDOp(venv)
+        optimizer = OptimizerEDBOp(venv)
     elif optimizer_name == "nmsimplex":
         optimizer = OptimizerNMSimplex(venv)
     elif optimizer_name == "sqsnobfit":
