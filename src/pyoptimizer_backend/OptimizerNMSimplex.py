@@ -1,9 +1,10 @@
+# import importlib
 import json
 import os
 from typing import Any, Dict, List
 
+from pyoptimizer_backend.NestedVenv import NestedVenv
 from pyoptimizer_backend.OptimizerABC import OptimizerABC
-from pyoptimizer_backend.VenvManager import VenvManager
 
 
 class OptimizerNMSimplex(OptimizerABC):
@@ -11,12 +12,12 @@ class OptimizerNMSimplex(OptimizerABC):
     # by this class
     _packages = ["scipy"]
 
-    def __init__(self, venv: VenvManager = None) -> None:
+    def __init__(self, venv: NestedVenv = None) -> None:
         """Optimizer class for the Nelder-Mead Simplex algorithm from the
         ``scipy`` package.
 
         :param venv: Virtual environment manager to use, defaults to None
-        :type venv: pyoptimizer_backend.VenvManager, optional
+        :type venv: pyoptimizer_backend.NestedVenv, optional
         """
 
         super().__init__(venv)
@@ -97,7 +98,15 @@ class OptimizerNMSimplex(OptimizerABC):
         with open(output_file, "w") as fout:
             json.dump(config, fout, indent=4)
 
-    def train(self) -> None:
+    def train(
+        optimizer_name: str,
+        prev_param: List[Any],
+        yield_value: float,
+        itr: int,
+        experiment_dir: str,
+        config: Dict,
+        venv: NestedVenv = "",
+    ) -> None:
         """No training step for this algorithm."""
 
         pass
@@ -135,10 +144,7 @@ class OptimizerNMSimplex(OptimizerABC):
 
         # Convert bounds list to sequence of tuples
         bounds = tuple(
-            [
-                tuple(bound_list)
-                for bound_list in config["continuous_feature_bounds"]
-            ]
+            [tuple(bound_list) for bound_list in config["continuous"]["bounds"]]
         )
 
         # Call the minimization function
@@ -202,6 +208,8 @@ class OptimizerNMSimplex(OptimizerABC):
         """Import package needed to run the optimizer."""
 
         from scipy.optimize import minimize
+
+        # minimize = importlib.import_module("scipy.optimize.minimize")
 
         self._imports = {
             "minimize": minimize,

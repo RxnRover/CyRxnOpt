@@ -2,8 +2,8 @@ import json
 import os
 from typing import Any, Dict, List
 
+from pyoptimizer_backend.NestedVenv import NestedVenv
 from pyoptimizer_backend.OptimizerABC import OptimizerABC
-from pyoptimizer_backend.VenvManager import VenvManager
 
 
 class OptimizerSQSnobFit(OptimizerABC):
@@ -11,12 +11,12 @@ class OptimizerSQSnobFit(OptimizerABC):
     # by this class
     _packages = ["SQSnobFit"]
 
-    def __init__(self, venv: VenvManager = None) -> None:
+    def __init__(self, venv: NestedVenv = None) -> None:
         """Optimizer class for the SQSnobFit algorithm from the
         ``SQSnobFit`` package.
 
         :param venv: Virtual environment manager to use, defaults to None
-        :type venv: pyoptimizer_backend.VenvManager, optional
+        :type venv: pyoptimizer_backend.NestedVenv, optional
         """
 
         super(OptimizerSQSnobFit, self).__init__(venv)
@@ -138,7 +138,7 @@ class OptimizerSQSnobFit(OptimizerABC):
 
         # Convert bounds list to sequence of tuples
         # bounds = tuple([tuple(bound_list) for bound_list in config["bounds"]])
-        bounds = config["continuous_feature_bounds"]
+        bounds = config["continuous"]["bounds"]
 
         print("budget: {}".format(config["budget"]))
 

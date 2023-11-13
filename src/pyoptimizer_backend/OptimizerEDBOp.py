@@ -2,8 +2,8 @@ import os
 import random
 from typing import Any, Dict, List
 
+from pyoptimizer_backend.NestedVenv import NestedVenv
 from pyoptimizer_backend.OptimizerABC import OptimizerABC
-from pyoptimizer_backend.VenvManager import VenvManager
 
 
 class OptimizerEBDOp(OptimizerABC):
@@ -12,11 +12,11 @@ class OptimizerEBDOp(OptimizerABC):
     _packages = ["benchmarking", "edboplus", "pandas", "pyoptimizer_backend"]
 
     # overidding methods
-    def __init__(self, venv: VenvManager = None) -> None:
+    def __init__(self, venv: NestedVenv = None) -> None:
         """initializing optimizer EDBO+ object
 
         :param venv: Virtual envirement class object, defaults to None
-        :type venv: VenvManager, optional
+        :type venv: NestedVenv, optional
         """
 
         super(OptimizerEBDOp, self).__init__(venv)

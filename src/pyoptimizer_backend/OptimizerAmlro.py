@@ -14,7 +14,7 @@ class OptimizerAmlro(OptimizerABC):
         """initializing optimizer AMLRO object
 
         :param venv: Virtual envirement class object, defaults to None
-        :type venv: VenvManager, optional
+        :type venv: NestedVenv, optional
         """
 
         super(OptimizerAmlro, self).__init__(venv)
@@ -26,6 +26,7 @@ class OptimizerAmlro(OptimizerABC):
         itr: int,
         experiment_dir: str,
         config: Dict,
+        obj_func=None,
     ) -> List[Any]:
         """generate initial training dataset needed for AMLRO model training.
 
@@ -75,6 +76,7 @@ class OptimizerAmlro(OptimizerABC):
         yield_value: float,
         experiment_dir: str,
         config: Dict,
+        obj_func=None,
     ) -> List[Any]:
         """prediction of next best combination of parameters and
          traning machine learning model from last experimental data for active learning.
