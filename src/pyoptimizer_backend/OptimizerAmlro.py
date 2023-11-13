@@ -142,7 +142,7 @@ class OptimizerAmlro(OptimizerABC):
         full_combo_df = self._imports["pd"].DataFrame(full_combo_list)
         training_combo_df = full_combo_df.sample(20)
 
-        if bool(config["categorical_feature_names"]):
+        if bool(config["categorical"]["feature_names"]):
             feature_names_list = self._imports["np"].concatenate(
                 (
                     config["continuous_feature_names"],
