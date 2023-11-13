@@ -22,55 +22,56 @@ class OptimizerEDBOp(OptimizerABC):
         super(OptimizerEDBOp, self).__init__(venv)
 
     def get_config(self):
-        """This function will return the configurations which need to initialize a
-        optimizer
+        """This function will return the configurations which are needed
+        to initialize an optimizer through `set_config()`.
 
-        :return: configuration dictionary
-        :rtype: Dict
+        :return: Configuration option descriptions.
+        :rtype: List[Dict[str, Any]]
         """
 
-        config = {
+        config = [
             {
-                "Name": "continuous_feature_names",
-                "Type": List[str],
-                "value": [""],
-            },
-            {
-                "Name": "continuous_feature_bounds",
-                "Type": List[List[float]],
-                "value": [[]],
-            },
-            {
-                "Name": "continuous_feature_resolutions",
-                "Type": List[float],
+                "name": "continuous_feature_names",
+                "type": List[str],
                 "value": [],
             },
             {
-                "Name": "categorical_feature_names",
-                "Type": List[str],
-                "value": [""],
+                "name": "continuous_feature_bounds",
+                "type": List[List[float]],
+                "value": [],
             },
             {
-                "Name": "categorical_feature_values",
-                "Type": List[List[str]],
-                "value": [[]],
+                "name": "continuous_feature_resolutions",
+                "type": List[float],
+                "value": [],
             },
             {
-                "Name": "budget",
-                "Type": int,
+                "name": "categorical_feature_names",
+                "type": List[str],
+                "value": [],
+            },
+            {
+                "name": "categorical_feature_values",
+                "type": List[List[str]],
+                "value": [],
+            },
+            {
+                "name": "budget",
+                "type": int,
                 "value": 100,
             },
             {
-                "Name": "objectives",
-                "Type": List[str],
-                "value": [""],
+                "name": "objectives",
+                "type": List[str],
+                "value": ["yield"],
             },
             {
-                "Name": "objective_mode",
-                "Type": List[str],
-                "value": [""],
+                "name": "objective_mode",
+                "type": str,
+                "value": "min",
+                "range": ["min", "max"],
             },
-        }
+        ]
 
         return config
 
@@ -220,6 +221,35 @@ class OptimizerEDBOp(OptimizerABC):
         """
         self._import_deps()
         reaction_components = {}
+
+        # If the keys are returned as they were given in `get_config` then
+        # translate them to the format that works here
+        if (
+            "continuous_feature_names" in config
+            and len(config["continuous_feature_names"]) > 0
+        ):
+            config["continuous"] = {}
+
+            config["continuous"]["feature_names"] = config[
+                "continuous_feature_names"
+            ]
+            config["continuous"]["bounds"] = config["continuous_feature_bounds"]
+            config["continuous"]["resolutions"] = config[
+                "continuous_feature_resolutions"
+            ]
+
+        if (
+            "categorical_feature_names" in config
+            and len(config["categorical_feature_names"]) > 0
+        ):
+            config["categorical"] = {}
+
+            config["categorical"]["feature_names"] = config[
+                "categorical_feature_names"
+            ]
+            config["categorical"]["values"] = config[
+                "categorical_feature_values"
+            ]
 
         for i in range(len(config["continuous"]["feature_names"])):
             low_bound = config["continuous"]["bounds"][i][0]
