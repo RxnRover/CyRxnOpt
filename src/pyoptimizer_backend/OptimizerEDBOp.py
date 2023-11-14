@@ -66,7 +66,7 @@ class OptimizerEDBOp(OptimizerABC):
                 "value": ["yield"],
             },
             {
-                "name": "objective_mode",
+                "name": "direction",
                 "type": str,
                 "value": "min",
                 "range": ["min", "max"],
@@ -106,7 +106,7 @@ class OptimizerEDBOp(OptimizerABC):
             filename=filename,  # Previously generated scope.
             objectives=config["objectives"],  # ['yield', 'ee', 'side_product'],
             # Objectives to be optimized.
-            objective_mode=config["objective_mode"],  # ['max', 'max', 'min'],
+            objective_mode=config["direction"],  # ['max', 'max', 'min'],
             # Maximize yield and ee but minimize side_product.
             batch=1,  # Number of experiments in parallel that
             # we want to perform in this round.
@@ -190,7 +190,7 @@ class OptimizerEDBOp(OptimizerABC):
             objectives=config[
                 "objectives"
             ],  # ['yield', 'ee', 'side_product'],  # Objectives to be optimized.
-            objective_mode=config["objective_mode"],  # ['max', 'max', 'min'],
+            objective_mode=config["direction"],  # ['max', 'max', 'min'],
             # Maximize yield and ee but minimize side_product.
             batch=1,  # Number of experiments in parallel that
             # we want to perform in this round.
