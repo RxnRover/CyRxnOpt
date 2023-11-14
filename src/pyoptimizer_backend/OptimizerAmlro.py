@@ -215,6 +215,9 @@ class OptimizerAmlro(OptimizerABC):
             experiment_dir, "training_combo_file.txt"
         )
 
+        if config["direction"].lower() == "min":
+            yield_value = -yield_value
+
         # training step
         next_parameters = self._imports[
             "training_set_generator"
@@ -262,6 +265,9 @@ class OptimizerAmlro(OptimizerABC):
             experiment_dir, "training_set_decoded_file.txt"
         )
         full_combo_path = os.path.join(experiment_dir, "full_combo_file.txt")
+
+        if config["direction"].lower() == "min":
+            yield_value = -yield_value
 
         # prediction step
         best_combo = self._imports["optimizer_main"].get_optimized_parameters(
