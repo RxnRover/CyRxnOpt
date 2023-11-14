@@ -283,7 +283,7 @@ class OptimizerEDBOp(OptimizerABC):
         edbo_config = {
             "reaction_components": reaction_components,
             "objectives": config["objectives"],
-            "objective_mode": config["objective_mode"],
+            "objective_mode": config["direction"],
         }
 
         return edbo_config
