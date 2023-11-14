@@ -207,6 +207,7 @@ class OptimizerEDBOp(OptimizerABC):
         )
 
         next_combo = df_edbo.iloc[:1].values.tolist()
+        next_combo = next_combo[0][:-2]
         print("Next combo:", next_combo)
 
         return next_combo
@@ -283,7 +284,7 @@ class OptimizerEDBOp(OptimizerABC):
         edbo_config = {
             "reaction_components": reaction_components,
             "objectives": config["objectives"],
-            "objective_mode": config["direction"],
+            "direction": config["direction"],
         }
 
         return edbo_config
