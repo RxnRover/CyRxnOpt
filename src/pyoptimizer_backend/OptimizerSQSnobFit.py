@@ -99,6 +99,7 @@ class OptimizerSQSnobFit(OptimizerABC):
         itr: int,
         experiment_dir: str,
         config: Dict,
+        obj_func=None,
     ) -> None:
         """No training step for this algorithm."""
 
@@ -138,9 +139,7 @@ class OptimizerSQSnobFit(OptimizerABC):
 
         # Convert bounds list to sequence of tuples
         # bounds = tuple([tuple(bound_list) for bound_list in config["bounds"]])
-        bounds = config["continuous"]["bounds"]
-
-        print("budget: {}".format(config["budget"]))
+        bounds = config["continuous_feature_bounds"]
 
         options = {
             "minfcall": None,

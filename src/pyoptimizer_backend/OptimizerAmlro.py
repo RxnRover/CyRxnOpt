@@ -1,16 +1,21 @@
 import os
 from typing import Any, Dict, List
 
+from pyoptimizer_backend.NestedVenv import NestedVenv
 from pyoptimizer_backend.OptimizerABC import OptimizerABC
 
 
 class OptimizerAmlro(OptimizerABC):
     # Private static data member to list dependency packages required
     # by this class
-    _packages = ["amlro", "benchmarking", "numpy"]
+    _packages = [
+        "git+ssh://git@github.com/RxnRover/amlo",
+        "numpy",
+        "pandas",
+    ]
 
     # overidding methods
-    def __init__(self, venv=None) -> None:
+    def __init__(self, venv: NestedVenv = None) -> None:
         """initializing optimizer AMLRO object
 
         :param venv: Virtual envirement class object, defaults to None
@@ -18,6 +23,161 @@ class OptimizerAmlro(OptimizerABC):
         """
 
         super(OptimizerAmlro, self).__init__(venv)
+
+    def get_config(self) -> List[Dict[str, Any]]:
+        """This function will return the configurations which are needed
+        to initialize an optimizer through `set_config()`.
+
+        :return: Configuration option descriptions.
+        :rtype: List[Dict[str, Any]]
+        """
+
+        config = [
+            {
+                "name": "continuous_feature_names",
+                "type": List[str],
+                "value": [],
+            },
+            {
+                "name": "continuous_feature_bounds",
+                "type": List[List[float]],
+                "value": [],
+            },
+            {
+                "name": "continuous_feature_resolutions",
+                "type": List[float],
+                "value": [],
+            },
+            {
+                "name": "categorical_feature_names",
+                "type": List[str],
+                "value": [],
+            },
+            {
+                "name": "categorical_feature_values",
+                "type": List[List[str]],
+                "value": [],
+            },
+            {
+                "name": "budget",
+                "type": int,
+                "value": 100,
+            },
+            {
+                "name": "objectives",
+                "type": List[str],
+                "value": ["yield"],
+            },
+            {
+                "name": "direction",
+                "type": str,
+                "value": "min",
+                "range": ["min", "max"],
+            },
+        ]
+        # TODO: Budget should be constrained to numbers greater than
+        #       zero once that format is solidified.
+        # TODO: Should the value of this "config" variable be moved into
+        #       a JSON file to make it easier to modify without changing
+        #       the code?
+
+        return config
+
+    def set_config(self, experiment_dir: str, config: Dict[str, Any]):
+        """Generate all the necessary data files based on the given config.
+
+        :param experiment_dir: Experimental directory for saving data files.
+        :type experiment_dir: str
+        :param config: Configuration settings defined from `get_config()`.
+        :type config: Dict[str, Any]
+        """
+
+        self._import_deps()
+
+        self._validate_config(config)
+
+        if not os.path.exists(experiment_dir):
+            os.makedirs(experiment_dir)
+
+        # Add extra entries that AMLRO will understand
+        config["continuous"] = {}
+        if (
+            "continuous_feature_names" in config
+            and len(config["continuous_feature_names"]) > 0
+        ):
+            config["continuous"]["feature_names"] = config[
+                "continuous_feature_names"
+            ]
+            config["continuous"]["bounds"] = config["continuous_feature_bounds"]
+            config["continuous"]["resolutions"] = config[
+                "continuous_feature_resolutions"
+            ]
+        else:
+            config["continuous"]["feature_names"] = []
+            config["continuous"]["bounds"] = []
+            config["continuous"]["resolutions"] = []
+
+        config["categorical"] = {}
+        if (
+            "categorical_feature_names" in config
+            and len(config["categorical_feature_names"]) > 0
+        ):
+            config["categorical"]["feature_names"] = config[
+                "categorical_feature_names"
+            ]
+            config["categorical"]["values"] = config[
+                "categorical_feature_values"
+            ]
+        else:
+            config["categorical"]["feature_names"] = []
+            config["categorical"]["values"] = []
+
+        full_combo_list = self._imports[
+            "generate_combos"
+        ].generate_uniform_grid(config)
+
+        full_combo_list = self._imports["np"].around(
+            full_combo_list, decimals=4
+        )
+        full_combo_df = self._imports["pd"].DataFrame(full_combo_list)
+        training_combo_df = full_combo_df.sample(20)
+
+        if bool(config["categorical"]["feature_names"]):
+            feature_names_list = self._imports["np"].concatenate(
+                (
+                    config["continuous_feature_names"],
+                    config["categorical_feature_names"],
+                )
+            )
+        else:
+            feature_names_list = config["continuous_feature_names"]
+
+        full_combo_df.columns = feature_names_list
+
+        full_combo_path = os.path.join(experiment_dir, "full_combo_file.txt")
+        training_combo_path = os.path.join(
+            experiment_dir, "training_combo_file.txt"
+        )
+
+        full_combo_df.to_csv(full_combo_path, index=False)
+        training_combo_df.to_csv(training_combo_path, index=False)
+
+        training_set_path = os.path.join(
+            experiment_dir, "training_set_file.txt"
+        )
+        training_set_decoded_path = os.path.join(
+            experiment_dir, "training_set_decoded_file.txt"
+        )
+
+        # Write the reaction conditions for training dataset into files
+        # (encoded and decoded versions)
+        with open(training_set_path, "w") as file_object:
+            feature_names = ",".join([str(elem) for elem in feature_names_list])
+            file_object.write(feature_names + ",Yield" + "\n")
+
+        with open(training_set_decoded_path, "w") as file_object:
+            feature_names = ",".join([str(elem) for elem in feature_names_list])
+            file_object.write(feature_names + ",Yield" + "\n")
 
     def train(
         self,
@@ -54,6 +214,9 @@ class OptimizerAmlro(OptimizerABC):
         training_combo_path = os.path.join(
             experiment_dir, "training_combo_file.txt"
         )
+
+        if config["direction"].lower() == "min":
+            yield_value = -yield_value
 
         # training step
         next_parameters = self._imports[
@@ -92,6 +255,7 @@ class OptimizerAmlro(OptimizerABC):
         :return: best predicted parameter combination
         :rtype: list
         """
+
         self._import_deps()
 
         training_set_path = os.path.join(
@@ -101,6 +265,9 @@ class OptimizerAmlro(OptimizerABC):
             experiment_dir, "training_set_decoded_file.txt"
         )
         full_combo_path = os.path.join(experiment_dir, "full_combo_file.txt")
+
+        if config["direction"].lower() == "min":
+            yield_value = -yield_value
 
         # prediction step
         best_combo = self._imports["optimizer_main"].get_optimized_parameters(
@@ -113,122 +280,6 @@ class OptimizerAmlro(OptimizerABC):
         )
 
         return best_combo
-
-    def get_config(self) -> Dict:
-        """This function will return the configurations which need to initialize a
-        optimizer
-
-        :return: configuration dictionary
-        :rtype: Dict
-        """
-        config = {
-            {
-                "Name": "continuous_feature_names",
-                "Type": List[str],
-                "value": [""],
-            },
-            {
-                "Name": "continuous_feature_bounds",
-                "Type": List[List[float]],
-                "value": [[]],
-            },
-            {
-                "Name": "continuous_feature_resoultions",
-                "Type": List[float],
-                "value": [],
-            },
-            {
-                "Name": "categorical_feature_names",
-                "Type": List[str],
-                "value": [""],
-            },
-            {
-                "Name": "categorical_feature_values",
-                "Type": List[List[str]],
-                "value": [[]],
-            },
-            {
-                "Name": "budget",
-                "Type": int,
-                "value": 100,
-            },
-            {
-                "Name": "objectives",
-                "Type": List[str],
-                "value": [""],
-            },
-            {
-                "Name": "objective_mode",
-                "Type": List[str],
-                "value": [""],
-            },
-        }
-        return config
-
-    def set_config(self, experiment_dir: str, config: Dict) -> None:
-        """Generate all the nessasry data files
-
-        :param experiment_dir: experimental directory for saving data files
-        :type experiment_dir: str
-        :param config: configuration dict which required for initializing AMLRO
-        :type config: dict
-        """
-        self._import_deps()
-
-        if not os.path.exists(experiment_dir):
-            os.makedirs(experiment_dir)
-
-        full_combo_list = self._imports[
-            "generate_combos"
-        ].generate_uniform_grid(config)
-
-        full_combo_list = self._imports["np"].around(
-            full_combo_list, decimals=4
-        )
-        full_combo_df = self._imports["pd"].DataFrame(full_combo_list)
-        training_combo_df = full_combo_df.sample(20)
-
-        if bool(config["categorical"]):
-            feature_names_list = self._imports["np"].concatenate(
-                (
-                    config["continuous"]["feature_names"],
-                    config["categorical"]["feature_names"],
-                )
-            )
-        else:
-            feature_names_list = config["continuous"]["feature_names"]
-
-        full_combo_df.columns = feature_names_list
-
-        print(len(full_combo_list))
-        print(len(training_combo_df))
-
-        full_combo_path = os.path.join(experiment_dir, "full_combo_file.txt")
-        training_combo_path = os.path.join(
-            experiment_dir, "training_combo_file.txt"
-        )
-
-        full_combo_df.to_csv(full_combo_path, index=False)
-        training_combo_df.to_csv(training_combo_path, index=False)
-
-        training_set_path = os.path.join(
-            experiment_dir, "training_set_file.txt"
-        )
-        training_set_decoded_path = os.path.join(
-            experiment_dir, "training_set_decoded_file.txt"
-        )
-
-        # writting the reaction conditions for
-        # training dataset into files(encoded and decoded versions)
-        with open(training_set_path, "w") as file_object:
-            # file_object.write("####" + "\n")
-            feature_names = ",".join([str(elem) for elem in feature_names_list])
-            file_object.write(feature_names + ",Yield" + "\n")
-
-        with open(training_set_decoded_path, "w") as file_object:
-            # file_object.write("####" + "\n")
-            feature_names = ",".join([str(elem) for elem in feature_names_list])
-            file_object.write(feature_names + ",Yield" + "\n")
 
     def _import_deps(self) -> None:
         """importing all the packages and libries needed for running amlro optimizer"""

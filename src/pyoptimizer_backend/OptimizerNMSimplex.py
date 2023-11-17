@@ -92,20 +92,20 @@ class OptimizerNMSimplex(OptimizerABC):
 
         # TODO: config validation should be performed
 
-        output_file = os.path.join(experiment_dir, "recent_config.json")
+        output_file = os.path.join(experiment_dir, "config.json")
 
         # Write the configuration to a file for later use
         with open(output_file, "w") as fout:
             json.dump(config, fout, indent=4)
 
     def train(
+        self,
         optimizer_name: str,
         prev_param: List[Any],
         yield_value: float,
         itr: int,
         experiment_dir: str,
         config: Dict,
-        venv: NestedVenv = "",
     ) -> None:
         """No training step for this algorithm."""
 
@@ -144,7 +144,10 @@ class OptimizerNMSimplex(OptimizerABC):
 
         # Convert bounds list to sequence of tuples
         bounds = tuple(
-            [tuple(bound_list) for bound_list in config["continuous"]["bounds"]]
+            [
+                tuple(bound_list)
+                for bound_list in config["continuous_feature_bounds"]
+            ]
         )
 
         # Call the minimization function

@@ -307,7 +307,7 @@ class NestedVenv(venv.EnvBuilder):
                 venv_modules.append(pkg)
 
         try:
-            print("Attempting import of", package)
+            # print("Attempting import of", package)
             module = importlib.import_module(package)
 
             # TODO: This version checking could be much more complex
@@ -316,9 +316,9 @@ class NestedVenv(venv.EnvBuilder):
             #       of only matching a specific version.
             if version != "":
                 package_found = True if module.__version__ == version else False
-            print("Import succeeded.")
+            # print("Import succeeded.")
         except ModuleNotFoundError:
-            print("Import failed.")
+            # print("Import failed.")
             package_found = False
 
         os.environ["PATH"] = og_env_path
@@ -398,7 +398,7 @@ class NestedVenv(venv.EnvBuilder):
                 importlib.util.find_spec(pkg).origin
                 and self.site_packages in importlib.util.find_spec(pkg).origin
             ):
-                print("Unimporting:", pkg)
+                # print("Unimporting:", pkg)
                 sys.modules.pop(pkg)
 
                 venv_modules.append(pkg)

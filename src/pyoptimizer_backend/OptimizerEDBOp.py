@@ -6,10 +6,10 @@ from pyoptimizer_backend.NestedVenv import NestedVenv
 from pyoptimizer_backend.OptimizerABC import OptimizerABC
 
 
-class OptimizerEBDOp(OptimizerABC):
+class OptimizerEDBOp(OptimizerABC):
     # Private static data member to list dependency packages required
     # by this class
-    _packages = ["benchmarking", "edboplus", "pandas", "pyoptimizer_backend"]
+    _packages = ["benchmarking", "edboplus", "pandas"]
 
     # overidding methods
     def __init__(self, venv: NestedVenv = None) -> None:
@@ -19,7 +19,61 @@ class OptimizerEBDOp(OptimizerABC):
         :type venv: NestedVenv, optional
         """
 
-        super(OptimizerEBDOp, self).__init__(venv)
+        super(OptimizerEDBOp, self).__init__(venv)
+
+    def get_config(self):
+        """This function will return the configurations which are needed
+        to initialize an optimizer through `set_config()`.
+
+        :return: Configuration option descriptions.
+        :rtype: List[Dict[str, Any]]
+        """
+
+        config = [
+            {
+                "name": "continuous_feature_names",
+                "type": List[str],
+                "value": [],
+            },
+            {
+                "name": "continuous_feature_bounds",
+                "type": List[List[float]],
+                "value": [],
+            },
+            {
+                "name": "continuous_feature_resolutions",
+                "type": List[float],
+                "value": [],
+            },
+            {
+                "name": "categorical_feature_names",
+                "type": List[str],
+                "value": [],
+            },
+            {
+                "name": "categorical_feature_values",
+                "type": List[List[str]],
+                "value": [],
+            },
+            {
+                "name": "budget",
+                "type": int,
+                "value": 100,
+            },
+            {
+                "name": "objectives",
+                "type": List[str],
+                "value": ["yield"],
+            },
+            {
+                "name": "direction",
+                "type": str,
+                "value": "min",
+                "range": ["min", "max"],
+            },
+        ]
+
+        return config
 
     def set_config(self, experiment_dir: str, config: Dict) -> None:
         """Generate all the nessasry data files
@@ -52,7 +106,7 @@ class OptimizerEBDOp(OptimizerABC):
             filename=filename,  # Previously generated scope.
             objectives=config["objectives"],  # ['yield', 'ee', 'side_product'],
             # Objectives to be optimized.
-            objective_mode=config["objective_mode"],  # ['max', 'max', 'min'],
+            objective_mode=config["direction"],  # ['max', 'max', 'min'],
             # Maximize yield and ee but minimize side_product.
             batch=1,  # Number of experiments in parallel that
             # we want to perform in this round.
@@ -60,59 +114,6 @@ class OptimizerEBDOp(OptimizerABC):
             init_sampling_method="seed",  # initialization method.
             seed=random.randint(0, 2**32 - 1),
         )
-
-    def get_config(self):
-        """This function will return the configurations which need to initialize a
-        optimizer
-
-        :return: configuration dictionary
-        :rtype: Dict
-        """
-
-        config = {
-            {
-                "Name": "continuous_feature_names",
-                "Type": List[str],
-                "value": [""],
-            },
-            {
-                "Name": "continuous_feature_bounds",
-                "Type": List[List[float]],
-                "value": [[]],
-            },
-            {
-                "Name": "continuous_feature_resoultions",
-                "Type": List[float],
-                "value": [],
-            },
-            {
-                "Name": "categorical_feature_names",
-                "Type": List[str],
-                "value": [""],
-            },
-            {
-                "Name": "categorical_feature_values",
-                "Type": List[List[str]],
-                "value": [[]],
-            },
-            {
-                "Name": "budget",
-                "Type": int,
-                "value": 100,
-            },
-            {
-                "Name": "objectives",
-                "Type": List[str],
-                "value": [""],
-            },
-            {
-                "Name": "objective_mode",
-                "Type": List[str],
-                "value": [""],
-            },
-        }
-
-        return config
 
     def train(
         self,
@@ -189,13 +190,14 @@ class OptimizerEBDOp(OptimizerABC):
             objectives=config[
                 "objectives"
             ],  # ['yield', 'ee', 'side_product'],  # Objectives to be optimized.
-            objective_mode=config["objective_mode"],  # ['max', 'max', 'min'],
+            objective_mode=config["direction"],  # ['max', 'max', 'min'],
             # Maximize yield and ee but minimize side_product.
             batch=1,  # Number of experiments in parallel that
             # we want to perform in this round.
             columns_features="all",  # features to be included in the model.
             init_sampling_method="seed",  # initialization method.
             seed=random.randint(0, 2**32 - 1),
+            write_extra_data=False,
         )
 
         # after one cycle of prediction again read the reaction condition file to
@@ -205,6 +207,7 @@ class OptimizerEBDOp(OptimizerABC):
         )
 
         next_combo = df_edbo.iloc[:1].values.tolist()
+        next_combo = next_combo[0][:-2]
         print("Next combo:", next_combo)
 
         return next_combo
@@ -221,6 +224,44 @@ class OptimizerEBDOp(OptimizerABC):
         self._import_deps()
         reaction_components = {}
 
+        # If the keys are returned as they were given in `get_config` then
+        # translate them to the format that works here
+        config["continuous"] = {}
+        if (
+            "continuous_feature_names" in config
+            and len(config["continuous_feature_names"]) > 0
+        ):
+            config["continuous"] = {}
+
+            config["continuous"]["feature_names"] = config[
+                "continuous_feature_names"
+            ]
+            config["continuous"]["bounds"] = config["continuous_feature_bounds"]
+            config["continuous"]["resolutions"] = config[
+                "continuous_feature_resolutions"
+            ]
+        else:
+            config["continuous"]["feature_names"] = []
+            config["continuous"]["bounds"] = []
+            config["continuous"]["resolutions"] = []
+
+        config["categorical"] = {}
+        if (
+            "categorical_feature_names" in config
+            and len(config["categorical_feature_names"]) > 0
+        ):
+            config["categorical"] = {}
+
+            config["categorical"]["feature_names"] = config[
+                "categorical_feature_names"
+            ]
+            config["categorical"]["values"] = config[
+                "categorical_feature_values"
+            ]
+        else:
+            config["categorical"]["feature_names"] = []
+            config["categorical"]["values"] = []
+
         for i in range(len(config["continuous"]["feature_names"])):
             low_bound = config["continuous"]["bounds"][i][0]
             upper_bound = config["continuous"]["bounds"][i][1]
@@ -234,7 +275,7 @@ class OptimizerEBDOp(OptimizerABC):
                 config["continuous"]["feature_names"][i]
             ] = values
 
-        if bool(config["categorical"]):
+        if bool(config["categorical"]["feature_names"]):
             for i in range(len(config["categorical"]["feature_names"])):
                 reaction_components[
                     config["categorical"]["feature_names"][i]
@@ -243,7 +284,7 @@ class OptimizerEBDOp(OptimizerABC):
         edbo_config = {
             "reaction_components": reaction_components,
             "objectives": config["objectives"],
-            "objective_mode": config["objective_mode"],
+            "direction": config["direction"],
         }
 
         return edbo_config
