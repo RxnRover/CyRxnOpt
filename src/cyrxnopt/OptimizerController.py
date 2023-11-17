@@ -1,10 +1,10 @@
 from typing import Any, Dict, List
 
-from pyoptimizer_backend.NestedVenv import NestedVenv
-from pyoptimizer_backend.OptimizerAmlro import OptimizerAmlro
-from pyoptimizer_backend.OptimizerEDBOp import OptimizerEDBOp
-from pyoptimizer_backend.OptimizerNMSimplex import OptimizerNMSimplex
-from pyoptimizer_backend.OptimizerSQSnobFit import OptimizerSQSnobFit
+from cyrxnopt.NestedVenv import NestedVenv
+from cyrxnopt.OptimizerAmlro import OptimizerAmlro
+from cyrxnopt.OptimizerEDBOp import OptimizerEDBOp
+from cyrxnopt.OptimizerNMSimplex import OptimizerNMSimplex
+from cyrxnopt.OptimizerSQSnobFit import OptimizerSQSnobFit
 
 
 def check_install(optimizer_name: str, venv: NestedVenv = "") -> bool:

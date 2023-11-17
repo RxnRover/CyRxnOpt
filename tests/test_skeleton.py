@@ -1,6 +1,6 @@
 import pytest
 
-from pyoptimizer_backend.skeleton import fib, main
+from cyrxnopt.skeleton import fib, main
 
 __author__ = "dulithaprasanna"
 __copyright__ = "dulithaprasanna"

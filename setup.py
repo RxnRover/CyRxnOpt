@@ -1,5 +1,5 @@
 """
-    Setup file for pyoptimizer_backend.
+    Setup file for cyrxnopt.
     Use setup.cfg to configure your project.
 
     This file was generated with PyScaffold 4.3.1.

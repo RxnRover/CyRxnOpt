@@ -1,8 +1,8 @@
 ===================
-pyoptimizer_backend
+cyrxnopt
 ===================
 
-This is the documentation of **pyoptimizer_backend**.
+This is the documentation of **cyrxnopt**.
 
 .. note::
 

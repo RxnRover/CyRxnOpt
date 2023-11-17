@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from pyoptimizer_backend.VenvManager import VenvManager
+from cyrxnopt.VenvManager import VenvManager
 
 
 class TestVenvManager(unittest.TestCase):

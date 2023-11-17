@@ -3,8 +3,8 @@ import json
 import os
 from typing import Any, Dict, List
 
-from pyoptimizer_backend.NestedVenv import NestedVenv
-from pyoptimizer_backend.OptimizerABC import OptimizerABC
+from cyrxnopt.NestedVenv import NestedVenv
+from cyrxnopt.OptimizerABC import OptimizerABC
 
 
 class OptimizerNMSimplex(OptimizerABC):
@@ -17,7 +17,7 @@ class OptimizerNMSimplex(OptimizerABC):
         ``scipy`` package.
 
         :param venv: Virtual environment manager to use, defaults to None
-        :type venv: pyoptimizer_backend.NestedVenv, optional
+        :type venv: cyrxnopt.NestedVenv, optional
         """
 
         super().__init__(venv)

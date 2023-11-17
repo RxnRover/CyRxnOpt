@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from pyoptimizer_backend.NestedVenv import NestedVenv
+from cyrxnopt.NestedVenv import NestedVenv
 
 
 class TestNestedVenv(unittest.TestCase):
