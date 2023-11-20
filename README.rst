@@ -77,7 +77,8 @@ using ``pip``:
 Installing an Optimizer
 -----------------------
 
-The first thing to do when using CyRxnOpt is to create an :term:`experiment directory`. The experiment directory will contain the optimizer installation,
+The first thing to do when using CyRxnOpt is to create an :term:`experiment
+directory`. The experiment directory will contain the optimizer installation,
 optimizer configuration files, reaction data, and other auxiliary files needed
 over the course of an optimization. By default, an instance of the optimization
 algorithm will be installed in each experiment directory to provide a snap shot
@@ -177,8 +178,8 @@ For API usage, see :ref:`api_usage`.
 Making Changes & Contributing
 =============================
 
-This project uses `pre-commit`_, please make sure to install it before making any
-changes or you will not be able to make commits!!!
+This project uses `pre-commit`_, please make sure to install it before making
+any changes or you will not be able to make commits!!!
 
 .. code-block:: bash
 
