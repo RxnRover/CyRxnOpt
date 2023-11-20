@@ -51,13 +51,13 @@ pyoptimizer_backend
   development of user-friendly tools and interfaces to lower the barrier of
   entry into reaction optimization
 
-.._cyrxnopt_overview_install
+.. _cyrxnopt_overview_install:
 
 Installation and Usage
 ======================
 
 CyRxnOpt is a Python-based library available for installation from PyPI
-using `pip`:
+using ``pip``:
 
 .. code-block:: bash
 
@@ -67,6 +67,9 @@ using `pip`:
 
    Can we easily make this available through conda as well? That would
    be advantageous, but not strictly necessary.
+
+
+.. _cyrxnopt_overview_cli_install:
 
 Installing an Optimizer
 -----------------------
@@ -96,6 +99,9 @@ technique applied in early reaction optimization studies.
 .. todo::
 
    We need to actually make this install command.
+
+
+.. _cyrxnopt_overview_cli_config:
 
 Configuring an Optimizer
 ------------------------
@@ -134,6 +140,8 @@ NMSimplex the formatting is simply checked to make sure the settings can
 be properly read during usage.
 
 
+.. _cyrxnopt_overview_cli_training:
+
 Training an Optimizer
 ---------------------
 
@@ -142,6 +150,8 @@ Training an Optimizer
    write me!
 
 TODO
+
+.. _cyrxnopt_overview_cli_prediction:
 
 Optimizing a Function
 ---------------------
