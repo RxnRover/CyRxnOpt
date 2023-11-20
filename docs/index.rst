@@ -1,8 +1,8 @@
-===================
-cyrxnopt
-===================
+========
+CyRxnOpt
+========
 
-This is the documentation of **cyrxnopt**.
+This is the documentation of the **cyrxnopt** package.
 
 .. note::
 
