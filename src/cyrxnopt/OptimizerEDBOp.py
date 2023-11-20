@@ -2,8 +2,8 @@ import os
 import random
 from typing import Any, Dict, List
 
-from pyoptimizer_backend.NestedVenv import NestedVenv
-from pyoptimizer_backend.OptimizerABC import OptimizerABC
+from cyrxnopt.NestedVenv import NestedVenv
+from cyrxnopt.OptimizerABC import OptimizerABC
 
 
 class OptimizerEDBOp(OptimizerABC):

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
 
-from pyoptimizer_backend.NestedVenv import NestedVenv
+from cyrxnopt.NestedVenv import NestedVenv
 
 
 class OptimizerABC(ABC):
@@ -17,7 +17,7 @@ class OptimizerABC(ABC):
         """Instantiates general Optimizer properties.
 
         :param venv: Virtual environment manager to use, defaults to None
-        :type venv: pyoptimizer_backend.NestedVenv, optional
+        :type venv: cyrxnopt.NestedVenv, optional
         """
 
         self._imports = {}  # Populated in self._import_deps()

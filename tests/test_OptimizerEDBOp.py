@@ -5,8 +5,8 @@
 #     validate_config_description,
 # )
 
-# from pyoptimizer_backend.NestedVenv import NestedVenv
-# from pyoptimizer_backend.OptimizerEDBOp import OptimizerEDBOp
+# from cyrxnopt.NestedVenv import NestedVenv
+# from cyrxnopt.OptimizerEDBOp import OptimizerEDBOp
 
 
 # class TestOptimizerEDBOp(unittest.TestCase):

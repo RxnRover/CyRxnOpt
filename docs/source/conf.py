@@ -89,7 +89,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = "pyoptimizer_backend"
+project = "cyrxnopt"
 copyright = "2022, dulithaprasanna"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -101,7 +101,7 @@ copyright = "2022, dulithaprasanna"
 # If you don’t need the separation provided between version and release,
 # just set them both to the same value.
 try:
-    from pyoptimizer_backend import __version__ as version
+    from cyrxnopt import __version__ as version
 except ImportError:
     version = ""
 
@@ -230,7 +230,7 @@ html_static_path = ["_static"]
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "pyoptimizer_backend-doc"
+htmlhelp_basename = "cyrxnopt-doc"
 
 
 # -- Options for LaTeX output ------------------------------------------------

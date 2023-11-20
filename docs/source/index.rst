@@ -1,8 +1,8 @@
-===================
-pyoptimizer_backend
-===================
+========
+CyRxnOpt
+========
 
-This is the documentation of **pyoptimizer_backend**.
+This is the documentation of the **cyrxnopt** package.
 
 .. note::
 
