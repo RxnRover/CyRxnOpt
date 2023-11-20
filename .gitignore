@@ -53,3 +53,6 @@ MANIFEST
 *venv*/
 .conda*/
 .python-version
+
+# Local script files
+*.sh
