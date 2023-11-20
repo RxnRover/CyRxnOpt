@@ -163,6 +163,12 @@ Optimizing a Function
 This is where the optimizer prediction will be described.
 
 
+API Usage
+=========
+
+For API usage, see :ref:`api_usage`.
+
+
 .. _pyscaffold-notes:
 
 Making Changes & Contributing
