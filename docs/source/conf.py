@@ -89,8 +89,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = "cyrxnopt"
-copyright = "2022, dulithaprasanna"
+project = "CyRxnOpt"
+copyright = "2023, CyRxnOpt Authors"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
