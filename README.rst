@@ -1,24 +1,27 @@
 .. These are examples of badges you might want to add to your README:
    please update the URLs accordingly
 
-    .. image:: https://readthedocs.org/projects/pyoptimizer_backend/badge/?version=latest
+    .. image:: https://api.cirrus-ci.com/github/<USER>/cyrxnopt.svg?branch=main
+        :alt: Built Status
+        :target: https://cirrus-ci.com/github/<USER>/cyrxnopt
+    .. image:: https://readthedocs.org/projects/cyrxnopt/badge/?version=latest
         :alt: ReadTheDocs
-        :target: https://pyoptimizer_backend.readthedocs.io/en/stable/
-    .. image:: https://img.shields.io/coveralls/github/RxnRover/pyoptimizer_backend/main.svg
+        :target: https://cyrxnopt.readthedocs.io/en/stable/
+    .. image:: https://img.shields.io/coveralls/github/<USER>/cyrxnopt/main.svg
         :alt: Coveralls
-        :target: https://coveralls.io/r/RxnRover/pyoptimizer_backend
-    .. image:: https://img.shields.io/pypi/v/pyoptimizer_backend.svg
+        :target: https://coveralls.io/r/<USER>/cyrxnopt
+    .. image:: https://img.shields.io/pypi/v/cyrxnopt.svg
         :alt: PyPI-Server
-        :target: https://pypi.org/project/pyoptimizer_backend/
-    .. image:: https://img.shields.io/conda/vn/conda-forge/pyoptimizer_backend.svg
+        :target: https://pypi.org/project/cyrxnopt/
+    .. image:: https://img.shields.io/conda/vn/conda-forge/cyrxnopt.svg
         :alt: Conda-Forge
-        :target: https://anaconda.org/conda-forge/pyoptimizer_backend
-    .. image:: https://pepy.tech/badge/pyoptimizer_backend/month
+        :target: https://anaconda.org/conda-forge/cyrxnopt
+    .. image:: https://pepy.tech/badge/cyrxnopt/month
         :alt: Monthly Downloads
-        :target: https://pepy.tech/project/pyoptimizer_backend
+        :target: https://pepy.tech/project/cyrxnopt
     .. image:: https://img.shields.io/twitter/url/http/shields.io.svg?style=social&label=Twitter
         :alt: Twitter
-        :target: https://twitter.com/pyoptimizer_backend
+        :target: https://twitter.com/cyrxnopt
 
 .. image:: https://api.cirrus-ci.com/github/RxnRover/pyoptimizer_backend.svg?branch=main
     :alt: Built Status
@@ -31,7 +34,7 @@
 |
 
 ===================
-pyoptimizer_backend
+cyrxnopt
 ===================
 
 

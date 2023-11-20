@@ -5,8 +5,8 @@ from utilities_for_testing.validate_config_description import (
     validate_config_description,
 )
 
-from pyoptimizer_backend.NestedVenv import NestedVenv
-from pyoptimizer_backend.OptimizerAmlro import OptimizerAmlro
+from cyrxnopt.NestedVenv import NestedVenv
+from cyrxnopt.OptimizerAmlro import OptimizerAmlro
 
 
 class TestOptimizerAmlro(unittest.TestCase):

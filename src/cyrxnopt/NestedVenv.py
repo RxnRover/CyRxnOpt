@@ -9,7 +9,7 @@ import sys
 import venv
 from typing import List
 
-# from pyoptimizer_backend.util.reset_module import reset_module
+# from cyrxnopt.util.reset_module import reset_module
 
 
 class NestedVenv(venv.EnvBuilder):

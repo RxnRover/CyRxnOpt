@@ -4,7 +4,7 @@ console script. To run this script uncomment the following lines in the
 ``[options.entry_points]`` section in ``setup.cfg``::
 
     console_scripts =
-         fibonacci = pyoptimizer_backend.skeleton:run
+         fibonacci = cyrxnopt.skeleton:run
 
 Then run ``pip install .`` (or ``pip install -e .`` for editable mode)
 which will install the command ``fibonacci`` inside your current environment.
@@ -24,7 +24,7 @@ import argparse
 import logging
 import sys
 
-from pyoptimizer_backend import __version__
+from cyrxnopt import __version__
 
 __author__ = "dulithaprasanna"
 __copyright__ = "dulithaprasanna"
@@ -36,7 +36,7 @@ _logger = logging.getLogger(__name__)
 # ---- Python API ----
 # The functions defined in this section can be imported by users in their
 # Python scripts/interactive interpreter, e.g. via
-# `from pyoptimizer_backend.skeleton import fib`,
+# `from cyrxnopt.skeleton import fib`,
 # when using this Python module as a library.
 
 
@@ -72,13 +72,17 @@ def parse_args(args):
     Returns:
       :obj:`argparse.Namespace`: command line parameters namespace
     """
-    parser = argparse.ArgumentParser(description="Just a Fibonacci demonstration")
+    parser = argparse.ArgumentParser(
+        description="Just a Fibonacci demonstration"
+    )
     parser.add_argument(
         "--version",
         action="version",
-        version="pyoptimizer_backend {ver}".format(ver=__version__),
+        version="cyrxnopt {ver}".format(ver=__version__),
     )
-    parser.add_argument(dest="n", help="n-th Fibonacci number", type=int, metavar="INT")
+    parser.add_argument(
+        dest="n", help="n-th Fibonacci number", type=int, metavar="INT"
+    )
     parser.add_argument(
         "-v",
         "--verbose",
@@ -106,7 +110,10 @@ def setup_logging(loglevel):
     """
     logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
     logging.basicConfig(
-        level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S"
+        level=loglevel,
+        stream=sys.stdout,
+        format=logformat,
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
 
 
@@ -144,6 +151,6 @@ if __name__ == "__main__":
     # After installing your project with pip, users can also run your Python
     # modules as scripts via the ``-m`` flag, as defined in PEP 338::
     #
-    #     python -m pyoptimizer_backend.skeleton 42
+    #     python -m cyrxnopt.skeleton 42
     #
     run()
