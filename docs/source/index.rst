@@ -9,15 +9,14 @@ Contents
 ========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   Overview <readme>
+   Overview <overview/index>
    Contributions & Help <contributing>
+   Module Reference <api/modules>
+   developer/index
    License <license>
    Authors <authors>
-   Changelog <changelog>
-   Dev Notes <dev_notes/index>
-   Module Reference <api/modules>
    Glossary <glossary>
 
 
