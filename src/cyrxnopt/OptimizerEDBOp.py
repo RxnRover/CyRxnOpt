@@ -2,8 +2,8 @@ import os
 import random
 from typing import Any, Dict, List
 
-from cyrxnopt.NestedVenv import NestedVenv
-from cyrxnopt.OptimizerABC import OptimizerABC
+from pyoptimizer_backend.NestedVenv import NestedVenv
+from pyoptimizer_backend.OptimizerABC import OptimizerABC
 
 
 class OptimizerEDBOp(OptimizerABC):
@@ -67,8 +67,8 @@ class OptimizerEDBOp(OptimizerABC):
             },
             {
                 "name": "direction",
-                "type": str,
-                "value": "min",
+                "type": List[str],
+                "value": ["min"],
                 "range": ["min", "max"],
             },
         ]
@@ -280,6 +280,17 @@ class OptimizerEDBOp(OptimizerABC):
                 reaction_components[
                     config["categorical"]["feature_names"][i]
                 ] = config["categorical"]["values"][i]
+
+        # EDBO+ supports multi-objective optimization, of which single-
+        # objective optimization is a subset. When providing arguments
+        # for single-objective optimization, only one objective and one
+        # corresponding direction must be given. This catches when the user
+        # does not provide single-element lists for the objectives and
+        # their directions, which could be an easy mistake.
+        if type(config["objectives"]) is str:
+            config["objectives"] = [config["objectives"]]
+        if type(config["direction"]) is str:
+            config["direction"] = [config["direction"]]
 
         edbo_config = {
             "reaction_components": reaction_components,
