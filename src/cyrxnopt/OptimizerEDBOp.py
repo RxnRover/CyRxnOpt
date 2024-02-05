@@ -147,6 +147,7 @@ class OptimizerEDBOp(OptimizerABC):
         yield_value: List[float],
         experiment_dir: str,
         config: Dict,
+        obj_func=None,
     ) -> List[Any]:
         """prediction of next best combination of parameters and
          traning machine learning model from last experimental data for active learning.
