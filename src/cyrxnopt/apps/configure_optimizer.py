@@ -62,7 +62,7 @@ def parse_args() -> argparse.Namespace:
         "-c",
         "--config",
         dest="config",
-        default="./config.json",
+        default="config.json",
         type=str,
         help=("Configuration file to use for the given optimizer."),
     )
