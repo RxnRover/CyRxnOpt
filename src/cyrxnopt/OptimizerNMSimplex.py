@@ -35,42 +35,42 @@ class OptimizerNMSimplex(OptimizerABC):
         config = [
             {
                 "name": "direction",
-                "type": str,
+                "type": "str",
                 "value": ["min", "max"],
             },
             {
                 "name": "continuous_feature_names",
-                "type": list,
+                "type": "list",
                 "value": [],
             },
             {
                 "name": "continuous_feature_bounds",
-                "type": list[list],
+                "type": "list[list]",
                 "value": [[]],
             },
             {
                 "name": "budget",
-                "type": int,
+                "type": "int",
                 "value": 100,
             },
             {
                 "name": "param_init",
-                "type": list,
+                "type": "list",
                 "value": [],
             },
             {
                 "name": "xatol",
-                "type": float,
+                "type": "float",
                 "value": 1e-8,
             },
             {
                 "name": "display",
-                "type": bool,
+                "type": "bool",
                 "value": False,
             },
             {
                 "name": "server",
-                "type": bool,
+                "type": "bool",
                 "value": False,
             },
         ]

@@ -34,37 +34,37 @@ class OptimizerSQSnobFit(OptimizerABC):
         config = [
             {
                 "name": "direction",
-                "type": str,
+                "type": "str",
                 "value": ["min", "max"],
             },
             {
                 "name": "continuous_feature_names",
-                "type": list,
+                "type": "list",
                 "value": [],
             },
             {
                 "name": "continuous_feature_bounds",
-                "type": list[list],
+                "type": "list[list]",
                 "value": [[]],
             },
             {
                 "name": "budget",
-                "type": int,
+                "type": "int",
                 "value": 100,
             },
             {
                 "name": "param_init",
-                "type": list,
+                "type": "list",
                 "value": [],
             },
             {
                 "name": "maxfail",
-                "type": int,
+                "type": "int",
                 "value": 5,
             },
             {
                 "name": "verbose",
-                "type": bool,
+                "type": "bool",
                 "value": False,
             },
         ]
