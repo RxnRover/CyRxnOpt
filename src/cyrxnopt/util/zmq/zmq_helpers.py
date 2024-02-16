@@ -1,3 +1,5 @@
+import logging
+
 import zmq
 
 
@@ -11,12 +13,12 @@ def init_socket(address: str) -> zmq.Socket:
     :rtype: zmq.Socket
     """
 
-    print("Binding socket at {} ...".format(address))
+    logging.debug("Binding socket at {} ...".format(address))
 
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
     socket.connect(address)
 
-    print("Binding complete!")
+    logging.debug("Binding complete!")
 
     return socket

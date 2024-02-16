@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import List
 
 import zmq
@@ -40,7 +41,7 @@ class zmq_obj_function:
         :rtype: float
         """
 
-        print("Sending parameters: {}".format(x))
+        logging.debug("Sending parameters: {}".format(x))
 
         if type(x) is not list:
             x = x.tolist()
@@ -48,7 +49,7 @@ class zmq_obj_function:
         self.socket.send(json.dumps(x).encode("utf-8"))
 
         reply = self.socket.recv()
-        print("Received reply: {}".format(reply))
+        logging.debug("Received reply: {}".format(reply))
 
         if reply == b"abort":
             raise AbortException()
