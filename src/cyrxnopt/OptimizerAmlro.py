@@ -1,3 +1,4 @@
+import json
 import os
 from typing import Any, Dict, List
 
@@ -178,6 +179,11 @@ class OptimizerAmlro(OptimizerABC):
         with open(training_set_decoded_path, "w") as file_object:
             feature_names = ",".join([str(elem) for elem in feature_names_list])
             file_object.write(feature_names + ",Yield" + "\n")
+
+        config_path = os.path.join(experiment_dir, "config.json")
+
+        with open(config_path, "w") as fout:
+            json.dump(config, fout, indent=4)
 
     def train(
         self,
