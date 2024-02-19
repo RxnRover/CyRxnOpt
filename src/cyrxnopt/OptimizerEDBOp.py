@@ -1,9 +1,30 @@
+import json
 import os
 import random
 from typing import Any, Dict, List
 
+import numpy as np
+
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerABC import OptimizerABC
+
+
+class NpEncoder(json.JSONEncoder):
+    """JSON encoder for numpy datatypes.
+
+    This encoder code is from Jie Yang on Stack Overflow
+    (https://stackoverflow.com/users/6683616/jie-yang) in answer
+    https://stackoverflow.com/a/57915246.
+    """
+
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super(NpEncoder, self).default(obj)
 
 
 class OptimizerEDBOp(OptimizerABC):
@@ -53,7 +74,7 @@ class OptimizerEDBOp(OptimizerABC):
             {
                 "name": "categorical_feature_values",
                 "type": "List[List[str]]",
-                "value": [],
+                "value": [[]],
             },
             {
                 "name": "budget",
@@ -114,6 +135,11 @@ class OptimizerEDBOp(OptimizerABC):
             init_sampling_method="seed",  # initialization method.
             seed=random.randint(0, 2**32 - 1),
         )
+
+        config_path = os.path.join(experiment_dir, "config.json")
+
+        with open(config_path, "w") as fout:
+            json.dump(config, fout, indent=4, cls=NpEncoder)
 
     def train(
         self,
@@ -269,9 +295,11 @@ class OptimizerEDBOp(OptimizerABC):
             upper_bound = config["continuous"]["bounds"][i][1]
             increment = config["continuous"]["resolutions"][i]
 
-            values = self._imports["np"].arange(
-                low_bound, upper_bound, increment
+            values = list(
+                self._imports["np"].arange(low_bound, upper_bound, increment)
             )
+
+            values = [float(x) for x in values]
 
             reaction_components[
                 config["continuous"]["feature_names"][i]
@@ -283,13 +311,15 @@ class OptimizerEDBOp(OptimizerABC):
                     config["categorical"]["feature_names"][i]
                 ] = config["categorical"]["values"][i]
 
-        edbo_config = {
-            "reaction_components": reaction_components,
-            "objectives": config["objectives"],
-            "direction": config["direction"],
-        }
+        config["reaction_components"] = reaction_components
 
-        return edbo_config
+        # edbo_config = {
+        #     "reaction_components": reaction_components,
+        #     "objectives": config["objectives"],
+        #     "direction": config["direction"],
+        # }
+
+        return config
 
     def _import_deps(self) -> None:
         """importing all the packages and libries needed for running amlro
