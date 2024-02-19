@@ -86,7 +86,7 @@ class OptimizerSQSnobFit(OptimizerABC):
 
         # TODO: config validation should be performed
 
-        output_file = os.path.join(experiment_dir, "recent_config.json")
+        output_file = os.path.join(experiment_dir, "config.json")
 
         # Write the configuration to a file for later use
         with open(output_file, "w") as fout:
