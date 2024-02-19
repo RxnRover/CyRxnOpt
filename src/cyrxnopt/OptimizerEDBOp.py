@@ -122,6 +122,7 @@ class OptimizerEDBOp(OptimizerABC):
         itr: int,
         experiment_dir: str,
         config: Dict,
+        obj_func=None,
     ) -> List[Any]:
         """generate initial training dataset needed for optmizer. EDBOP doesent need
         initial training. traning function should be pass or empty.
@@ -147,6 +148,7 @@ class OptimizerEDBOp(OptimizerABC):
         yield_value: List[float],
         experiment_dir: str,
         config: Dict,
+        obj_func=None,
     ) -> List[Any]:
         """prediction of next best combination of parameters and
          traning machine learning model from last experimental data for active learning.
