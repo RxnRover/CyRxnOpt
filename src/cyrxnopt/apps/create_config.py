@@ -24,9 +24,9 @@ def main():
     ):
         print(
             (
-                "No optimizer install found at the given location. Run ",
-                "'install_optimizer --help' for more details on how to ",
-                "install an optimizer.",
+                "No optimizer install found at the given location. Run "
+                "'install_optimizer --help' for more details on how to "
+                "install an optimizer."
             )
         )
         return -1
@@ -50,10 +50,10 @@ def main():
     if Path(config_file).exists() and not args.force:
         print(
             (
-                "Config file already exists at {}.".format(config_file),
-                "Use the '-f' flag to overwrite this file with a new, ",
-                "default config file.",
-            )
+                "Config file already exists at {}."
+                "Use the '-f' flag to overwrite this file with a new, "
+                "default config file."
+            ).format(config_file)
         )
         return -1
 

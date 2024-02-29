@@ -35,8 +35,8 @@ def main():
     else:
         print(
             (
-                "Optimizer already installed. Use the '-f' flag to force ",
-                "a fresh reinstall if needed.",
+                "Optimizer already installed. Use the '-f' flag to force "
+                "a fresh reinstall if needed."
             )
         )
 

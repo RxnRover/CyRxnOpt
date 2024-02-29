@@ -24,9 +24,9 @@ def main():
     ):
         print(
             (
-                "No optimizer install found at the given location. Run ",
-                "'install_optimizer --help' for more details on how to install ",
-                "an optimizer.",
+                "No optimizer install found at the given location. Run "
+                "'install_optimizer --help' for more details on how to install "
+                "an optimizer."
             )
         )
         return -1
