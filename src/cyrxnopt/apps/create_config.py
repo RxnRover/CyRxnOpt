@@ -45,12 +45,12 @@ def main():
 
         config_contents[config["name"]] = value
 
-    config_file = os.path.join(args.location, "config.json")
+    config_file = os.path.join(args.location, args.config)
 
     if Path(config_file).exists() and not args.force:
         print(
             (
-                "Config file already exists at {}."
+                "Config file already exists at {}. "
                 "Use the '-f' flag to overwrite this file with a new, "
                 "default config file."
             ).format(config_file)
@@ -83,6 +83,16 @@ def parse_args() -> argparse.Namespace:
         dest="force",
         action="store_true",
         help=("Forces a fresh configuration file to be created."),
+    )
+    parser.add_argument(
+        "-c",
+        "--config",
+        dest="config",
+        default="config.json",
+        type=str,
+        help=(
+            "Name of the configuration file to create. Defaults to 'config.json'."
+        ),
     )
 
     args = parser.parse_args()
