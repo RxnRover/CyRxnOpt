@@ -1,14 +1,19 @@
 import argparse
 import json
+import logging
 import os
 from pathlib import Path
 
+from cyrxnopt.apps._utilities.gen_logfile import gen_logfile
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerController import check_install, set_config
 
 
 def main():
     args = parse_args()
+
+    logfile = gen_logfile(__file__, args.location)
+    logging.basicConfig(filename=logfile, filemode="w", level=logging.DEBUG)
 
     # Prepare virtual environment
     venv_path = os.path.join(args.location, "venv_{}".format(args.optimizer))
@@ -25,7 +30,7 @@ def main():
             )
         )
         return -1
-    print("Activating virtual environment at:", venv_path)
+    logging.debug("Activating virtual environment at: {}".format(venv_path))
     venv.activate()
 
     # TODO: Make args.config relative to args.location
@@ -36,10 +41,11 @@ def main():
         return -1
 
     with open(args.config, "r") as fin:
-        print("Reading config to file:", args.config)
+        logging.debug("Reading config to file: {}".format(args.config))
         config_contents = json.load(fin)
 
     print("Configuring optimizer: {}".format(args.optimizer))
+    print("Potential output from the optimizer:")
     set_config(args.optimizer, config_contents, args.location, venv)
 
 

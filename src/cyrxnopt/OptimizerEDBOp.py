@@ -1,30 +1,12 @@
 import json
+import logging
 import os
 import random
 from typing import Any, Dict, List
 
-import numpy as np
-
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerABC import OptimizerABC
-
-
-class NpEncoder(json.JSONEncoder):
-    """JSON encoder for numpy datatypes.
-
-    This encoder code is from Jie Yang on Stack Overflow
-    (https://stackoverflow.com/users/6683616/jie-yang) in answer
-    https://stackoverflow.com/a/57915246.
-    """
-
-    def default(self, obj):
-        if isinstance(obj, np.integer):
-            return int(obj)
-        if isinstance(obj, np.floating):
-            return float(obj)
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return super(NpEncoder, self).default(obj)
+from cyrxnopt.util.NpEncoder import NpEncoder
 
 
 class OptimizerEDBOp(OptimizerABC):
@@ -236,7 +218,7 @@ class OptimizerEDBOp(OptimizerABC):
 
         next_combo = df_edbo.iloc[:1].values.tolist()
         next_combo = next_combo[0][:-2]
-        print("Next combo:", next_combo)
+        logging.debug("Next combo: {}".format(next_combo))
 
         return next_combo
 

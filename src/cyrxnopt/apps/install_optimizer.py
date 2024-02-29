@@ -1,12 +1,19 @@
 import argparse
+import logging
 import os
 
+from cyrxnopt.apps._utilities.gen_logfile import gen_logfile
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerController import check_install, install
 
 
 def main():
     args = parse_args()
+
+    logfile = gen_logfile(__file__, args.location)
+    logging.basicConfig(filename=logfile, filemode="w", level=logging.DEBUG)
+
+    logging.debug("Argparse arguments: {}".format(args))
 
     # Prepare virtual environment
     venv_path = os.path.join(args.location, "venv_{}".format(args.optimizer))
@@ -15,7 +22,7 @@ def main():
     if not os.path.exists(venv_path) or args.force:
         print("Creating virtual environment at:", venv_path)
         venv.create()
-    print("Activating virtual environment at:", venv_path)
+    logging.debug("Activating virtual environment at: {}".format(venv_path))
     venv.activate()
 
     # Install the optimizer if it is not already installed
