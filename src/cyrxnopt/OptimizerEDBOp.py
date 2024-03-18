@@ -217,7 +217,8 @@ class OptimizerEDBOp(OptimizerABC):
             # TODO: Rework this when we switch to multi-objective!
             with open(self._reaction_order_filename, "a") as fout:
                 line = prev_param
-                line.extend(yield_value)
+                # TODO: Switch to line.extend for multi-objective
+                line.append(yield_value)
                 fout.write(",".join(line))
                 fout.write("\n")
 
