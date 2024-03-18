@@ -57,6 +57,10 @@ def main():
     address = "tcp://localhost:5555"
     socket = zmq_helpers.init_socket(address)
 
+    # TODO: Temporary fix until we support multi-objective
+    if type(config_contents["direction"]) is list:
+        config_contents["direction"] = config_contents["direction"][0]
+
     obj_func = zmq_obj_function(socket, config_contents["direction"])
 
     print("Beginning optimization...")
