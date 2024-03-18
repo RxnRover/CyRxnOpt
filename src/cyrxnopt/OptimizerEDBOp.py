@@ -215,7 +215,10 @@ class OptimizerEDBOp(OptimizerABC):
             # Write the reaction parameters and results to the file preserving
             # reaction order
             # TODO: Rework this when we switch to multi-objective!
-            with open(self._reaction_order_filename, "a") as fout:
+            reaction_order_path = os.path.join(
+                experiment_dir, self._reaction_order_filename
+            )
+            with open(reaction_order_path, "a") as fout:
                 line = prev_param
                 # TODO: Switch to line.extend for multi-objective
                 line.append(yield_value)
