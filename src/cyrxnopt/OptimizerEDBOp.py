@@ -139,7 +139,8 @@ class OptimizerEDBOp(OptimizerABC):
             headers = feature_names
             headers.extend(objectives)
 
-            fout.write(",".join(headers), "\n")
+            fout.write(",".join(headers))
+            fout.write("\n")
 
     def train(
         self,
