@@ -134,7 +134,7 @@ class OptimizerEDBOp(OptimizerABC):
             feature_names = config["continuous"]["feature_names"]
             # If categorical feature names is an empty list, list.extend leaves
             # the list unchanged
-            feature_names.extend(config["categorical"]["feature_names"])
+            feature_names.append(config["categorical"]["feature_names"])
 
             objectives = config["objectives"][0]
 
