@@ -127,7 +127,10 @@ class OptimizerEDBOp(OptimizerABC):
 
         # Create file for preserving reaction order
         # TODO: Rework this when we switch to multi-objective!
-        with open(self._reaction_order_filename, "w") as fout:
+        reaction_order_path = os.path.join(
+            experiment_dir, self._reaction_order_filename
+        )
+        with open(reaction_order_path, "w") as fout:
             feature_names = config["continuous"]["feature_names"]
             # If categorical feature names is an empty list, list.extend leaves
             # the list unchanged
