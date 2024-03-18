@@ -219,6 +219,7 @@ class OptimizerEDBOp(OptimizerABC):
                 line = prev_param
                 # TODO: Switch to line.extend for multi-objective
                 line.append(yield_value)
+                line = [str(value) for value in line]
                 fout.write(",".join(line))
                 fout.write("\n")
 
