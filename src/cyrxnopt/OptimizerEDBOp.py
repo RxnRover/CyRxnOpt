@@ -134,13 +134,13 @@ class OptimizerEDBOp(OptimizerABC):
             feature_names = config["continuous"]["feature_names"]
             # If categorical feature names is an empty list, list.extend leaves
             # the list unchanged
-            feature_names.append(config["categorical"]["feature_names"])
+            feature_names.extend(config["categorical"]["feature_names"])
 
-            objectives = config["objectives"][0]
+            # objectives = config["objectives"][0]
 
             # Collect the feature names and objective names as headers
             headers = feature_names
-            headers.extend(objectives)
+            headers.extend(config["objectives"])
 
             fout.write(",".join(headers))
             fout.write("\n")
