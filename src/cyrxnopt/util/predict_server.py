@@ -45,7 +45,13 @@ def predict_faux_server(
         "raw_results": [],
     }
 
-    if config["direction"] == "min":
+    # TODO: This is a temporary fix until multi-objective is supported
+    if type(config["direction"]) is list:
+        direction = config["direction"][0]
+    else:
+        direction = config["direction"]
+
+    if direction == "min":
         results["best_value"] = float("inf")
     else:
         results["best_value"] = float("-inf")
@@ -63,17 +69,16 @@ def predict_faux_server(
 
         yield_value = obj_func(prev_param)
 
-        if (
-            config["direction"] == "min" and yield_value < results["best_value"]
-        ) or (
-            config["direction"] == "max" and yield_value > results["best_value"]
+        if (direction == "min" and yield_value < results["best_value"]) or (
+            direction == "max" and yield_value > results["best_value"]
         ):
             results["best_value"] = yield_value
             results["best_coords"] = prev_param
             results["best_iter"] = i
 
         # Add another line to the raw results
-        result_line = [x for x in prev_param].append(yield_value)
+        result_line = [x for x in prev_param]
+        result_line.append(yield_value)
         results["raw_results"].append(result_line)
 
     return results
