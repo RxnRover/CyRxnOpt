@@ -297,7 +297,7 @@ class OptimizerEDBOp(OptimizerABC):
             increment = config["continuous"]["resolutions"][i]
 
             values = self._imports["np"].arange(
-                low_bound, upper_bound, increment
+                low_bound, upper_bound + increment, increment
             )
 
             reaction_components[
