@@ -313,8 +313,8 @@ class OptimizerEDBOp(OptimizerABC):
             upper_bound = config["continuous"]["bounds"][i][1]
             increment = config["continuous"]["resolutions"][i]
 
-            values = list(
-                self._imports["np"].arange(low_bound, upper_bound, increment)
+            values = self._imports["np"].arange(
+                low_bound, upper_bound + increment, increment
             )
 
             values = [float(x) for x in values]
