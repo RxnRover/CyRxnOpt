@@ -7,7 +7,18 @@ from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerController import check_install, install
 
 
-def main():
+def main() -> int:
+    """Program entry point.
+
+    Return codes::
+
+       0 - Program ran successfully.
+       1 - An error occurred.
+       2 - Optimizer already installed.
+
+    :return: Return code as detailed in description
+    :rtype: int
+    """
     args = parse_args()
 
     logfile = gen_logfile(__file__, args.location)
@@ -39,6 +50,10 @@ def main():
                 "a fresh reinstall if needed."
             )
         )
+
+        return 2
+
+    return 0
 
 
 def parse_args() -> argparse.Namespace:
@@ -72,4 +87,4 @@ def parse_args() -> argparse.Namespace:
 
 
 if __name__ == "__main__":
-    main()
+    exit(main())
