@@ -21,6 +21,9 @@ class OptimizerEDBOp(OptimizerABC):
 
         super(OptimizerEDBOp, self).__init__(venv)
 
+        self._edbop_filename = "my_optimization.csv"
+        self._reaction_order_filename = "reaction_order.csv"
+
     def get_config(self):
         """This function will return the configurations which are needed
         to initialize an optimizer through `set_config()`.
@@ -67,8 +70,8 @@ class OptimizerEDBOp(OptimizerABC):
             },
             {
                 "name": "direction",
-                "type": str,
-                "value": "min",
+                "type": List[str],
+                "value": ["min"],
                 "range": ["min", "max"],
             },
         ]
@@ -86,7 +89,6 @@ class OptimizerEDBOp(OptimizerABC):
         if not os.path.exists(experiment_dir):
             os.makedirs(experiment_dir)
 
-        filename = "my_optimization.csv"
         config = self.config_translate(
             config
         )  # get reaction scope configurations
@@ -96,14 +98,14 @@ class OptimizerEDBOp(OptimizerABC):
         self._imports["EDBOplus"]().generate_reaction_scope(
             components=config["reaction_components"],
             directory=experiment_dir,
-            filename=filename,
+            filename=self._edbop_filename,
             check_overwrite=False,
         )
 
         # initialize the edbop optimization file will be use for prediction
         self._imports["EDBOplus"]().run(
             directory=experiment_dir,
-            filename=filename,  # Previously generated scope.
+            filename=self._edbop_filename,  # Previously generated scope.
             objectives=config["objectives"],  # ['yield', 'ee', 'side_product'],
             # Objectives to be optimized.
             objective_mode=config["direction"],  # ['max', 'max', 'min'],
@@ -115,6 +117,22 @@ class OptimizerEDBOp(OptimizerABC):
             seed=random.randint(0, 2**32 - 1),
         )
 
+        # Create file for preserving reaction order
+        # TODO: Rework this when we switch to multi-objective!
+        with open(self._reaction_order_filename, "w") as fout:
+            feature_names = config["continuous"]["feature_names"]
+            # If categorical feature names is an empty list, list.extend leaves
+            # the list unchanged
+            feature_names.extend(config["categorical"]["feature_names"])
+
+            objectives = config["objectives"][0]
+
+            # Collect the feature names and objective names as headers
+            headers = feature_names
+            headers.extend(objectives)
+
+            fout.write(",".join(headers), "\n")
+
     def train(
         self,
         prev_param: List[Any],
@@ -122,6 +140,7 @@ class OptimizerEDBOp(OptimizerABC):
         itr: int,
         experiment_dir: str,
         config: Dict,
+        obj_func=None,
     ) -> List[Any]:
         """generate initial training dataset needed for optmizer. EDBOP doesent need
         initial training. traning function should be pass or empty.
@@ -147,6 +166,7 @@ class OptimizerEDBOp(OptimizerABC):
         yield_value: List[float],
         experiment_dir: str,
         config: Dict,
+        obj_func=None,
     ) -> List[Any]:
         """prediction of next best combination of parameters and
          traning machine learning model from last experimental data for active learning.
@@ -182,6 +202,15 @@ class OptimizerEDBOp(OptimizerABC):
             # yield_value[i] for i in range(len(yield_value))]
             df_edbo.loc[0, config["objectives"][0]] = yield_value
             df_edbo.to_csv(os.path.join(experiment_dir, filename), index=False)
+
+            # Write the reaction parameters and results to the file preserving
+            # reaction order
+            # TODO: Rework this when we switch to multi-objective!
+            with open(self._reaction_order_filename, "a") as fout:
+                line = prev_param
+                line.extend(yield_value)
+                fout.write(",".join(line))
+                fout.write("\n")
 
         # running the edbop prediction
         self._imports["EDBOplus"]().run(
@@ -268,7 +297,7 @@ class OptimizerEDBOp(OptimizerABC):
             increment = config["continuous"]["resolutions"][i]
 
             values = self._imports["np"].arange(
-                low_bound, upper_bound, increment
+                low_bound, upper_bound + increment, increment
             )
 
             reaction_components[
@@ -280,6 +309,17 @@ class OptimizerEDBOp(OptimizerABC):
                 reaction_components[
                     config["categorical"]["feature_names"][i]
                 ] = config["categorical"]["values"][i]
+
+        # EDBO+ supports multi-objective optimization, of which single-
+        # objective optimization is a subset. When providing arguments
+        # for single-objective optimization, only one objective and one
+        # corresponding direction must be given. This catches when the user
+        # does not provide single-element lists for the objectives and
+        # their directions, which could be an easy mistake.
+        if type(config["objectives"]) is str:
+            config["objectives"] = [config["objectives"]]
+        if type(config["direction"]) is str:
+            config["direction"] = [config["direction"]]
 
         edbo_config = {
             "reaction_components": reaction_components,
