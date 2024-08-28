@@ -39,12 +39,12 @@ repos:
   - id: black
     language_version: python3
 
-## If like to embrace black styles even in the docs:
-# - repo: https://github.com/asottile/blacken-docs
-#   rev: v1.12.0
-#   hooks:
-#   - id: blacken-docs
-#     additional_dependencies: [black]
+- repo: https://github.com/LilSpazJoekp/docstrfmt
+  rev: v1.9.0
+  hooks:
+    - id: docstrfmt
+      language_version: python3
+      types_or: [rst]  # [python, rst, txt]
 
 - repo: https://github.com/PyCQA/flake8
   rev: 6.1.0
