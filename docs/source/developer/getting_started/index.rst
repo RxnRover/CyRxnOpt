@@ -15,6 +15,6 @@ familiar with a tool or process.
     viewing_documentation
     writing_documentation
     testing_code
-    repository_structure
+    project_structure
     code_conventions
     contributing_code
