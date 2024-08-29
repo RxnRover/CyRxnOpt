@@ -1,31 +1,28 @@
-##########
- CyRxnOpt
-##########
+CyRxnOpt
+========
 
 This is the documentation of the **cyrxnopt** package.
 
-**********
- Contents
-**********
+Contents
+--------
 
 .. toctree::
-   :maxdepth: 1
+    :maxdepth: 1
 
-   Overview <overview/index>
-   Contributions & Help <contributing>
-   Module Reference <api/modules>
-   developer/index
-   License <license>
-   Authors <authors>
-   Glossary <glossary>
+    Overview <overview/index>
+    Contributions & Help <contributing>
+    Module Reference <api/modules>
+    developer/index
+    License <license>
+    Authors <authors>
+    Glossary <glossary>
 
-********************
- Indices and tables
-********************
+Indices and tables
+------------------
 
--  :ref:`genindex`
--  :ref:`modindex`
--  :ref:`search`
+- :ref:`genindex`
+- :ref:`modindex`
+- :ref:`search`
 
 .. _autodoc: https://www.sphinx-doc.org/en/master/ext/autodoc.html
 
