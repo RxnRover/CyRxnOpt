@@ -176,7 +176,7 @@ changes or you will not be able to make commits!!!
 .. code-block:: bash
 
     pip install pre-commit
-    cd pyoptimizer_backend
+    cd cyrxnopt
     pre-commit install
 
 It is a good idea to update the hooks to the latest version:
