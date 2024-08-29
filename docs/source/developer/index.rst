@@ -16,4 +16,5 @@ Contents
     :maxdepth: 1
 
     getting_started/index
+    architecture
     add_new_optimizer
