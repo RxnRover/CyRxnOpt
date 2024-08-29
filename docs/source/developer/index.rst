@@ -13,6 +13,7 @@ Contents
 --------
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
+    getting_started/index
     add_new_optimizer
