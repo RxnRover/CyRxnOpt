@@ -90,7 +90,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "CyRxnOpt"
-copyright = "2023, CyRxnOpt Authors"
+copyright = "2024, CyRxnOpt Authors"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
