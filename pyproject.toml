@@ -20,7 +20,6 @@ known_first_party = "cyrxnopt"
 multi_line_output = 3
 line_length = 79
 
-# .coveragerc to control coverage.py
 [tool.coverage.run]
 branch = true
 source = ["cyrxnopt"]
