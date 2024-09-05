@@ -34,7 +34,7 @@ except ImportError:
     from sphinx import apidoc
 
 output_dir = os.path.join(__location__, "api")
-module_dir = os.path.join(__location__, "../../src/pyoptimizer_backend")
+module_dir = os.path.join(__location__, "../../src/cyrxnopt")
 try:
     shutil.rmtree(output_dir)
 except FileNotFoundError:
@@ -89,8 +89,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = "cyrxnopt"
-copyright = "2022, dulithaprasanna"
+project = "CyRxnOpt"
+copyright = "2024, CyRxnOpt Authors"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
