@@ -42,9 +42,9 @@ coverage.xml
 build/*
 dist/*
 sdist/*
-docs/api/*
-docs/_rst/*
-docs/_build/*
+docs/source/api/*
+!docs/source/api/modules.rst
+docs/source/_rst/*
 docs/build/*
 cover/*
 MANIFEST
@@ -53,3 +53,6 @@ MANIFEST
 *venv*/
 .conda*/
 .python-version
+
+# Local script files
+*.sh
