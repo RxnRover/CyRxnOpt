@@ -1,28 +1,30 @@
 import copy
 import importlib
 import importlib.util
+import logging
 import os
 import shutil
 import site
 import subprocess
 import sys
 import venv
-from typing import List
+from importlib.machinery import ModuleSpec
+from pathlib import Path
+from typing import List, Optional, Union, cast
 
 # from cyrxnopt.util.reset_module import reset_module
+logger = logging.getLogger(__name__)
 
 
 class NestedVenv(venv.EnvBuilder):
-    def __init__(self, virtual_dir: str):
+    def __init__(self, virtual_dir: Union[str, Path]):
         """initializing the virtual environment directory
 
         :param virtual_dir: path to the virtual env directory
-        :type virtual_dir: str
+        :type virtual_dir: str | Path
         """
 
-        self.prefix = os.path.abspath(virtual_dir)
-        self.python = self._get_python_path()
-        self.site_packages = self._get_site_package_path()
+        self.prefix = Path(virtual_dir)
 
         # Call the EnvBuilder constructor
         super().__init__(
@@ -35,7 +37,7 @@ class NestedVenv(venv.EnvBuilder):
             upgrade_deps=True,
         )
 
-    def activate(self):
+    def activate(self) -> None:
         """Activates the current virtual environment as the primary virtual
         environment. If the venv is active but not primary, it will be
         reactivated as the primary venv.
@@ -50,15 +52,15 @@ class NestedVenv(venv.EnvBuilder):
         # # Deactivate the virtual environment if it was already active
         # self.deactivate()
 
-        if os.path.exists(self.prefix):
+        if self.prefix.exists():
             # NOTE: This os.environ["PATH"] stuff is from a Google Groups
             #       conversation between users "voltron" and "Ian Bicking"
             #       but it doesn't seem to actually bring the venv into
             #       scope
             #
             # Source: https://groups.google.com/g/python-virtualenv/c/FfipsFBqvq4?pli=1
-            env_path = os.environ["PATH"].split(":")
-            env_path.insert(0, self._bin_dir)
+            env_path = [Path(p) for p in os.environ["PATH"].split(":")]
+            env_path.insert(0, self.binary_directory)
 
             # Determine available modules before activating this, then
             # available packages afterward to diff what packages were
@@ -68,7 +70,7 @@ class NestedVenv(venv.EnvBuilder):
             # TODO: This adds the site to the end of sys.path. It should
             #       go before any other venv site paths to be the primary venv.
             # Activates the virtual environment, adding it to sys.path
-            site.addsitedir(self.site_packages)
+            site.addsitedir(str(self.site_packages.resolve()))
             # NOTE: This sitedir stuff is from the SO answer here:
             #       https://stackoverflow.com/a/68173529, which points
             #       to this in dcreager/virtualenv on GitHub:
@@ -86,14 +88,14 @@ class NestedVenv(venv.EnvBuilder):
         else:
             raise RuntimeError("Virtual environment has not been created yet!")
 
-        os.environ["PATH"] = ":".join(env_path)
+        os.environ["PATH"] = ":".join([str(p.resolve()) for p in env_path])
 
-    def create(self):
+    def create(self) -> None:
         """Creates the virtual environment at the given location."""
 
         super().create(self.prefix)
 
-    def deactivate(self):
+    def deactivate(self) -> None:
         """Deactivates the virtual environment regardless of if it is the
         primary virtual environment.
         """
@@ -102,12 +104,12 @@ class NestedVenv(venv.EnvBuilder):
         if not self.is_active():
             return
 
-        env_path = os.environ["PATH"].split(":")
+        env_path = [Path(p) for p in os.environ["PATH"].split(":")]
 
         # Remove all instances of the virtual environment from the path
-        env_path = [path for path in env_path if path != self._bin_dir]
+        env_path = [path for path in env_path if path != self.binary_directory]
 
-        os.environ["PATH"] = ":".join(env_path)
+        os.environ["PATH"] = ":".join([str(p.resolve()) for p in env_path])
 
         # TODO: We need to remove the virtual environment from sys.path
         #       and unimport the packages from it without affecting
@@ -118,7 +120,7 @@ class NestedVenv(venv.EnvBuilder):
         # Remove module: https://stackoverflow.com/a/57891909
 
         # Remove this venv from the sys.path
-        sys.path.remove(self.site_packages)
+        sys.path.remove(str(self.site_packages.resolve()))
 
         # A start is to invalidate the internal cache to guarantee that
         # import finders will notice new modules
@@ -140,10 +142,10 @@ class NestedVenv(venv.EnvBuilder):
                 # print("Failed to reimport:", pkg)
                 continue
 
-    def delete(self):
+    def delete(self) -> None:
         self.deactivate()
 
-        if os.path.exists(self.prefix):
+        if self.prefix.exists():
             shutil.rmtree(self.prefix)
 
     def is_active(self) -> bool:
@@ -156,9 +158,9 @@ class NestedVenv(venv.EnvBuilder):
         :rtype: bool
         """
 
-        env_path = os.environ["PATH"].split(":")
+        env_path = [Path(p) for p in os.environ["PATH"].split(":")]
 
-        return self._bin_dir in env_path
+        return self.binary_directory in env_path
 
     def is_primary(self) -> bool:
         """Checks if the virtual environment is the primary active
@@ -176,31 +178,48 @@ class NestedVenv(venv.EnvBuilder):
         :rtype: bool
         """
 
-        env_path = os.environ["PATH"].split(":")
+        env_path = [Path(p) for p in os.environ["PATH"].split(":")]
 
-        return env_path[0] == self._bin_dir
+        return env_path[0].resolve() == self.binary_directory
 
     def pip_freeze(self) -> List[str]:
         """Returns the list of modules in the virtual environment as
         they would be returned by 'pip freeze'.
+
+        :raises CalledProcessError: An error occurred when running pip freeze
         """
 
-        # TODO: This doesn't return the list of dependencies
-        subprocess.call(
-            [
-                self.python,
-                "-m",
-                "pip",
-                "freeze",
-            ]
+        # Run ``pip freeze`` and capture the output
+        completed_process = subprocess.run(
+            [self.python, "-m", "pip", "freeze"],
+            capture_output=True,  # Capture stdout and stderr
+            encoding="utf-8",  # Dencode the stdout and stderr bytestrings
         )
 
-    def pip_install(self, package):
-        """installing the packages to the running virtual env using
-        pip install commands.
+        # Raises CalledProcessError if the return code is non-zero
+        completed_process.check_returncode()
 
-        :param package: package name
-        :type package: Str
+        # The response is split by newlines since one package is
+        # printed on each line
+        return completed_process.stdout.split()
+
+    def pip_install(
+        self,
+        package_name: str,
+        package_path: Optional[Path] = None,
+        editable: bool = False,
+    ) -> None:
+        """Install a package to the active virtual environment using
+        ``pip install`` for an editable install.
+
+        :param package_name: Name of the package
+        :type package_name: str
+        :param package_path: Path to the package location
+        :type package_path: Path
+        :param editable: Whether to use an editable install
+        :type editable: bool
+
+        :raises CalledProcessError: An error occurred when running pip freeze
         """
 
         # NOTE: In the 'importlib' package, it is noted that `import_module()`
@@ -209,48 +228,79 @@ class NestedVenv(venv.EnvBuilder):
         #
         # Source: https://docs.python.org/3/library/importlib.html#importlib.__import__
         try:
-            __import__(package)
+            __import__(package_name)
         except ModuleNotFoundError:
-            subprocess.call(
-                [
-                    self.python,
-                    "-m",
-                    "pip",
-                    "install",
-                    package,
-                    "--upgrade",
-                ]
+            # Decide whether this is a local path or PyPI package
+            if package_path is not None:
+                package: str = str(package_path)
+            else:
+                package = package_name
+
+            # Do we need to prepend ``-e`` for an editable install?
+            pre_args = []
+            if editable:
+                pre_args.append("-e")
+
+            # Create the command list
+            cmd: List[str] = [str(self.python), "-m", "pip", "install"]
+            cmd.extend(pre_args)
+            cmd.append(package)
+            cmd.append("--upgrade")
+
+            completed_process = subprocess.run(
+                cmd,
+                capture_output=True,  # Capture stdout and stderr
+                encoding="utf-8",  # Dencode the stdout and stderr bytestrings
             )
 
-    def pip_install_e(self, package):
-        """installing the local packages (from folder) to the running virtual env
-        using pip install -e commands.
+            # Raises CalledProcessError if the return code is non-zero
+            completed_process.check_returncode()
 
-        :param package: folder path/name to the package
-        :type package: Str
+    def pip_install_e(self, package_path: Path, package_name: str = "") -> None:
+        """Install a package to the active virtual environment using
+        ``pip install`` for an editable install.
+
+        :param package_path: Path to the package location
+        :type package_path: Path
+        :param package_name: Name of the package, defaults to "". If not provided,
+            the package name is assumed to the the last part of ``package_path``.
+        :type package_name: str, optional
+
+        :raises CalledProcessError: An error occurred when running ``pip install``
         """
-        try:
-            __import__(package)
-        except ModuleNotFoundError:
-            subprocess.call(
-                [self.python, "-m", "pip", "install", "-e", package]
-            )
 
-    def pip_install_r(self, filename):
+        # Derive the package name from the package path if a name is not
+        # explicitly provided
+        if package_name == "":
+            package_name = package_path.stem
+
+        # Attempt to install the package
+        self.pip_install(package_name, package_path, editable=True)
+
+    def pip_install_r(self, req_file: Path) -> None:
         """Installs package requirements from a "requirements.txt"-style file.
 
-        :param filename: Requirements file to use
-        :type filename: str
+        :param req_file: Requirements file to use
+        :type req_file: str
+
+        :raises CalledProcessError: An error occurred when running
+            ``pip install`` for a package
         """
 
         # Read each line of the requirements file and install the packages
-        with open(filename, "r") as fin:
+        with open(req_file, "r") as fin:
             lines = fin.readlines()
 
             for line in lines:
                 if line.startswith("-e"):
-                    package = line.replace("-e", "").strip()
-                    self.pip_install_e(os.path.abspath(package))
+                    package_path = Path(line.replace("-e", "").strip())
+                    package_name = package_path.stem
+
+                    self.pip_install(
+                        package_name,
+                        package_path.resolve(strict=True),
+                        editable=True,
+                    )
 
                 else:
                     package = line
@@ -277,8 +327,8 @@ class NestedVenv(venv.EnvBuilder):
                 break
 
         # Replace the PATH variable with only the virtual environment
-        os.environ["PATH"] = self._bin_dir
-        sys.path.append(self.site_packages)
+        os.environ["PATH"] = str(self.binary_directory)
+        sys.path.append(str(self.site_packages.resolve()))
 
         importlib.invalidate_caches()
 
@@ -330,33 +380,15 @@ class NestedVenv(venv.EnvBuilder):
 
         return package_found
 
-    def _get_python_path(self) -> str:
-        python_path = ""
-
-        # Decide, based on the operating system, what path to the Python binary
-        # to use. Windows uses <venv>/Scripts/python.exe, while Linux (and Mac,
-        # I think) use <venv>/bin/python.
-        self._python_bin = "python.exe" if sys.platform == "win32" else "python"
-        self._venv_dir = "Scripts" if sys.platform == "win32" else "bin"
-        self._bin_dir = os.path.join(self.prefix, self._venv_dir)
-
-        python_path = os.path.join(self._bin_dir, self._python_bin)
-
-        return python_path
-
-    def _get_site_package_path(self) -> str:
-        site_package_path = ""
-
+    def _get_site_package_path(self) -> Path:
         if sys.platform == "win32":
-            site_package_path = os.path.join(
-                self.prefix, "Lib", "site-packages"
-            )
+            site_package_path = self.prefix / "Lib" / "site-packages"
         else:
-            site_package_path = os.path.join(
-                self.prefix,
-                "lib",
-                "python{}".format(self._get_python_version()),
-                "site-packages",
+            site_package_path = (
+                self.prefix
+                / "lib"
+                / "python{}".format(self._get_python_version())
+                / "site-packages"
             )
 
         return site_package_path
@@ -385,18 +417,24 @@ class NestedVenv(venv.EnvBuilder):
         loaded_package_modules = [key for key, value in sys.modules.items()]
         for pkg in loaded_package_modules:
             try:
+                modulespec = importlib.util.find_spec(pkg)
+
                 # If the spec is None, skip the entry
-                if importlib.util.find_spec(pkg) is None:
+                if modulespec is None:
                     continue
             # Sometimes a ValueError is raised if no .__spec__ member
-            # is found
+            # is found. Skip the entry as well
             except ValueError:
                 continue
 
+            # We can guarantee that importlib.util.find_spec(pkg) is not
+            # None from the checks above
+            modulespec = cast(ModuleSpec, modulespec)
+
             # Check if valid packages are from this virtual environment
             if (
-                importlib.util.find_spec(pkg).origin
-                and self.site_packages in importlib.util.find_spec(pkg).origin
+                modulespec.origin is not None
+                and str(self.site_packages) in modulespec.origin
             ):
                 # print("Unimporting:", pkg)
                 sys.modules.pop(pkg)
@@ -404,3 +442,65 @@ class NestedVenv(venv.EnvBuilder):
                 venv_modules.append(pkg)
 
         return venv_modules
+
+    @property
+    def binary_directory(self) -> Path:
+        """The venv subdirectory containing binaries based on operating system.
+
+        :return: Full path to the venv binary directory
+        :rtype: Path
+        """
+
+        return self.prefix / self._binary_directory_name
+
+    @property
+    def prefix(self) -> Path:
+        """The prefix directory for this venv.
+
+        :return: Full path to the prefix directory for this venv
+        :rtype: Path
+        """
+
+        return self._prefix
+
+    @prefix.setter
+    def prefix(self, value: Path) -> None:
+        full_prefix = value.resolve()
+
+        logger.debug("Setting venv prefix to {}".format(full_prefix))
+        self._prefix = full_prefix
+
+    @property
+    def python(self) -> Path:
+        """The python binary of the venv based on operatingsystem.
+
+        :return: Full path to the Python binary of the venv
+        :rtype: Path
+        """
+
+        return self.binary_directory / self._python_binary_file_name
+
+    @property
+    def site_packages(self) -> Path:
+        return self._get_site_package_path()
+
+    @property
+    def _python_binary_file_name(self) -> str:
+        """The python binary file name based on operating system.
+
+        :return: Python binary file name
+        :rtype: str
+        """
+
+        return "python.exe" if sys.platform == "win32" else "python"
+
+    @property
+    def _binary_directory_name(self) -> str:
+        """The name of the venv subdirectory containing binaries based on
+        operating system.
+
+        :return: Virtual environment binary directory
+        :rtype: str
+        """
+
+        return "Scripts" if sys.platform == "win32" else "bin"

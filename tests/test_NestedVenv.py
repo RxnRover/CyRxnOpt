@@ -1,19 +1,20 @@
-import os
 import unittest
+from pathlib import Path
+from typing import List
 
 from cyrxnopt.NestedVenv import NestedVenv
 
 
 class TestNestedVenv(unittest.TestCase):
     def setUp(self) -> None:
-        self.parent_venv_path = "tmp"
-        self.venv_path = os.path.join(self.parent_venv_path, "test_venv_")
+        self.parent_venv_path = Path("tmp")
+        self.venv_path = self.parent_venv_path / "test_venv_"
 
         # Append the test ID so each venv is separate
-        self.venv_path += self.id()
+        self.venv_path = Path(str(self.venv_path) + self.id())
 
         # List of venvs created in the test
-        self.venvs = []
+        self.venvs: List[NestedVenv] = []
 
         return super().setUp()
 
@@ -22,16 +23,16 @@ class TestNestedVenv(unittest.TestCase):
         for venv in self.venvs:
             venv.delete()
 
-            self.assertTrue(not os.path.exists(venv.prefix))
+            self.assertFalse(venv.prefix.exists())
 
         return super().tearDown()
 
-    def test_activate_with_no_venv_created(self):
+    def test_activate_with_no_venv_created(self) -> None:
         venv = NestedVenv(self.venv_path)
 
         self.assertRaises(RuntimeError, venv.activate)
 
-    def test_activate_with_venv_created(self):
+    def test_activate_with_venv_created(self) -> None:
         venv = NestedVenv(self.venv_path)
         self.venvs.append(venv)
         venv.create()
@@ -39,7 +40,7 @@ class TestNestedVenv(unittest.TestCase):
         # Shouldn't throw an exception
         venv.activate()
 
-    def test_activate_when_active(self):
+    def test_activate_when_active(self) -> None:
         venv = NestedVenv(self.venv_path)
         self.venvs.append(venv)
         venv.create()
@@ -50,9 +51,9 @@ class TestNestedVenv(unittest.TestCase):
         # Also shouldn't throw an exception
         venv.activate()
 
-    def test_activate_two_venvs(self):
+    def test_activate_two_venvs(self) -> None:
         venv1 = NestedVenv(self.venv_path)
-        venv2 = NestedVenv(self.venv_path + "_2")
+        venv2 = NestedVenv(Path(str(self.venv_path) + "_2"))
         self.venvs.append(venv1)
         self.venvs.append(venv2)
 
@@ -71,9 +72,9 @@ class TestNestedVenv(unittest.TestCase):
         self.assertTrue(venv1.is_active())
         self.assertTrue(venv2.is_active())
 
-    def test_activate_two_venvs_then_deactivate_first(self):
+    def test_activate_two_venvs_then_deactivate_first(self) -> None:
         venv1 = NestedVenv(self.venv_path)
-        venv2 = NestedVenv(self.venv_path + "_2")
+        venv2 = NestedVenv(Path(str(self.venv_path) + "_2"))
         self.venvs.append(venv1)
         self.venvs.append(venv2)
 
@@ -94,41 +95,41 @@ class TestNestedVenv(unittest.TestCase):
         self.assertFalse(venv1.is_active())
         self.assertTrue(venv2.is_active())
 
-    def test_create_with_no_prior_creation(self):
+    def test_create_with_no_prior_creation(self) -> None:
         venv = NestedVenv(self.venv_path)
         self.venvs.append(venv)
 
         venv.create()
 
-        self.assertTrue(os.path.exists(self.venv_path))
-        self.assertTrue(os.path.exists(venv.python))
+        self.assertTrue(self.venv_path.exists())
+        self.assertTrue(venv.python.exists())
 
         venv.delete()
 
-    def test_create_when_dir_exists(self):
+    def test_create_when_dir_exists(self) -> None:
         venv = NestedVenv(self.venv_path)
         self.venvs.append(venv)
 
         # Create the directory beforehand
-        os.makedirs(self.venv_path)
+        self.venv_path.mkdir(parents=True, exist_ok=False)
 
         # Creating venv but path already exists
         venv.create()
 
-        self.assertTrue(os.path.exists(self.venv_path))
-        self.assertTrue(os.path.exists(venv.python))
+        self.assertTrue(self.venv_path.exists())
+        self.assertTrue(venv.python.exists)
 
-    def test_create_twice(self):
+    def test_create_twice(self) -> None:
         venv = NestedVenv(self.venv_path)
         self.venvs.append(venv)
 
         venv.create()
         venv.create()
 
-        self.assertTrue(os.path.exists(self.venv_path))
-        self.assertTrue(os.path.exists(venv.python))
+        self.assertTrue(self.venv_path.exists())
+        self.assertTrue(venv.python.exists())
 
-    def test_deactivate_not_active(self):
+    def test_deactivate_not_active(self) -> None:
         venv = NestedVenv(self.venv_path)
         self.venvs.append(venv)
 
@@ -139,7 +140,7 @@ class TestNestedVenv(unittest.TestCase):
 
         self.assertFalse(venv.is_active())
 
-    def test_is_active_not_active(self):
+    def test_is_active_not_active(self) -> None:
         venv = NestedVenv(self.venv_path)
         self.venvs.append(venv)
 
@@ -147,7 +148,7 @@ class TestNestedVenv(unittest.TestCase):
 
         self.assertFalse(venv.is_active())
 
-    def test_is_active(self):
+    def test_is_active(self) -> None:
         venv = NestedVenv(self.venv_path)
         self.venvs.append(venv)
 
@@ -156,14 +157,14 @@ class TestNestedVenv(unittest.TestCase):
 
         self.assertTrue(venv.is_active())
 
-    def test_is_primary_not_active(self):
+    def test_is_primary_not_active(self) -> None:
         venv = NestedVenv(self.venv_path)
 
         # No venv has been created or activated
 
         self.assertFalse(venv.is_primary())
 
-    def test_is_primary_only_venv(self):
+    def test_is_primary_only_venv(self) -> None:
         venv = NestedVenv(self.venv_path)
         self.venvs.append(venv)
 
@@ -176,9 +177,9 @@ class TestNestedVenv(unittest.TestCase):
 
         self.assertFalse(venv.is_primary())
 
-    def test_is_primary_two_venvs(self):
+    def test_is_primary_two_venvs(self) -> None:
         venv1 = NestedVenv(self.venv_path)
-        venv2 = NestedVenv(self.venv_path + "_2")
+        venv2 = NestedVenv(Path(str(self.venv_path) + "_2"))
         self.venvs.append(venv1)
         self.venvs.append(venv2)
 
@@ -215,7 +216,7 @@ class TestNestedVenv(unittest.TestCase):
         self.assertFalse(venv1.is_primary())
         self.assertFalse(venv2.is_primary())
 
-    def test_pip_install_numpy(self):
+    def test_pip_install_numpy(self) -> None:
         """This test attempts to install the 'numpy' package from online
         using 'pip'.
         """
@@ -230,7 +231,7 @@ class TestNestedVenv(unittest.TestCase):
 
         self.assertTrue(venv.check_package("numpy"))
 
-    def test_pip_install_e(self):
+    def test_pip_install_e(self) -> None:
         """This test attempts to self-install this package into a new
         virtual environment using an editable install.
         """
@@ -241,12 +242,12 @@ class TestNestedVenv(unittest.TestCase):
         venv.create()
         venv.activate()
 
-        venv.pip_install_e(os.path.abspath("tests/test_assets/test_project"))
+        venv.pip_install_e(Path("tests/test_assets/test_project").resolve())
 
         # self.assertTrue(venv.check_package("test_project"))
         self.assertTrue(venv.check_package("numpy", "1.24.0"))
 
-    def test_pip_install_r(self):
+    def test_pip_install_r(self) -> None:
         """This test attempts to self-install this package's requirements.txt
         file into a new virtual environment using
         'pip install -r requirements.txt'.
@@ -258,17 +259,15 @@ class TestNestedVenv(unittest.TestCase):
         venv.create()
         venv.activate()
 
-        venv.pip_install_r(
-            os.path.abspath("tests/test_assets/requirements.txt")
-        )
+        venv.pip_install_r(Path("tests/test_assets/requirements.txt").resolve())
 
         # self.assertTrue(venv.check_package("test_project"))
         self.assertTrue(venv.check_package("numpy", "1.24.0"))
         self.assertTrue(venv.check_package("requests", "2.31.0"))
 
-    def test_pip_install_numpy_first_of_two_venvs(self):
+    def test_pip_install_numpy_first_of_two_venvs(self) -> None:
         venv1 = NestedVenv(self.venv_path)
-        venv2 = NestedVenv(self.venv_path + "_2")
+        venv2 = NestedVenv(Path(str(self.venv_path) + "_2"))
         self.venvs.append(venv1)
         self.venvs.append(venv2)
 
@@ -289,9 +288,9 @@ class TestNestedVenv(unittest.TestCase):
         # The second, primary venv should not
         self.assertFalse(venv2.check_package("numpy"))
 
-    def test_pip_install_numpy_two_versions(self):
+    def test_pip_install_numpy_two_versions(self) -> None:
         venv1 = NestedVenv(self.venv_path)
-        venv2 = NestedVenv(self.venv_path + "_2")
+        venv2 = NestedVenv(Path(str(self.venv_path) + "_2"))
         self.venvs.append(venv1)
         self.venvs.append(venv2)
 
