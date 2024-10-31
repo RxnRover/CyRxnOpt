@@ -45,3 +45,7 @@ exclude_lines = [
     "if 0:",
     "if __name__ == .__main__.:",
 ] # Regexes for lines to exclude from consideration
+
+[[tool.mypy.overrides]]
+module = "cyrxnopt.*"
+disallow_incomplete_defs = true
