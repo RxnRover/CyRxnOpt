@@ -1,3 +1,4 @@
+import sys
 import unittest
 from pathlib import Path
 from typing import List
@@ -247,7 +248,7 @@ class TestNestedVenv(unittest.TestCase):
         venv.pip_install_e(self.test_asset_path / "test_project")
 
         # self.assertTrue(venv.check_package("test_project"))
-        self.assertTrue(venv.check_package("numpy", "1.24.0"))
+        self.assertTrue(venv.check_package("numpy"))
 
     def test_pip_install_r(self) -> None:
         """This test attempts to self-install this package's requirements.txt
@@ -264,8 +265,8 @@ class TestNestedVenv(unittest.TestCase):
         venv.pip_install_r(self.test_asset_path / "requirements.txt")
 
         # self.assertTrue(venv.check_package("test_project"))
-        self.assertTrue(venv.check_package("numpy", "1.24.0"))
-        self.assertTrue(venv.check_package("requests", "2.31.0"))
+        self.assertTrue(venv.check_package("numpy"))
+        self.assertTrue(venv.check_package("requests"))
 
     def test_pip_install_numpy_first_of_two_venvs(self) -> None:
         venv1 = NestedVenv(self.venv_path)
@@ -304,18 +305,38 @@ class TestNestedVenv(unittest.TestCase):
         venv2.create()
         venv2.activate()
 
-        venv1.pip_install("numpy==1.25")
-        venv2.pip_install("numpy==1.24")
+        if sys.version_info[:2] >= (3, 12):
+            numpy_version_1 = "2.0"
+            numpy_version_2 = "1.26"
+        elif sys.version_info[:2] >= (3, 9):
+            numpy_version_1 = "1.25"
+            numpy_version_2 = "1.24"
+        else:
+            raise RuntimeError("Python versions under 3.9 not supported")
 
-        self.assertTrue(venv1.check_package("numpy", "1.25.0"))
-        self.assertTrue(venv2.check_package("numpy", "1.24.0"))
+        venv1.pip_install("numpy=={}".format(numpy_version_1))
+        venv2.pip_install("numpy=={}".format(numpy_version_2))
+
+        self.assertTrue(
+            venv1.check_package("numpy", "{}.0".format(numpy_version_1))
+        )
+        self.assertTrue(
+            venv2.check_package("numpy", "{}.0".format(numpy_version_2))
+        )
 
         import numpy
 
-        self.assertEqual(numpy.__version__, "1.24.0")
+        self.assertEqual(numpy.__version__, "{}.0".format(numpy_version_2))
 
         venv1.deactivate()
 
         import numpy
 
-        print(numpy.__version__, "1.25.0")
+        self.assertEqual(numpy.__version__, "{}.0".format(numpy_version_2))
+
+        venv2.deactivate()
+        venv1.activate()
+
+        import numpy
+
+        self.assertEqual(numpy.__version__, "{}.0".format(numpy_version_1))

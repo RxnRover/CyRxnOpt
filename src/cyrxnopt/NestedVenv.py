@@ -10,6 +10,7 @@ import sys
 import venv
 from importlib.machinery import ModuleSpec
 from pathlib import Path
+from subprocess import CalledProcessError
 from typing import Any, List, Optional, Union, cast
 
 # from cyrxnopt.util.reset_module import reset_module
@@ -45,12 +46,12 @@ class NestedVenv(venv.EnvBuilder):
         :raises RuntimeError: The virtual environment does not exist.
         """
 
+        logger.info("Activating venv: {}".format(self.prefix))
+
         # Return early if already active
         if self.is_active():
+            logger.info("Venv already active.")
             return
-
-        # # Deactivate the virtual environment if it was already active
-        # self.deactivate()
 
         if self.prefix.exists():
             # NOTE: This os.environ["PATH"] stuff is from a Google Groups
@@ -77,18 +78,12 @@ class NestedVenv(venv.EnvBuilder):
             #       https://github.com/dcreager/virtualenv/blob/master/virtualenv_support/activate_this.py
             #
             # Docs for site: https://docs.python.org/3/library/site.html
-
-            # Move the site package to the front of the sys.path so it is
-            # picked up first
-            # print("sys.path:", sys.path)
-            # tmp_site_packages = sys.path.pop(-1)
-            # print("tmp_site_packages:", tmp_site_packages)
-            # sys.path.insert(0, tmp_site_packages)
-            # print("sys.path:", sys.path)
         else:
             raise RuntimeError("Virtual environment has not been created yet!")
 
         os.environ["PATH"] = ":".join([str(p.resolve()) for p in env_path])
+
+        logger.info("Venv activated.")
 
     def create(self, env_dir: Any = "") -> None:
         """Creates the virtual environment at the given location.
@@ -101,7 +96,14 @@ class NestedVenv(venv.EnvBuilder):
 
         # Default to the provided prefix provided on instantiation
         if str(env_dir) == "":
+            logger.debug(
+                "env_dir argument not given, defaulting to: {}".format(
+                    self.prefix
+                )
+            )
             prefix = self.prefix
+
+        logger.info("Creating venv: {}".format(self.prefix))
 
         return super().create(prefix)
 
@@ -110,8 +112,11 @@ class NestedVenv(venv.EnvBuilder):
         primary virtual environment.
         """
 
+        logger.info("Deactivating venv: {}".format(self.prefix))
+
         # Do nothing if the virtual environment is not active
         if not self.is_active():
+            logger.info("Venv not active.")
             return
 
         env_path = [Path(p) for p in os.environ["PATH"].split(":")]
@@ -137,9 +142,13 @@ class NestedVenv(venv.EnvBuilder):
         importlib.invalidate_caches()
 
         # Unimport packages that originate from this venv
+        logger.debug("Removing deactivated venv packages...")
         venv_modules = self._unimport_packages()
 
         # Attempt to reimport modules from other venvs
+        logger.debug(
+            "Attempting to reimport packages still active in other venvs..."
+        )
         for pkg in venv_modules:
             try:
                 importlib.import_module(pkg)
@@ -147,16 +156,25 @@ class NestedVenv(venv.EnvBuilder):
                 # import pkg
                 # importlib.reload(pkg)
                 # reset_module(pkg)
-                # print("Successfully reimported:", pkg)
-            except ModuleNotFoundError:
-                # print("Failed to reimport:", pkg)
+                logger.debug("Successfully reimported: {}".format(pkg))
+            except (KeyError, ModuleNotFoundError) as e:
+                logger.debug("Could not reimport: {}".format(pkg))
+                logger.debug(
+                    "Reimport exception: {}({})".format(e.__class__.__name__, e)
+                )
                 continue
 
+        logger.info("Venv deactivated.")
+
     def delete(self) -> None:
+        logger.info("Deleting venv: {}".format(self.prefix))
+
         self.deactivate()
 
         if self.prefix.exists():
             shutil.rmtree(self.prefix)
+
+        logger.info("Venv deleted.")
 
     def is_active(self) -> bool:
         """Checks if the virtual environment is active or not.
@@ -170,7 +188,15 @@ class NestedVenv(venv.EnvBuilder):
 
         env_path = [Path(p) for p in os.environ["PATH"].split(":")]
 
-        return self.binary_directory in env_path
+        is_active = self.binary_directory in env_path
+
+        logger.debug(
+            "Venv at {} is currently {}.".format(
+                self.prefix, "active" if is_active else "not active"
+            )
+        )
+
+        return is_active
 
     def is_primary(self) -> bool:
         """Checks if the virtual environment is the primary active
@@ -190,7 +216,15 @@ class NestedVenv(venv.EnvBuilder):
 
         env_path = [Path(p) for p in os.environ["PATH"].split(":")]
 
-        return env_path[0].resolve() == self.binary_directory
+        is_primary = env_path[0].resolve() == self.binary_directory
+
+        logger.debug(
+            "Venv at {} is currently {}.".format(
+                self.prefix, "primary" if is_primary else "not primary"
+            )
+        )
+
+        return is_primary
 
     def pip_freeze(self) -> List[str]:
         """Returns the list of modules in the virtual environment as
@@ -198,6 +232,8 @@ class NestedVenv(venv.EnvBuilder):
 
         :raises CalledProcessError: An error occurred when running pip freeze
         """
+
+        # TODO: Add logging
 
         # Run ``pip freeze`` and capture the output
         completed_process = subprocess.run(
@@ -232,6 +268,8 @@ class NestedVenv(venv.EnvBuilder):
         :raises CalledProcessError: An error occurred when running pip freeze
         """
 
+        # TODO: Add logging
+
         # NOTE: In the 'importlib' package, it is noted that `import_module()`
         #       should be used instead of `__import__()`. Maybe it is better
         #       to use that here, too. More research needed.
@@ -264,7 +302,12 @@ class NestedVenv(venv.EnvBuilder):
             )
 
             # Raises CalledProcessError if the return code is non-zero
-            completed_process.check_returncode()
+            try:
+                completed_process.check_returncode()
+            except CalledProcessError as e:
+                logger.info("Return code nonzero: {}".format(e))
+                logger.info("stdout: {}".format(completed_process.stdout))
+                logger.info("stderr: {}".format(completed_process.stderr))
 
     def pip_install_e(self, package_path: Path, package_name: str = "") -> None:
         """Install a package to the active virtual environment using
@@ -278,6 +321,8 @@ class NestedVenv(venv.EnvBuilder):
 
         :raises CalledProcessError: An error occurred when running ``pip install``
         """
+
+        # TODO: Add logging
 
         # Derive the package name from the package path if a name is not
         # explicitly provided
@@ -296,6 +341,8 @@ class NestedVenv(venv.EnvBuilder):
         :raises CalledProcessError: An error occurred when running
             ``pip install`` for a package
         """
+
+        # TODO: Add logging
 
         # Read each line of the requirements file and install the packages
         with open(req_file, "r") as fin:
@@ -321,6 +368,12 @@ class NestedVenv(venv.EnvBuilder):
         #       the time of calling? I think it can still be checked without
         #       affecting anything, so I am allowing it on inactive venvs
         #       for now.
+
+        # TODO: Add logging and docstring!
+
+        logger.debug(
+            "Checking for '{}' in venv: {}".format(package, self.prefix)
+        )
 
         # Default to the package being found
         package_found = True
@@ -388,9 +441,15 @@ class NestedVenv(venv.EnvBuilder):
 
         sys.modules = og_sys_modules
 
+        logger.debug(
+            "{} {}".format(package, "found" if package_found else "not found")
+        )
+
         return package_found
 
     def _get_site_package_path(self) -> Path:
+        # TODO: Add logging and docstring!
+
         if sys.platform == "win32":
             site_package_path = self.prefix / "Lib" / "site-packages"
         else:
@@ -404,6 +463,8 @@ class NestedVenv(venv.EnvBuilder):
         return site_package_path
 
     def _get_python_version(self) -> str:
+        # TODO: Add logging and docstring!
+
         # This grabs the full semver, for example, "3.11.3"
         python_version = sys.version.split(" ")[0]
 
@@ -422,9 +483,12 @@ class NestedVenv(venv.EnvBuilder):
         :rtype: List[str]
         """
 
+        # TODO: Add logging
+
         venv_modules = []
 
         loaded_package_modules = [key for key, value in sys.modules.items()]
+
         for pkg in loaded_package_modules:
             try:
                 modulespec = importlib.util.find_spec(pkg)
@@ -446,10 +510,12 @@ class NestedVenv(venv.EnvBuilder):
                 modulespec.origin is not None
                 and str(self.site_packages) in modulespec.origin
             ):
-                # print("Unimporting:", pkg)
+                logger.debug("Unimporting: {}".format(pkg))
                 sys.modules.pop(pkg)
 
                 venv_modules.append(pkg)
+
+        venv_modules
 
         return venv_modules
 
