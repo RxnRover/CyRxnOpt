@@ -90,7 +90,7 @@ class NestedVenv(venv.EnvBuilder):
 
         os.environ["PATH"] = ":".join([str(p.resolve()) for p in env_path])
 
-    def create(self) -> None:
+    def create(self):
         """Creates the virtual environment at the given location."""
 
         super().create(self.prefix)
