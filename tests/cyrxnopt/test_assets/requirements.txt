@@ -1,2 +1,2 @@
--e tests/test_assets/test_project
+-e tests/cyrxnopt/test_assets/test_project
 requests==2.31.0

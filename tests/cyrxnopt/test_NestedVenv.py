@@ -16,6 +16,8 @@ class TestNestedVenv(unittest.TestCase):
         # List of venvs created in the test
         self.venvs: List[NestedVenv] = []
 
+        self.test_asset_path = Path("tests/cyrxnopt/test_assets").resolve()
+
         return super().setUp()
 
     def tearDown(self) -> None:
@@ -242,7 +244,7 @@ class TestNestedVenv(unittest.TestCase):
         venv.create()
         venv.activate()
 
-        venv.pip_install_e(Path("tests/test_assets/test_project").resolve())
+        venv.pip_install_e(self.test_asset_path / "test_project")
 
         # self.assertTrue(venv.check_package("test_project"))
         self.assertTrue(venv.check_package("numpy", "1.24.0"))
@@ -259,7 +261,7 @@ class TestNestedVenv(unittest.TestCase):
         venv.create()
         venv.activate()
 
-        venv.pip_install_r(Path("tests/test_assets/requirements.txt").resolve())
+        venv.pip_install_r(self.test_asset_path / "requirements.txt")
 
         # self.assertTrue(venv.check_package("test_project"))
         self.assertTrue(venv.check_package("numpy", "1.24.0"))
