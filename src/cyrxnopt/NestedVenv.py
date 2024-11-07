@@ -10,7 +10,7 @@ import sys
 import venv
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import List, Optional, Union, cast
+from typing import Any, List, Optional, Union, cast
 
 # from cyrxnopt.util.reset_module import reset_module
 logger = logging.getLogger(__name__)
@@ -90,10 +90,20 @@ class NestedVenv(venv.EnvBuilder):
 
         os.environ["PATH"] = ":".join([str(p.resolve()) for p in env_path])
 
-    def create(self):
-        """Creates the virtual environment at the given location."""
+    def create(self, env_dir: Any = "") -> None:
+        """Creates the virtual environment at the given location.
 
-        super().create(self.prefix)
+        :param env_dir: Desired venv directory
+        :type env_dir: AnyPath
+        """
+
+        prefix = env_dir
+
+        # Default to the provided prefix provided on instantiation
+        if str(env_dir) == "":
+            prefix = self.prefix
+
+        return super().create(prefix)
 
     def deactivate(self) -> None:
         """Deactivates the virtual environment regardless of if it is the
