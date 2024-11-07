@@ -1,12 +1,12 @@
 import os
 import unittest
 
-from utilities_for_testing.validate_config_description import (
-    validate_config_description,
-)
-
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerAmlro import OptimizerAmlro
+
+from .utilities_for_testing.validate_config_description import (
+    validate_config_description,
+)
 
 
 class TestOptimizerAmlro(unittest.TestCase):

@@ -1,4 +1,4 @@
-def validate_config_description(test_case, config_desc):
+def validate_config_description(test_case, config_desc) -> None:
     # A config description should be a list of descriptions for each config
     # option of the optimizer
     test_case.assertEqual(type(config_desc), list)
