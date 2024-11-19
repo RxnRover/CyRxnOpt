@@ -1,4 +1,19 @@
-def validate_config_description(test_case, config_desc) -> None:
+import unittest
+from typing import Any, Dict, List
+
+
+def validate_config_description(
+    test_case: unittest.TestCase, config_desc: List[Dict[str, Any]]
+) -> None:
+    """Validates the general formatting of a config description returned from
+    an ``Optimizer.get_config()`` call.
+
+    :param test_case: Unittest test case that has the assertion checks.
+    :type test_case: unittest.TestCase
+    :param config_desc: Collection of config descriptors
+    :type config_desc: List[Dict[str, Any]]
+    """
+
     # A config description should be a list of descriptions for each config
     # option of the optimizer
     test_case.assertEqual(type(config_desc), list)
