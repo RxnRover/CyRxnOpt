@@ -23,14 +23,14 @@ installation:
 
    .. code-block:: bash
 
-      python -m venv cyrxnopt
+      python -m venv venv
 
 #. Activate the Virtual Environment:
 
    .. code-block:: bash
 
-      source cyrxnopt/bin/activate  # On Unix or MacOS
-      .\cyrxnopt\Scripts\activate   # On Windows
+      source venv/bin/activate  # On Unix or MacOS
+      .\venv\Scripts\activate   # On Windows
 
 #. Install the Library:
 
