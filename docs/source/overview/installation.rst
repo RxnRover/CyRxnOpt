@@ -37,3 +37,4 @@ installation:
    .. code-block:: bash
 
       pip install .
+      #pip install cyrxnopt
