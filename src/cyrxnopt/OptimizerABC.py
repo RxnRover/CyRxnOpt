@@ -140,7 +140,6 @@ class OptimizerABC(ABC):
         self,
         prev_param: List[Any],
         yield_value: float,
-        itr: int,
         experiment_dir: str,
     ):
         """This abstract method should be overide with actual training function
@@ -151,8 +150,6 @@ class OptimizerABC(ABC):
         :type prev_param: list[any]
         :param yield_value: experimental yield
         :type yield_value: float
-        :param itr: experimental cycle number for training
-        :type itr: int
         :param experiment_dir: experimental directory for saving data files
         :type experiment_dir: str
         """
