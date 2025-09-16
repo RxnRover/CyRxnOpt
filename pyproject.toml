@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 # check out https://github.com/pypa/setuptools_scm
 version_scheme = "no-guess-dev"
 
-[tool.pytest]
+[tool.pytest.ini_options]
 # Enable log display during test runs
 # See: https://docs.pytest.org/en/latest/how-to/logging.html#live-logs
 log_cli = true
