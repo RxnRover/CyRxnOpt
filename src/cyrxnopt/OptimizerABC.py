@@ -1,7 +1,11 @@
+import logging
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional
 
 from cyrxnopt.NestedVenv import NestedVenv
+
+logger = logging.getLogger(__name__)
 
 
 class OptimizerABC(ABC):
@@ -11,20 +15,20 @@ class OptimizerABC(ABC):
 
     # Private static data member to list dependency packages required
     # by this class. This should be overwritten in children.
-    _packages = []
+    _packages: List[str] = []
 
-    def __init__(self, venv: NestedVenv = None) -> None:
+    def __init__(self, venv: NestedVenv) -> None:
         """Instantiates general Optimizer properties.
 
-        :param venv: Virtual environment manager to use, defaults to None
-        :type venv: cyrxnopt.NestedVenv, optional
+        :param venv: Virtual environment manager to use
+        :type venv: cyrxnopt.NestedVenv
         """
 
-        self._imports = {}  # Populated in self._import_deps()
+        self._imports: Dict[str, Any] = {}  # Populated in self._import_deps()
         self.__venv = venv
 
-    def check_install(self):
-        """Check if the installation for this optimizer exists or not.
+    def check_install(self) -> bool:
+        """Check if an installation for this optimizer exists or not.
 
         :return: Whether the optimizer is installed (True) or not (False).
         :rtype: bool
@@ -37,36 +41,36 @@ class OptimizerABC(ABC):
             self._import_deps()
         except ModuleNotFoundError as e:
             # Printing the exception so the user knows what went wrong
-            print(e)
+            logger.error(e)
             return False
 
         return True
 
     def install(self, local_paths: Dict[str, str] = {}) -> None:
-        """Install the dependencies required for this optimizer class.
+        """Install the optimizer and its dependencies.
 
-        The list of packages to be installed can be checked with
+        The list of packages to be installed can be checked with the
+        ``OptimizerABC.dependencies`` property.
 
-        .. code-block:: python
-
-           print(OptimizerNMSimplex.dependencies)
-
-        :param local_paths: Local paths to the packages to be installed,
-                            defaults to {}
+        :param local_paths: Mapping of package names to local paths to the
+            packages to be installed. The package names in the mapping must
+            match a name returned by ``OptimizerABC.dependencies``.
+            Defaults to {}
         :type local_paths: Dict[str, str], optional
         """
 
-        self.__venv.deactivate()
+        logger.info("Installing {}...".format(self.__class__.__name__))
+
+        if not self.__venv.is_active():
+            self.__venv.activate()
 
         # Install each package
         for package in self._packages:
             # Install from local path if one is given
             if package in local_paths.keys():
-                self.__venv.pip_install_e(local_paths[package])
+                self.__venv.pip_install_e(Path(local_paths[package]))
             else:
                 self.__venv.pip_install(package)
-
-        self.__venv.activate()
 
         # Import the packages after they were installed
         self._import_deps()
@@ -80,7 +84,7 @@ class OptimizerABC(ABC):
         dictionaries with three keys, "name", "type", and "value":
 
         - "name" will contain the name for the config option in snake_case,
-          with "continuous_" or "categorical_" prepended to the name if two
+          with "continuous" or "categorical" prepended to the name if two
           versions of the option are needed for continuous and categorical
           variables.
         - "type" will contain the Python type annotation describing the type
@@ -115,14 +119,14 @@ class OptimizerABC(ABC):
         pass
 
     @abstractmethod
-    def set_config(self, experiment_dir: str, config: Dict[str, Any]):
+    def set_config(self, experiment_dir: str, config: Dict[str, Any]) -> None:
         """This abstract method should be included function calls required for
         genereting initial configurations and files for optimizer.
 
         The key for each option must match the corresponding "name" field
         and the value type must match the one assigned in the "type" field
-        from `get_config()`. Options prefixed with "continuous_" or
-        "categorical_" should be stored as the name with the prefix removed
+        from ``get_config()``. Options prefixed with "continuous" or
+        "categorical" should be stored as the name with the prefix removed
         under either the "continuous" or "categorical" key. For example,
         the "continuous_feature_names" config option should be stored in a
         ``config`` dict as ``config["continuous"]["feature_names"]``.
@@ -141,39 +145,71 @@ class OptimizerABC(ABC):
         prev_param: List[Any],
         yield_value: float,
         experiment_dir: str,
-    ):
-        """This abstract method should be overide with actual training function
-        calls.
+        config: Dict[str, Any],
+        obj_func: Optional[Callable] = None,
+    ) -> List[Any]:
+        """Abstract optimizer training function.
 
         :param prev_param: experimental parameter combination for previous
                            experiment
-        :type prev_param: list[any]
+        :type prev_param: List[Any]
         :param yield_value: experimental yield
         :type yield_value: float
         :param experiment_dir: experimental directory for saving data files
         :type experiment_dir: str
+        :param config: Optimizer config
+        :type config: Dict[str, Any]
+        :param obj_func: Objective function to optimize.
+        :type obj_func: Optional[Callable]
+
+        :returns: The next suggested reaction to perform
+        :rtype: List[Any]
         """
 
         pass
 
     @abstractmethod
     def predict(
-        self, prev_param: List[Any], yield_value: float, experiment_dir: str
-    ):
-        """This abstract method should be overide with actual predict function
-        calls.
-        :param prev_param: experimental parameter combination for previous
-                           experiment
-        :type prev_param: list[any]
-        :param yield_value: experimental yield
+        self,
+        prev_param: List[Any],
+        yield_value: float,
+        experiment_dir: str,
+        config: Dict[str, Any],
+        obj_func: Optional[Callable] = None,
+    ) -> List[Any]:
+        """Abstract optimizer prediction function.
+
+        :param prev_param: Previous suggested reaction conditions
+        :type prev_param: List[Any]
+        :param yield_value: Yield value from previous reaction conditions
         :type yield_value: float
-        :param experiment_dir: experimental directory for saving data files
+        :param experiment_dir: Output directory for the current experiment
         :type experiment_dir: str
+        :param config: Optimizer configuration
+        :type config: Dict[str, Any]
+        :param obj_func: Objective function to optimize, defaults to None
+        :type obj_func: Optional[Callable], optional
+
+        :returns: The next suggested conditions to perform
+        :rtype: List[Any]
         """
 
         pass
 
-    def _validate_config(self, config):
+    @abstractmethod
+    def _import_deps(self) -> None:
+        """Imports required dependencies for the optimizer"""
+
+        pass
+
+    def _validate_config(self, config: Dict[str, Any]) -> None:
+        """Verifies that an optimizer configuration is valid.
+
+        :param config: Optimizer configuration to check
+        :type config: Dict[str, Any]
+        :raises RuntimeError: Invalid optimizer configuration
+        """
+
         # Make sure that feature names are provided
         if (
             "continuous_feature_names" not in config
@@ -225,10 +261,9 @@ class OptimizerABC(ABC):
 
     @property
     def dependencies(self) -> List[str]:
-        """This is a static property to print the dependencies required
-        by this class.
+        """Dependencies required by this optimizer.
 
-        :return: List of dependency package names
+        :return: Dependency package names
         :rtype: List[str]
         """
 
