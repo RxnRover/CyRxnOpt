@@ -324,7 +324,7 @@ class TestNestedVenv(unittest.TestCase):
             venv2.check_package("numpy", "{}.0".format(numpy_version_2))
         )
 
-        import numpy
+        import numpy  # type: ignore
 
         self.assertEqual(numpy.__version__, "{}.0".format(numpy_version_2))
 
