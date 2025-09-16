@@ -46,11 +46,11 @@ class NestedVenv(venv.EnvBuilder):
         :raises RuntimeError: The virtual environment does not exist.
         """
 
-        logger.info("Activating venv: {}".format(self.prefix))
+        logger.info("Activating virtual environment at: {}".format(self.prefix))
 
         # Return early if already active
         if self.is_active():
-            logger.info("Venv already active.")
+            logger.debug("Venv already active.")
             return
 
         if self.prefix.exists():
@@ -83,8 +83,6 @@ class NestedVenv(venv.EnvBuilder):
 
         os.environ["PATH"] = ":".join([str(p.resolve()) for p in env_path])
 
-        logger.info("Venv activated.")
-
     def create(self, env_dir: Any = "") -> None:
         """Creates the virtual environment at the given location.
 
@@ -103,7 +101,7 @@ class NestedVenv(venv.EnvBuilder):
             )
             prefix = self.prefix
 
-        logger.info("Creating venv: {}".format(self.prefix))
+        logger.info("Creating virtual environment at: {}".format(self.prefix))
 
         return super().create(prefix)
 
@@ -112,11 +110,13 @@ class NestedVenv(venv.EnvBuilder):
         primary virtual environment.
         """
 
-        logger.info("Deactivating venv: {}".format(self.prefix))
+        logger.info(
+            "Deactivating virtual environment at: {}".format(self.prefix)
+        )
 
         # Do nothing if the virtual environment is not active
         if not self.is_active():
-            logger.info("Venv not active.")
+            logger.debug("Venv is not active.")
             return
 
         env_path = [Path(p) for p in os.environ["PATH"].split(":")]
@@ -164,17 +164,13 @@ class NestedVenv(venv.EnvBuilder):
                 )
                 continue
 
-        logger.info("Venv deactivated.")
-
     def delete(self) -> None:
-        logger.info("Deleting venv: {}".format(self.prefix))
+        logger.info("Deleting virtual environment at: {}".format(self.prefix))
 
         self.deactivate()
 
         if self.prefix.exists():
             shutil.rmtree(self.prefix)
-
-        logger.info("Venv deleted.")
 
     def is_active(self) -> bool:
         """Checks if the virtual environment is active or not.
@@ -189,12 +185,6 @@ class NestedVenv(venv.EnvBuilder):
         env_path = [Path(p) for p in os.environ["PATH"].split(":")]
 
         is_active = self.binary_directory in env_path
-
-        logger.debug(
-            "Venv at {} is currently {}.".format(
-                self.prefix, "active" if is_active else "not active"
-            )
-        )
 
         return is_active
 
@@ -217,12 +207,6 @@ class NestedVenv(venv.EnvBuilder):
         env_path = [Path(p) for p in os.environ["PATH"].split(":")]
 
         is_primary = env_path[0].resolve() == self.binary_directory
-
-        logger.debug(
-            "Venv at {} is currently {}.".format(
-                self.prefix, "primary" if is_primary else "not primary"
-            )
-        )
 
         return is_primary
 
@@ -295,19 +279,21 @@ class NestedVenv(venv.EnvBuilder):
             cmd.append(package)
             cmd.append("--upgrade")
 
+            logging.debug("Running command: {}".format(cmd))
+
             completed_process = subprocess.run(
                 cmd,
                 capture_output=True,  # Capture stdout and stderr
                 encoding="utf-8",  # Dencode the stdout and stderr bytestrings
             )
 
-            # Raises CalledProcessError if the return code is non-zero
             try:
+                # Raises CalledProcessError if the return code is non-zero
                 completed_process.check_returncode()
             except CalledProcessError as e:
-                logger.info("Return code nonzero: {}".format(e))
-                logger.info("stdout: {}".format(completed_process.stdout))
-                logger.info("stderr: {}".format(completed_process.stderr))
+                logger.debug("Return code nonzero: {}".format(e))
+                logger.debug("stdout: {}".format(completed_process.stdout))
+                logger.debug("stderr: {}".format(completed_process.stderr))
 
     def pip_install_e(self, package_path: Path, package_name: str = "") -> None:
         """Install a package to the active virtual environment using
