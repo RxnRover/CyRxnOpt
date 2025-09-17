@@ -8,7 +8,7 @@ from cyrxnopt.NestedVenv import NestedVenv
 
 class TestNestedVenv(unittest.TestCase):
     def setUp(self) -> None:
-        self.parent_venv_path = Path("tmp")
+        self.parent_venv_path = Path("tests/tmp")
         self.venv_path = self.parent_venv_path / "test_venv_"
 
         # Append the test ID so each venv is separate
