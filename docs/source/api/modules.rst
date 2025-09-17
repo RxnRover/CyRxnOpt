@@ -1,7 +1,7 @@
-pyoptimizer_backend
-===================
+cyrxnopt
+========
 
 .. toctree::
-   :maxdepth: 4
+    :maxdepth: 4
 
-   pyoptimizer_backend
+    cyrxnopt
