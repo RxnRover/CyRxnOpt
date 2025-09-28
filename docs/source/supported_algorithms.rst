@@ -9,10 +9,10 @@ These algorithms enable efficient exploration of reaction condition landscapes,
 balance local and global search strategies, and facilitate multi-objective
 decision-making.
 
-Nelder-Mead Simplex (NMSimplex)
--------------------------------
+Nelder-Mead Simplex
+-------------------
 
-The Nelder-Mead simplex method is a **derivative-free, local optimization algorithm**
+The Nelder-Mead Simplex method is a **derivative-free, local optimization algorithm**
 widely used for smooth, low-dimensional problems. It iteratively refines a simplex
 (a polytope with n+1 vertices in n-dimensional space) through reflection, expansion,
 contraction, and shrink steps to approach a local minimum. While efficient for
@@ -23,10 +23,11 @@ unimodal surfaces, it may converge to local rather than global optima.
 - Nelder, J. A.; Mead, R. *A Simplex Method for Function Minimization. The Computer
 Journal 1965, 7, 308-313, DOI: 10.1093/comjnl/7.4.308.683
 
-SNOBFit (SQSNOBFit)
-------------------------------------------
+SQSnobFit
+---------
 
-SNOBFit (Stable Noisy Optimization by Branch and Fit) is a **global optimization algorithm**
+SQSnobFit is a Python implementation of Huyer and Neumaier's SNOBFIT (Stable Noisy Optimization by Branch and Fit) algorithm by scikit-quant.
+SNOBFIT is a **global optimization algorithm**
 particularly well-suited for expensive, noisy black-box functions. It combines local
 quadratic model fitting with global space-partitioning to balance **exploration and exploitation**.
 
@@ -36,11 +37,11 @@ quadratic model fitting with global space-partitioning to balance **exploration 
 and Fit. ACM Transactions on Mathematical Software 2008, 35, 1-25, DOI:
 10.1145/1377612.1377613.
 
-EDBO+ (Bayesian Optimization)
------------------------------
+EDBO+
+-----
 
 EDBO+ is an **open-source, Bayesian optimization framework** specifically designed for
-chemical reaction optimization. It leverages Gaussian process models with acquisition
+chemical reaction optimization based on the original EDBO (Experimental Design via Bayesian Optimization) algorithm from the Doyle group. It leverages Gaussian process models with acquisition
 functions (e.g., Expected Improvement, qEI, and EHVI for multi-objective settings) to
 identify new experiments that are most informative. EDBO+ has been successfully applied
 to multi-objective optimization of reaction yields, selectivity, and sustainability metrics.
@@ -53,10 +54,10 @@ to multi-objective optimization of reaction yields, selectivity, and sustainabil
 - Nambiar, A. M.; Doyle, A. G. *EDBO+: Enhanced Bayesian Optimization for Multi-Objective
   Reaction Optimization.* J. Chem. Inf. Model., 2022, 62, 4274-4283.
 
-AMLRO (Active Machine Learning Reaction Optimizer)
---------------------------------------------------
+AMLRO
+-----
 
-AMLRO is our **in-house active learning framework** designed for ** reaction
+AMLRO (Active Machine Learning Reaction Optimizer) is our **in-house active learning framework** designed for **reaction
 space optimization**. It integrates regression models with iterative candidate selection. AMLRO is capable of handling
 **continuous and categorical features**, dynamic objectives with directions (minimization
 or maximization), and user feedback loops.
