@@ -22,9 +22,9 @@ rather than global optima.
 References
 ~~~~~~~~~~
 
-.. [Nelder1965] Nelder, J. A.; Mead, R. *A Simplex Method for Function
-    Minimization*. The Computer Journal 1965, 7, 308-313, DOI:
-    10.1093/comjnl/7.4.308.683
+.. [nelder1965] Nelder, J. A.; Mead, R. A Simplex Method for Function
+    Minimization. *The Computer Journal* **1965**, *7* (4), 308--313. DOI:
+    `10.1093/comjnl/7.4.308 <https://doi.org/10.1093/comjnl/7.4.308>`__.
 
 SQSnobFit
 ---------
@@ -39,9 +39,10 @@ local quadratic model fitting with global space-partitioning to balance
 References
 ~~~~~~~~~~
 
-.. [Huyer2008] Huyer, W.; Neumaier, A. *SNOBFIT - Stable Noisy Optimization by
-    Branch and Fit*. ACM Transactions on Mathematical Software 2008, 35, 1-25,
-    DOI: 10.1145/1377612.1377613.
+.. [huyer2008] Huyer, W.; Neumaier, A. SNOBFIT -- Stable Noisy Optimization by
+    Branch and Fit. *ACM Transactions on Mathematical Software* **2008**, *35*
+    (2), 1--25. DOI: `10.1145/1377612.1377613
+    <https://doi.org/10.1145/1377612.1377613>`__.
 
 EDBO+
 -----
@@ -58,19 +59,17 @@ yields, selectivity, and sustainability metrics.
 References
 ~~~~~~~~~~
 
-.. [Shields2021] Shields, B. J.; Stevens, J.; Li, J.; Parasram, M.; Damani, F.;
-    Janey, J.; Adams, R. P.; Doyle, A. G. *Bayesian Reaction Optimization as a
-    Tool for Chemical Synthesis*. Nature, 2021, 590, 89-96.
+.. [shields2021] Shields, B. J.; Stevens, J.; Li, J.; Parasram, M.; Damani, F.;
+    Alvarado, J. I. M.; Janey, J. M.; Adams, R. P.; Doyle, A. G. Bayesian
+    Reaction Optimization as a Tool for Chemical Synthesis. *Nature* **2021**,
+    *590* (7844), 89--96. DOI: `10.1038/s41586-021-03213-y
+    <https://doi.org/10.1038/s41586-021-03213-y>`__.
 
-.. [GarridoTorres2022] Garrido Torres, J. A.; Lau, S. H.; Anchuri, P.; Stevens,
+.. [garridotorres2022] Garrido Torres, J. A.; Lau, S. H.; Anchuri, P.; Stevens,
     J. M.; Tabora, J. E.; Li, J.; Borovika, A.; Adams, R. P.; Doyle, A. G. A
     Multi-Objective Active Learning Platform and Web App for Reaction
-    Optimization. J. Am. Chem. Soc. 2022, 144 (43), 19999-20007. DOI:
-    10.1021/jacs.2c08592.
-
-.. [Nambiar2022] Nambiar, A. M.; Doyle, A. G. *EDBO+: Enhanced Bayesian
-    Optimization for Multi-Objective Reaction Optimization*. J. Chem. Inf.
-    Model., 2022, 62, 4274-4283.
+    Optimization. *J. Am. Chem. Soc.* **2022**, *144* (43), 19999--20007. DOI:
+    `10.1021/jacs.2c08592 <https://doi.org/10.1021/jacs.2c08592>`__.
 
 AMLRO
 -----
@@ -87,4 +86,4 @@ with directions (minimization or maximization), and user feedback loops.
 References
 ~~~~~~~~~~
 
-.. [AMLRO] Manuscript in preparation.
+.. [amlro] Manuscript in preparation.
