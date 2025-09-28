@@ -31,12 +31,12 @@ References
 SQSnobFit
 ---------
 
-SQSnobFit [sqsnobfit]_ is a Python implementation by scikit-quant of Huyer and
-Neumaier's original SNOBFIT (Stable Noisy Optimization by Branch and Fit)
-algorithm. [huyer2008]_ SNOBFIT is a **global optimization algorithm**
-particularly well-suited for expensive, noisy black-box functions. It combines
-local quadratic model fitting with global space-partitioning to balance
-**exploration and exploitation**.
+`SQSnobFit <https://pypi.org/project/SQSnobFit/>`__ is scikit-quant's Python
+implementation of Huyer and Neumaier's original SNOBFIT (Stable Noisy
+Optimization by Branch and Fit) algorithm. [huyer2008]_ SNOBFIT is a **global
+optimization algorithm** particularly well-suited for expensive, noisy black-box
+functions. It combines local quadratic model fitting with global
+space-partitioning to balance **exploration and exploitation**.
 
 References
 ~~~~~~~~~~
