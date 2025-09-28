@@ -10,6 +10,7 @@ Contents
     :maxdepth: 1
 
     Overview <overview/index>
+    Supported Algorithms <supported_algorithms>
     Contributions & Help <contributing>
     Module Reference <api/modules>
     developer/index
