@@ -11,12 +11,15 @@ and global search strategies, and single- or multi-objective decision-making.
 Nelder-Mead Simplex
 -------------------
 
-The Nelder-Mead Simplex method [nelder1965]_ is a **derivative-free, local
-optimization algorithm** widely used for smooth, low-dimensional problems. It
-iteratively refines a simplex (a polytope with n+1 vertices in n-dimensional
-space) through reflection, expansion, contraction, and shrink steps to approach
-a local minimum. While efficient for unimodal surfaces, it may converge to local
-rather than global optima.
+CyRxnOpt uses `Scipy's implementation
+<https://docs.scipy.org/doc/scipy/reference/optimize.minimize-neldermead.html>`__
+of the Nelder-Mead Simpex method (NMSIM). [nelder1965]_ NMSIM is a
+**derivative-free, local optimization algorithm** widely used for smooth,
+low-dimensional problems. It iteratively refines a simplex (a polytope with n+1
+vertices in n-dimensional space) through reflection, expansion, contraction, and
+shrink steps to approach a local minimum. While efficient for surfaces or
+regions with a single optimum, noisy surfaces or those with many local optima
+may converge to a local optimum rather than the desired global solution.
 
 References
 ~~~~~~~~~~
