@@ -1,3 +1,5 @@
+.. _supported-algorithms:
+
 Supported Algorithms
 ====================
 
