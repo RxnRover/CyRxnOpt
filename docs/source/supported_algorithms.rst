@@ -11,7 +11,7 @@ and global search strategies, and single- or multi-objective decision-making.
 Nelder-Mead Simplex
 -------------------
 
-CyRxnOpt uses `Scipy's implementation
+CyRxnOpt uses `Scipy's Python implementation
 <https://docs.scipy.org/doc/scipy/reference/optimize.minimize-neldermead.html>`__
 of the Nelder-Mead Simpex method (NMSIM). [nelder1965]_ NMSIM is a
 **derivative-free, local optimization algorithm** widely used for smooth,
