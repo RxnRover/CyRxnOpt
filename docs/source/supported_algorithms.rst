@@ -3,11 +3,10 @@
 Supported Algorithms
 ====================
 
-Our platform supports a variety of state-of-the-art optimization algorithms,
-ranging from classical methods to modern machine learning-driven approaches.
-These algorithms enable efficient exploration of reaction condition landscapes,
-balance local and global search strategies, and facilitate multi-objective
-decision-making.
+CyRxnOpt supports a variety of state-of-the-art optimization algorithms, ranging
+from traditional methods to modern machine learning-driven approaches. These
+algorithms enable efficient exploration of reaction condition landscapes, local
+and global search strategies, and single- or multi-objective decision-making.
 
 Nelder-Mead Simplex
 -------------------
