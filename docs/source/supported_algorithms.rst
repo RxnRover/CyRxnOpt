@@ -49,14 +49,14 @@ References
 EDBO+
 -----
 
-EDBO+ [garridotorres2022]_ is an **open-source, Bayesian optimization
-framework** specifically designed for chemical reaction optimization based on
-the original EDBO (Experimental Design via Bayesian Optimization) algorithm
-[shields2021]_ from the Doyle group. It leverages Gaussian process models with
-acquisition functions (e.g., Expected Improvement, qEI, and EHVI for
-multi-objective settings) to identify new experiments that are most informative.
-EDBO+ has been successfully applied to multi-objective optimization of reaction
-yields, selectivity, and sustainability metrics.
+EDBO+ [garridotorres2022]_ is a **Bayesian optimization** framework specifically
+designed for chemical reaction optimization based on the original EDBO
+(Experimental Design via Bayesian Optimization) algorithm [shields2021]_ from
+the Doyle group. It leverages Gaussian process models with acquisition functions
+(e.g., Expected Improvement, qEI, and EHVI for multi-objective settings) to
+identify new experiments that are most informative. EDBO+ has been successfully
+applied to **global, multi-objective optimization** of reaction yields,
+selectivity, and sustainability metrics.
 
 References
 ~~~~~~~~~~
