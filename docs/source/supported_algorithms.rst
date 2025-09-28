@@ -46,14 +46,14 @@ References
 EDBO+
 -----
 
-EDBO+ [nambiar2022]_ is an **open-source, Bayesian optimization framework**
-specifically designed for chemical reaction optimization based on the original
-EDBO (Experimental Design via Bayesian Optimization) algorithm [shields2021]_
-from the Doyle group. It leverages Gaussian process models with acquisition
-functions (e.g., Expected Improvement, qEI, and EHVI for multi-objective
-settings) to identify new experiments that are most informative. EDBO+ has been
-successfully applied to multi-objective optimization of reaction yields,
-selectivity, and sustainability metrics.
+EDBO+ [garridotorres2022]_ is an **open-source, Bayesian optimization
+framework** specifically designed for chemical reaction optimization based on
+the original EDBO (Experimental Design via Bayesian Optimization) algorithm
+[shields2021]_ from the Doyle group. It leverages Gaussian process models with
+acquisition functions (e.g., Expected Improvement, qEI, and EHVI for
+multi-objective settings) to identify new experiments that are most informative.
+EDBO+ has been successfully applied to multi-objective optimization of reaction
+yields, selectivity, and sustainability metrics.
 
 References
 ~~~~~~~~~~
@@ -61,6 +61,12 @@ References
 .. [Shields2021] Shields, B. J.; Stevens, J.; Li, J.; Parasram, M.; Damani, F.;
     Janey, J.; Adams, R. P.; Doyle, A. G. *Bayesian Reaction Optimization as a
     Tool for Chemical Synthesis*. Nature, 2021, 590, 89-96.
+
+.. [GarridoTorres2022] Garrido Torres, J. A.; Lau, S. H.; Anchuri, P.; Stevens,
+    J. M.; Tabora, J. E.; Li, J.; Borovika, A.; Adams, R. P.; Doyle, A. G. A
+    Multi-Objective Active Learning Platform and Web App for Reaction
+    Optimization. J. Am. Chem. Soc. 2022, 144 (43), 19999-20007. DOI:
+    10.1021/jacs.2c08592.
 
 .. [Nambiar2022] Nambiar, A. M.; Doyle, A. G. *EDBO+: Enhanced Bayesian
     Optimization for Multi-Objective Reaction Optimization*. J. Chem. Inf.
