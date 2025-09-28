@@ -2,15 +2,15 @@ Supported Algorithms
 ====================
 
 Our platform supports a variety of state-of-the-art optimization algorithms,
-ranging from classical methods to modern machine learning–driven approaches.
+ranging from classical methods to modern machine learning-driven approaches.
 These algorithms enable efficient exploration of reaction condition landscapes,
 balance local and global search strategies, and facilitate multi-objective
 decision-making.
 
-Nelder–Mead Simplex (NMSimplex)
+Nelder-Mead Simplex (NMSimplex)
 -------------------------------
 
-The Nelder–Mead simplex method is a **derivative-free, local optimization algorithm**
+The Nelder-Mead simplex method is a **derivative-free, local optimization algorithm**
 widely used for smooth, low-dimensional problems. It iteratively refines a simplex
 (a polytope with n+1 vertices in n-dimensional space) through reflection, expansion,
 contraction, and shrink steps to approach a local minimum. While efficient for
@@ -19,7 +19,7 @@ unimodal surfaces, it may converge to local rather than global optima.
 **Reference:**
 
 - Nelder, J. A.; Mead, R. *A Simplex Method for Function Minimization. The Computer
-Journal 1965, 7, 308–313, DOI: 10.1093/comjnl/7.4.308.683
+Journal 1965, 7, 308-313, DOI: 10.1093/comjnl/7.4.308.683
 
 SNOBFit (SQSNOBFit)
 ------------------------------------------
@@ -30,8 +30,8 @@ quadratic model fitting with global space-partitioning to balance **exploration 
 
 **References:**
 
-- Huyer, W.; Neumaier, A. *SNOBFIT – Stable Noisy Optimization by Branch
-and Fit. ACM Transactions on Mathematical Software 2008, 35, 1–25, DOI:
+- Huyer, W.; Neumaier, A. *SNOBFIT - Stable Noisy Optimization by Branch
+and Fit. ACM Transactions on Mathematical Software 2008, 35, 1-25, DOI:
 10.1145/1377612.1377613.
 
 EDBO+ (Bayesian Optimization)
@@ -47,9 +47,9 @@ to multi-objective optimization of reaction yields, selectivity, and sustainabil
 
 - Shields, B. J.; Stevens, J.; Li, J.; Parasram, M.; Damani, F.; Janey, J.; Adams, R. P.;
   Doyle, A. G. *Bayesian Reaction Optimization as a Tool for Chemical Synthesis.*
-  Nature, 2021, 590, 89–96.
+  Nature, 2021, 590, 89-96.
 - Nambiar, A. M.; Doyle, A. G. *EDBO+: Enhanced Bayesian Optimization for Multi-Objective
-  Reaction Optimization.* J. Chem. Inf. Model., 2022, 62, 4274–4283.
+  Reaction Optimization.* J. Chem. Inf. Model., 2022, 62, 4274-4283.
 
 AMLRO (Active Machine Learning Reaction Optimizer)
 --------------------------------------------------
