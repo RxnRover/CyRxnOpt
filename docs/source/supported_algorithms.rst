@@ -11,6 +11,54 @@ and global search strategies, and single- or multi-objective decision-making.
 Below are sections briefly describing each supported algorithm, along with the
 :term:`CyRxnOpt ID` associated with each method in CyRxnOpt.
 
+AMLRO
+-----
+
+:term:`CyRxnOpt ID`: ``amlro``
+
+AMLRO (Active Machine Learning Reaction Optimizer) is our **in-house active
+learning framework** designed for **reaction space optimization**. [amlro]_ It
+integrates regression models with iterative candidate selection. AMLRO is
+capable of handling **continuous and categorical features**, dynamic objectives
+with directions (minimization or maximization), and user feedback loops.
+
+- **Status:** Source code is currently under development. Public release is
+  planned, and the project will be hosted on GitHub (expected link: *TBA*).
+
+References
+~~~~~~~~~~
+
+.. [amlro] Manuscript in preparation.
+
+EDBO+
+-----
+
+:term:`CyRxnOpt ID`: ``edbop``
+
+EDBO+ [garridotorres2022]_ is a **Bayesian optimization** framework specifically
+designed for chemical reaction optimization based on the original EDBO
+(Experimental Design via Bayesian Optimization) algorithm [shields2021]_ from
+the Doyle group. It leverages Gaussian process models with acquisition functions
+(e.g., Expected Improvement, qEI, and EHVI for multi-objective settings) to
+identify new experiments that are most informative. EDBO+ has been successfully
+applied to **global, multi-objective optimization** of reaction yields,
+selectivity, and sustainability metrics.
+
+References
+~~~~~~~~~~
+
+.. [shields2021] Shields, B. J.; Stevens, J.; Li, J.; Parasram, M.; Damani, F.;
+    Alvarado, J. I. M.; Janey, J. M.; Adams, R. P.; Doyle, A. G. Bayesian
+    Reaction Optimization as a Tool for Chemical Synthesis. *Nature* **2021**,
+    *590* (7844), 89--96. DOI: `10.1038/s41586-021-03213-y
+    <https://doi.org/10.1038/s41586-021-03213-y>`__.
+
+.. [garridotorres2022] Garrido Torres, J. A.; Lau, S. H.; Anchuri, P.; Stevens,
+    J. M.; Tabora, J. E.; Li, J.; Borovika, A.; Adams, R. P.; Doyle, A. G. A
+    Multi-Objective Active Learning Platform and Web App for Reaction
+    Optimization. *J. Am. Chem. Soc.* **2022**, *144* (43), 19999--20007. DOI:
+    `10.1021/jacs.2c08592 <https://doi.org/10.1021/jacs.2c08592>`__.
+
 Nelder-Mead Simplex
 -------------------
 
@@ -52,51 +100,3 @@ References
     Branch and Fit. *ACM Transactions on Mathematical Software* **2008**, *35*
     (2), 1--25. DOI: `10.1145/1377612.1377613
     <https://doi.org/10.1145/1377612.1377613>`__.
-
-EDBO+
------
-
-:term:`CyRxnOpt ID`: ``edbop``
-
-EDBO+ [garridotorres2022]_ is a **Bayesian optimization** framework specifically
-designed for chemical reaction optimization based on the original EDBO
-(Experimental Design via Bayesian Optimization) algorithm [shields2021]_ from
-the Doyle group. It leverages Gaussian process models with acquisition functions
-(e.g., Expected Improvement, qEI, and EHVI for multi-objective settings) to
-identify new experiments that are most informative. EDBO+ has been successfully
-applied to **global, multi-objective optimization** of reaction yields,
-selectivity, and sustainability metrics.
-
-References
-~~~~~~~~~~
-
-.. [shields2021] Shields, B. J.; Stevens, J.; Li, J.; Parasram, M.; Damani, F.;
-    Alvarado, J. I. M.; Janey, J. M.; Adams, R. P.; Doyle, A. G. Bayesian
-    Reaction Optimization as a Tool for Chemical Synthesis. *Nature* **2021**,
-    *590* (7844), 89--96. DOI: `10.1038/s41586-021-03213-y
-    <https://doi.org/10.1038/s41586-021-03213-y>`__.
-
-.. [garridotorres2022] Garrido Torres, J. A.; Lau, S. H.; Anchuri, P.; Stevens,
-    J. M.; Tabora, J. E.; Li, J.; Borovika, A.; Adams, R. P.; Doyle, A. G. A
-    Multi-Objective Active Learning Platform and Web App for Reaction
-    Optimization. *J. Am. Chem. Soc.* **2022**, *144* (43), 19999--20007. DOI:
-    `10.1021/jacs.2c08592 <https://doi.org/10.1021/jacs.2c08592>`__.
-
-AMLRO
------
-
-:term:`CyRxnOpt ID`: ``amlro``
-
-AMLRO (Active Machine Learning Reaction Optimizer) is our **in-house active
-learning framework** designed for **reaction space optimization**. [amlro]_ It
-integrates regression models with iterative candidate selection. AMLRO is
-capable of handling **continuous and categorical features**, dynamic objectives
-with directions (minimization or maximization), and user feedback loops.
-
-- **Status:** Source code is currently under development. Public release is
-  planned, and the project will be hosted on GitHub (expected link: *TBA*).
-
-References
-~~~~~~~~~~
-
-.. [amlro] Manuscript in preparation.
