@@ -8,6 +8,9 @@ from traditional methods to modern machine learning-driven approaches. These
 algorithms enable efficient exploration of reaction condition landscapes, local
 and global search strategies, and single- or multi-objective decision-making.
 
+Below are sections briefly describing each supported algorithm, along with the
+:term:`CyRxnOpt ID` associated with each method in CyRxnOpt.
+
 Nelder-Mead Simplex
 -------------------
 
