@@ -11,6 +11,8 @@ and global search strategies, and single- or multi-objective decision-making.
 Nelder-Mead Simplex
 -------------------
 
+:term:`CyRxnOpt ID`: ``nmsimplex``
+
 CyRxnOpt uses `Scipy's Python implementation
 <https://docs.scipy.org/doc/scipy/reference/optimize.minimize-neldermead.html>`__
 of the Nelder-Mead Simpex method (NMSIM). [nelder1965]_ NMSIM is a
@@ -31,6 +33,8 @@ References
 SQSnobFit
 ---------
 
+:term:`CyRxnOpt ID`: ``sqsnobfit``
+
 `SQSnobFit <https://pypi.org/project/SQSnobFit/>`__ is scikit-quant's Python
 implementation of Huyer and Neumaier's original SNOBFIT (Stable Noisy
 Optimization by Branch and Fit) algorithm. [huyer2008]_ SNOBFIT is a **global
@@ -48,6 +52,8 @@ References
 
 EDBO+
 -----
+
+:term:`CyRxnOpt ID`: ``edbop``
 
 EDBO+ [garridotorres2022]_ is a **Bayesian optimization** framework specifically
 designed for chemical reaction optimization based on the original EDBO
@@ -75,6 +81,8 @@ References
 
 AMLRO
 -----
+
+:term:`CyRxnOpt ID`: ``amlro``
 
 AMLRO (Active Machine Learning Reaction Optimizer) is our **in-house active
 learning framework** designed for **reaction space optimization**. [amlro]_ It
