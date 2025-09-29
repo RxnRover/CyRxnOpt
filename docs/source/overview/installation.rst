@@ -7,7 +7,7 @@
 To utilize the CyRxnOpt Library, follow the steps below for
 installation:
 
-#. **Clone the repository:**
+#. Clone the repository:
 
    .. code-block:: bash
 
