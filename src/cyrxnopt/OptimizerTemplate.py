@@ -1,9 +1,15 @@
+import os
+from typing import Any, Dict, List
+
+from cyrxnopt.NestedVenv import NestedVenv
+from cyrxnopt.OptimizerABC import OptimizerABC
+
 class OptimizerTemplate(OptimizerABC):
     
-    __packages = ["Packages"]
+    __packages = ["package"]
 
     def __init__(self, venv: VenvManager = None) -> None:
-        """This code will initialize your optimizer class .
+        """This code will initialize your optimizer class.
 
         :param venv: Virtual environment manager to use, defaults to None
         :type venv: cyrxnopt.NestedVenv, optional
@@ -11,27 +17,6 @@ class OptimizerTemplate(OptimizerABC):
         
         self._imports = {}  # Populated in self._import_deps()
         self.__venv = venv
-
-    def check_install(self) -> bool:
-        
-        try:
-            self._import_deps()
-        except ModuleNotFoundError as e:
-            print(e)
-            return False
-
-        return True
-
-    def install(self, local_paths: Dict[str, str] = {}) -> None:
-        
-        for package in self.__packages:
-            
-            if package in local_paths:
-                self.__venv.pip_install_e(local_paths[package])
-            else:
-                self.__venv.pip_install(package)
-
-        self._import_deps()
 
     def get_config(self) -> List[Dict[str, Any]]:
         """Get the configuration options available for this optimizer.
@@ -49,11 +34,46 @@ class OptimizerTemplate(OptimizerABC):
 
         config = [
             {
-                "name": "direction",
-                "type": str,
-                "value": ["min", "max"],
+                "name": "continuous_feature_names",
+                "type": List[str],
+                "value": [],
             },
-            
+            {
+                "name": "continuous_feature_bounds",
+                "type": List[List[float]],
+                "value": [],
+            },
+            {
+                "name": "continuous_feature_resolutions",
+                "type": List[float],
+                "value": [],
+            },
+            {
+                "name": "categorical_feature_names",
+                "type": List[str],
+                "value": [],
+            },
+            {
+                "name": "categorical_feature_values",
+                "type": List[List[str]],
+                "value": [],
+            },
+            {
+                "name": "budget",
+                "type": int,
+                "value": 100,
+            },
+            {
+                "name": "objectives",
+                "type": List[str],
+                "value": ["yield"],
+            },
+            {
+                "name": "direction",
+                "type": List[str],
+                "value": ["min"],
+                "range": ["min", "max"],
+            },
         ]
 
         return config
@@ -63,8 +83,8 @@ class OptimizerTemplate(OptimizerABC):
         configuration options should be retrieved using `get_config()` before
         calling this function.
 
-        In this code block/function you need to handle all the configuration options
-        and all the code required to intialize yor algoithm will go here. For example,
+        In this code block/function, you need to handle all the configuration options
+        and include all the code required to initialize your algorithm. For example,
         reaction space generation or generation of initial files. Depending on your 
         workflow you can breakdown your code in this function.
 
@@ -83,7 +103,7 @@ class OptimizerTemplate(OptimizerABC):
         config: Dict,
         obj_func=None,
     ) -> List[Any]:
-        """generate initial training dataset needed for AMLRO model training.
+        """generate initial training dataset needed for training.
 
         If your algorithm required generate training dataset or loading training files
         this function can be used for adding those code lines.
@@ -129,16 +149,16 @@ class OptimizerTemplate(OptimizerABC):
 
 
     def _import_deps(self) -> None:
-        """Import package needed to run the optimizer.
+        """Import packages needed to run the optimizer.
         
         You need to add code lines to import all the required packages here.
-        Then create _imports dictionary to update all the packages and later use this dictionary 
+        Then add those packages to the self._imports dictionary to be used later 
         to access packages as necessary.
         
         """
 
-        from Your_Library import Your_Package
+        from YourLibrary import YourPackage
 
         self._imports = {
-            "package": Your_package
+            "package": YourPackage
         }

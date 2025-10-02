@@ -11,7 +11,7 @@
     located at: `CyRxnOpt/src/CyRxnOpt/OptimizerTemplate.py` . 
     You can download here :download:`OptimizerTemplate.py
    </../../src/cyrxnopt/OptimizerTemplate.py>`
-
+ 
 #. Change the class name to your optimizer class name, for example,
    `OptimizerName`.
 
@@ -53,9 +53,21 @@
    .. code:: python
 
       config = [
-          {"name": "continuous_feature_names", "type": List[str], "value": []},
-          {"name": "continuous_feature_bounds", "type": List[List[float]], "value": []},
-          {"name": "continuous_feature_resolutions", "type": List[float], "value": []},
+          {
+            "name": "continuous_feature_names", 
+            "type": List[str], 
+            "value": []
+            },
+          {
+            "name": "continuous_feature_bounds", 
+            "type": List[List[float]], 
+            "value": []
+            },
+          {
+            "name": "continuous_feature_resolutions", 
+            "type": List[float], 
+            "value": []
+            },
           {
               "name": "categorical_feature_names",
               "type": List[str],
