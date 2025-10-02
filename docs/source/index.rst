@@ -11,13 +11,14 @@ This is the documentation of the **cyrxnopt** package.
 .. toctree::
    :maxdepth: 1
 
-   Overview <overview/index>
-   Contributions & Help <contributing>
-   Module Reference <api/modules>
-   developer/index
-   License <license>
-   Authors <authors>
-   Glossary <glossary>
+    Overview <overview/index>
+    Supported Algorithms <supported_algorithms>
+    Contributions & Help <contributing>
+    Module Reference <api/modules>
+    developer/index
+    License <license>
+    Authors <authors>
+    Glossary <glossary>
 
 ********************
  Indices and tables
