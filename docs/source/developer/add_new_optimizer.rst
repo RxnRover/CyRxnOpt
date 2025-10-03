@@ -5,11 +5,11 @@
 #. Make a copy of `OptimizerTemplate.py` and rename it as
    `OptimizerName.py`. Make a copy of OptimizerTemplate.py and rename it 
    as OptimizerName.py, replacing Name with the name or an abbreviation
-    of your optimizer. For example, if this template was being used to 
-    add support for the optimizer, Nelder-Mead Simplex, we may rename 
-    OptimizerTemplate.py to OptimizerNMSimplex.py.The template file is 
-    located at: `CyRxnOpt/src/CyRxnOpt/OptimizerTemplate.py` . 
-    You can download here :download:`OptimizerTemplate.py
+   of your optimizer. For example, if this template was being used to 
+   add support for the optimizer, Nelder-Mead Simplex, we may rename 
+   OptimizerTemplate.py to OptimizerNMSimplex.py.The template file is 
+   located at: `CyRxnOpt/src/CyRxnOpt/OptimizerTemplate.py` . 
+   You can download here :download:`OptimizerTemplate.py
    </../../src/cyrxnopt/OptimizerTemplate.py>`
  
 #. Change the class name to your optimizer class name, for example,
