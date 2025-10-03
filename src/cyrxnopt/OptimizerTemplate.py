@@ -8,7 +8,7 @@ class OptimizerTemplate(OptimizerABC):
     
     __packages = ["package"]
 
-    def __init__(self, venv: VenvManager = None) -> None:
+    def __init__(self, venv: NestedVenv = None) -> None:
         """This code will initialize your optimizer class.
 
         :param venv: Virtual environment manager to use, defaults to None
