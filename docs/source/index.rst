@@ -15,7 +15,7 @@ This is the documentation of the **cyrxnopt** package.
     Supported Algorithms <supported_algorithms>
     Contributions & Help <contributing>
     Module Reference <api/modules>
-    developer/index
+    Developer <developer/index>
     License <license>
     Authors <authors>
     Glossary <glossary>

@@ -139,7 +139,7 @@
       self._imports["np"].array()
       self._imports["pd"].DataFrame()
 
-#. #. Depending on your optimizer workflow, add more class methods as
+#. Depending on your optimizer workflow, add more class methods as
    necessary. Refer to how existing optimizer classes are defined,
    for guidance.
 
@@ -150,21 +150,21 @@
 After implementing your optimizer class, update the
 `OptimizerController.py` file to use your optimizer.
 
-#. At the top of this file, add the optimizer import line, replacing 
+1. At the top of this file, add the optimizer import line, replacing 
 `OptimizerName` with the name of your optimizer class:
 
       .. code:: python
 
          from CyRxnOpt.OptimizerName import OptimizerName
 
-#. Update the `get_optimizer()` function to include your optimizer:
+2. Update the `get_optimizer()` function to include your optimizer:
 
       .. code:: python
 
          elif optimizer_name == "name":
              optimizer = OptimizerName(venv)
 
-3. #. All the function parameters should match with the corresponding 
+3. All the function parameters should match with the corresponding 
 abstract function defined in `OptimizerABC`. If you want to add new 
 parameter for any function first add that into the optimizer controller 
 function and give default value as None. For Eexample, if your algorithm 
