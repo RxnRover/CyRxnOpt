@@ -153,16 +153,16 @@ After implementing your optimizer class, update the
 1. At the top of this file, add the optimizer import line, replacing 
 `OptimizerName` with the name of your optimizer class:
 
-      .. code:: python
+   .. code:: python
 
-         from CyRxnOpt.OptimizerName import OptimizerName
+      from CyRxnOpt.OptimizerName import OptimizerName
 
 2. Update the `get_optimizer()` function to include your optimizer:
 
-      .. code:: python
+   .. code:: python
 
-         elif optimizer_name == "name":
-             optimizer = OptimizerName(venv)
+      elif optimizer_name == "name":
+         optimizer = OptimizerName(venv)
 
 3. All the function parameters should match with the corresponding 
 abstract function defined in `OptimizerABC`. If you want to add new 
