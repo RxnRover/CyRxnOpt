@@ -10,10 +10,10 @@
       A user-provided number of :term:`optimization steps <optimization step>`
       to be attempted before abandoning the :term:`optimization cycle`.
 
-    CyRxnOpt ID
+   CyRxnOpt ID
        The *exact* identifier of an optimizer to use when an optimizer name is required when calling a CyRxnOpt function.
 
-    experiment
+   experiment
        In the context of reaction optimization, we consider an experiment to be
        one :term:`optimization cycle`.
 
