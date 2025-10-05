@@ -85,8 +85,8 @@ Creating a New Optimizer Class
 10. Depending on your optimizer workflow, add more class methods as necessary.
     Refer to how existing optimizer classes are defined, for guidance.
 
-Update Optimizer Controller
-===========================
+Adding new Optimizer to CyRxnOpt
+--------------------------------
 
 <<<<<<< HEAD
    Then, when you want to use the imported library, you can access it through the

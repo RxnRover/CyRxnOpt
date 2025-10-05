@@ -9,10 +9,10 @@ This is documentation relevant to developers of CyRxnOpt.
 
     potentially expand this introduction
 
-Contents
---------
+Tutorials
+---------
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
-    add_new_optimizer
+    tutorials/add_new_optimizer
