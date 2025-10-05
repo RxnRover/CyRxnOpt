@@ -5,4 +5,4 @@ Functions Example
 
 .. todo::
 
-   write me! ...and probably change the title
+    write me! ...and probably change the title

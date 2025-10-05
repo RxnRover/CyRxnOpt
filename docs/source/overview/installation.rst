@@ -1,40 +1,38 @@
 .. _installation:
 
-##############
- Installation
-##############
+Installation
+============
 
-To utilize the CyRxnOpt Library, follow the steps below for
-installation:
+To utilize the CyRxnOpt Library, follow the steps below for installation:
 
-#. Clone the repository:
+1. Clone the repository:
 
    .. code-block:: bash
 
-      git clone https://github.com/RxnRover/CyRxnOpt.git
+       git clone https://github.com/RxnRover/CyRxnOpt.git
 
-#. Navigate to the library directory:
-
-   .. code-block:: bash
-
-      cd CyRxnOpt
-
-#. Create a Virtual Environment:
+2. Navigate to the library directory:
 
    .. code-block:: bash
 
-      python -m venv venv
+       cd CyRxnOpt
 
-#. Activate the Virtual Environment:
-
-   .. code-block:: bash
-
-      source venv/bin/activate  # On Unix or MacOS
-      .\venv\Scripts\activate   # On Windows
-
-#. Install the Library:
+3. Create a Virtual Environment:
 
    .. code-block:: bash
 
-      pip install .
-      #pip install cyrxnopt
+       python -m venv venv
+
+4. Activate the Virtual Environment:
+
+   .. code-block:: bash
+
+       source venv/bin/activate  # On Unix or MacOS
+       .\venv\Scripts\activate   # On Windows
+
+5. Install the Library:
+
+   .. code-block:: bash
+
+       pip install .
+       #pip install cyrxnopt

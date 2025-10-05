@@ -1,8 +1,7 @@
 .. _introduction:
 
-##############
- Introduction
-##############
+Introduction
+============
 
 Optimization algorithms experience widespread application in economics,
 molecular modeling, and industrial processes. In chemistry, optimization of

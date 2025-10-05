@@ -5,4 +5,4 @@ API Example
 
 .. todo::
 
-   write me! and add API entry to glossary
+    write me! and add API entry to glossary

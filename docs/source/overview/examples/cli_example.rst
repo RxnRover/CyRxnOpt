@@ -5,4 +5,4 @@ Command Line Example
 
 .. todo::
 
-   write me!
+    write me!
