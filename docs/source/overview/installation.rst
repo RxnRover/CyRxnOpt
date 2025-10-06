@@ -3,7 +3,40 @@
 Installation
 ============
 
-To utilize the CyRxnOpt Library, follow the steps below for installation:
+To utilize the CyRxnOpt Library, follow the steps below for either pip or manual
+installation:
+
+via Pip
+-------
+
+1. If you have not already, it is recommended to use a virtual environment for
+   your project:
+
+   .. code-block:: bash
+
+       python -m venv venv
+
+2. If you created a virtual environment, activate it:
+
+   .. code-block:: bash
+
+       source venv/bin/activate  # On Unix or MacOS
+       .\venv\Scripts\activate   # On Windows
+
+3. Install the CyRxnOpt library from PyPI using ``pip``:
+
+   .. code-block:: bash
+
+       pip install cyrxnopt
+
+   .. note::
+
+       You can also add ``cyrxnopt`` to your project's dependency list in
+       ``requirements.txt``, ``pyproject.toml``, or ``setup.cfg`` for automatic
+       installation with your project.
+
+via Source Code (Manual)
+------------------------
 
 1. Clone the repository:
 
@@ -35,4 +68,3 @@ To utilize the CyRxnOpt Library, follow the steps below for installation:
    .. code-block:: bash
 
        pip install .
-       #pip install cyrxnopt
