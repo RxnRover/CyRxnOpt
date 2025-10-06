@@ -85,7 +85,7 @@ Creating a New Optimizer Class
 10. Depending on your optimizer workflow, add more class methods as necessary.
     Refer to how existing optimizer classes are defined, for guidance.
 
-Adding new Optimizer to CyRxnOpt
+Adding New Optimizer to CyRxnOpt
 --------------------------------
 
 <<<<<<< HEAD
