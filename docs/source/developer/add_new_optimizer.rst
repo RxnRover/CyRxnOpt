@@ -1,6 +1,7 @@
-################################
- Creating a New Optimizer Class
-################################
+.. _add_new_optimizer:
+
+Creating a New Optimizer Class
+==============================
 
 #. Make a copy of `OptimizerTemplate.py` and rename it as
    `OptimizerName.py`. Make a copy of OptimizerTemplate.py and rename it 
@@ -131,7 +132,7 @@
              "pd": pd
          }
 
-    Then, when you want to use the imported library, you can access it through the
+   Then, when you want to use the imported library, you can access it through the
    `self._imports` dictionary.
 
    .. code:: python
