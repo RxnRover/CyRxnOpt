@@ -182,6 +182,8 @@ class OptimizerTemplate(OptimizerABC):
         :rtype: List[Any]
         """
 
+        self._import_deps()
+
         # TODO: Add the code necessary to call your algorithm to optimize the
         #       reaction process.
         # TODO: If your algorithm does not map 1 call -> 1 reaction (e.g. uses
