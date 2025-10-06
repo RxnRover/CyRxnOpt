@@ -50,20 +50,20 @@ via Source Code (Manual)
 
        cd CyRxnOpt
 
-3. Create a Virtual Environment:
+3. Create a virtual environment:
 
    .. code-block:: bash
 
        python -m venv venv
 
-4. Activate the Virtual Environment:
+4. Activate the virtual environment:
 
    .. code-block:: bash
 
        source venv/bin/activate  # On Unix or MacOS
        .\venv\Scripts\activate   # On Windows
 
-5. Install the Library:
+5. Install the library:
 
    .. code-block:: bash
 
