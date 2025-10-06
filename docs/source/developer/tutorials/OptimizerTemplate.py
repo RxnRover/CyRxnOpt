@@ -1,13 +1,22 @@
-import os
+# TODO: Update this template for your optimizer algorithm. To help guide the
+# process, TODO items like this one have been added to the template. These can
+# be easily found by searching for "TODO".
+
+
 from typing import Any, Dict, List
 
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerABC import OptimizerABC
 
 
+# TODO: Rename ``OptimizerTemplate`` to ``OptimizerName``, where ``Name`` is
+# the name of your optimizer or an abbreviation of it.
 class OptimizerTemplate(OptimizerABC):
 
-    __packages = ["package1", "package2", ...]
+    # List of dependency packages required by this class. This is used to
+    # to install the required packages in the ``install()`` method.
+    # TODO: Update this list for the packages for your optimizer
+    _packages = ["package1", "package2", ...]
 
     def __init__(self, venv: NestedVenv = None) -> None:
         """This code will initialize your optimizer class.
@@ -22,9 +31,11 @@ class OptimizerTemplate(OptimizerABC):
     def get_config(self) -> List[Dict[str, Any]]:
         """Get the configuration options available for this optimizer.
 
-        In this function you need to add all the required configuration variable
-        that are needed to run your optimizer algorithm. Follow the common dictionary
-        keys and add new features end of the dictionary.
+        TODO: Add the required configuration variables needed to run your
+        optimizer algorithm. Follow the common dictionary keys and add new
+        features end of the config list.
+        TODO: See the documentation for ``OptimizerABC.get_config()`` for how
+        to write configuration descriptions.
 
         :return: List of configuration options with option name, data type,
                  and information about which values are allowed/defaulted.
@@ -33,6 +44,7 @@ class OptimizerTemplate(OptimizerABC):
 
         self._import_deps()
 
+        # TODO: Update this config description list for your optimizer
         config = [
             {
                 "name": "continuous_feature_names",
@@ -84,16 +96,24 @@ class OptimizerTemplate(OptimizerABC):
         configuration options should be retrieved using `get_config()` before
         calling this function.
 
-        In this code block/function, you need to handle all the configuration options
-        and include all the code required to initialize your algorithm. For example,
-        reaction space generation or generation of initial files. Depending on your
-        workflow you can breakdown your code in this function.
+        TODO: Handle all the configuration options and include all the code
+        required to initialize your algorithm. For example, reaction space
+        generation or generation of initial files. Depending on your workflow
+        you can break down your code into more functions.
+        TODO: See the documentation for ``OptimizerABC.set_config()`` for more
+        information about the incoming configuration format to expect.
 
         :param experiment_dir: Output directory for the configuration file.
         :type experiment_dir: str
         :param config: Configuration options for this optimizer instance.
         :type config: Dict[str, Any]
         """
+
+        self._import_deps()
+
+        # TODO: Add config validation code
+        # TODO: Add initial file generation as needed
+        # TODO: Add other initial configuration code as needed
 
     def train(
         self,
@@ -104,25 +124,36 @@ class OptimizerTemplate(OptimizerABC):
         config: Dict,
         obj_func=None,
     ) -> List[Any]:
-        """generate initial training dataset needed for training.
+        """Generates initial training dataset needed for training.
 
-        If your algorithm required generate training dataset or loading training files
-        this function can be used for adding those code lines.
+        TODO: If your algorithm requires generating a training dataset or
+        loading training files, add that code here. Otherwise, just set the
+        function body to call ``pass`` so it is a no-op.
 
-        :param prev_param: experimental parameter combination for previous experiment
-        :type prev_param: list
-        :param yield_value: experimental yield
+        :param prev_param: Parameters provided from the previous training step
+        :type prev_param: List[Any]
+        :param yield_value: Experimental result from the previous training step
         :type yield_value: float
         :param itr: experimental cycle number for training
         :type itr: int
-        :param experiment_dir: experimental directory for saving data files
+        :param experiment_dir: Output directory for the optimizer algorithm
         :type experiment_dir: str
         :param config: Initial reaction feature configurations
         :type config: Dict
-        :return: next parameter combination for next experimental cycle.
-        :rtype: list
+        :param obj_func: Objective function to optimize, defaults to None
+        :type obj_func: function, optional
+
+        :return: Next parameter combination for next experimental cycle.
+        :rtype: LIst[Any]
         """
+
+        # TODO: If your algorithm doesn't need training, uncomment the following
+        #       "pass" line and delete all lines in the function after it.
+        # pass
+
         self._import_deps()
+
+        # TODO: Add necessary training code here
 
     def predict(
         self,
@@ -131,10 +162,10 @@ class OptimizerTemplate(OptimizerABC):
         experiment_dir: str,
         config: Dict[str, Any],
         obj_func=None,
-    ) -> None:
-        """Find the desired optimum of the provided objective function using your algorithm.
+    ) -> List[Any]:
+        """Finds the desired optimum of the provided objective function.
 
-        In this code block, you can add codes required for the finding optimum reaction conditions.
+        TODO: Call your optimizer to find the optimum reaction conditions.
 
         :param prev_param: Parameters provided from the previous prediction or
                            training step.
@@ -146,17 +177,28 @@ class OptimizerTemplate(OptimizerABC):
         :type experiment_dir: str
         :param obj_func: Objective function to optimize, defaults to None
         :type obj_func: function, optional
+
+        :return: Next suggested parameter combination
+        :rtype: List[Any]
         """
+
+        # TODO: Add the code necessary to call your algorithm to optimize the
+        #       reaction process.
+        # TODO: If your algorithm does not map 1 call -> 1 reaction (e.g. uses
+        #       an internal optimization loop), then an objective function must
+        #       be provided to communicate individual reaction parameter
+        #       suggestions and receive the result of each reaction.
 
     def _import_deps(self) -> None:
         """Import packages needed to run the optimizer.
 
-        You need to add code lines to import all the required packages here.
-        Then add those packages to the self._imports dictionary to be used later
-        to access packages as necessary.
-
+        TODO: Import all the required packages here, then add those packages to
+        the self._imports dictionary to be used later to access packages as
+        necessary.
         """
 
+        # TODO: Update required package imports
         from YourLibrary import YourPackage
 
+        # TODO: Update imported package dictionary
         self._imports = {"package": YourPackage}
