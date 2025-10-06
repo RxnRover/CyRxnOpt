@@ -4,9 +4,10 @@ from typing import Any, Dict, List
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerABC import OptimizerABC
 
+
 class OptimizerTemplate(OptimizerABC):
-    
-    __packages = ["package"]
+
+    __packages = ["package1", "package2", ...]
 
     def __init__(self, venv: NestedVenv = None) -> None:
         """This code will initialize your optimizer class.
@@ -14,7 +15,7 @@ class OptimizerTemplate(OptimizerABC):
         :param venv: Virtual environment manager to use, defaults to None
         :type venv: cyrxnopt.NestedVenv, optional
         """
-        
+
         self._imports = {}  # Populated in self._import_deps()
         self.__venv = venv
 
@@ -85,7 +86,7 @@ class OptimizerTemplate(OptimizerABC):
 
         In this code block/function, you need to handle all the configuration options
         and include all the code required to initialize your algorithm. For example,
-        reaction space generation or generation of initial files. Depending on your 
+        reaction space generation or generation of initial files. Depending on your
         workflow you can breakdown your code in this function.
 
         :param experiment_dir: Output directory for the configuration file.
@@ -147,18 +148,15 @@ class OptimizerTemplate(OptimizerABC):
         :type obj_func: function, optional
         """
 
-
     def _import_deps(self) -> None:
         """Import packages needed to run the optimizer.
-        
+
         You need to add code lines to import all the required packages here.
-        Then add those packages to the self._imports dictionary to be used later 
+        Then add those packages to the self._imports dictionary to be used later
         to access packages as necessary.
-        
+
         """
 
         from YourLibrary import YourPackage
 
-        self._imports = {
-            "package": YourPackage
-        }
+        self._imports = {"package": YourPackage}

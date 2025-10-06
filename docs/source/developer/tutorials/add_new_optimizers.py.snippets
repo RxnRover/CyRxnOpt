@@ -1,7 +1,10 @@
 class OptimizerName(OptimizerABC):
+    pass
+
 
 __packages = ["Package1", "Package2", ...]
 
+# fmt: off
 config = [
     {
         "name": "continuous_feature_names",
@@ -45,6 +48,8 @@ config = [
         "range": ["min", "max"],
     },
 ]
+# fmt: on
+
 
 def _import_deps(self) -> None:
 
@@ -53,13 +58,17 @@ def _import_deps(self) -> None:
 
     self._imports = {"np": np, "pd": pd}
 
+
 self._imports["np"].array()
 self._imports["pd"].DataFrame()
 
 from CyRxnOpt.OptimizerName import OptimizerName
 
+if True:
+    pass
 elif optimizer_name == "name":
     optimizer = OptimizerName(venv)
+
 
 def predict(
     optimizer_name: str,
@@ -71,3 +80,4 @@ def predict(
     obj_func=None,
     learning_rate=None,
 ) -> List[Any]:
+    pass

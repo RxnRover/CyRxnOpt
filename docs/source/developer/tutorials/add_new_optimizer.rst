@@ -7,22 +7,22 @@ Creating a New Optimizer Class
    ``OptimizerName.py``, replacing ``Name`` with the name or an abbreviation of
    your optimizer. For example, if this template was being used to add support
    for the optimizer, Nelder-Mead Simplex, we may rename
-   ``OptimizerTemplate.py`` to ``OptimizerNMSimplex.py``. The template file is
-   located at: ``CyRxnOpt/src/CyRxnOpt/OptimizerTemplate.py``. You can download
-   the file here: :download:`OptimizerTemplate.py
-   </../../src/cyrxnopt/OptimizerTemplate.py>`
+   ``OptimizerTemplate.py`` to ``OptimizerNMSimplex.py``. You can download the
+   file here: :download:`OptimizerTemplate.py <OptimizerTemplate.py>`. It can
+   also be found in the CyRxnOpt repository at
+   ``docs/source/developer/tutorials/OptimizerTemplate.py``.
 2. Change the class name to your optimizer class name, for example,
    ``OptimizerName``.
 
-   .. literalinclude:: add_new_optimizers.py.txt
+   .. literalinclude:: add_new_optimizers.py.snippets
        :lines: 1
        :language: python
 
 3. Add all the necessary libraries required for your optimizer to the
    ``__packages`` list in the template file.
 
-   .. literalinclude:: add_new_optimizers.py.txt
-       :lines: 3
+   .. literalinclude:: add_new_optimizers.py.snippets
+       :lines: 5
        :language: python
 
 4. Check that the ``install()`` and ``check_install()`` functions do not need to
@@ -48,8 +48,8 @@ Creating a New Optimizer Class
    run your optimizer. Follow the same dictionary keys as other optimizer
    classes. Example get_config dictionary will be like this,
 
-   .. literalinclude:: add_new_optimizers.py.txt
-       :lines: 5-47
+   .. literalinclude:: add_new_optimizers.py.snippets
+       :lines: 8-50
        :language: python
 
 6. In the ``set_config()`` function, you need to add the necessary code to
@@ -71,15 +71,15 @@ Creating a New Optimizer Class
    dictionary key, use the package name. As a example, ``numpy`` and ``pandas``
    are imported here:
 
-   .. literalinclude:: add_new_optimizers.py.txt
-       :lines: 49-54
+   .. literalinclude:: add_new_optimizers.py.snippets
+       :lines: 54-59
        :language: python
 
    Then, when you want to use the imported library, you can access it through
    the ``self._imports`` dictionary.
 
-   .. literalinclude:: add_new_optimizers.py.txt
-       :lines: 56-57
+   .. literalinclude:: add_new_optimizers.py.snippets
+       :lines: 62-63
        :language: python
 
 10. Depending on your optimizer workflow, add more class methods as necessary.
@@ -99,14 +99,14 @@ file to use your optimizer.
 1. At the top of this file, add the optimizer import line, replacing
    ``OptimizerName`` with the name of your optimizer class:
 
-   .. literalinclude:: add_new_optimizers.py.txt
-       :lines: 59
+   .. literalinclude:: add_new_optimizers.py.snippets
+       :lines: 65
        :language: python
 
 2. Update the ``get_optimizer()`` function to include your optimizer:
 
-   .. literalinclude:: add_new_optimizers.py.txt
-       :lines: 61-62
+   .. literalinclude:: add_new_optimizers.py.snippets
+       :lines: 69-70
        :language: python
 
 3. All the function parameters should match with the corresponding abstract
@@ -115,6 +115,6 @@ file to use your optimizer.
    default value as None. For Eexample, if your algorithm predict function
    requires a new parameter call, learning rate.
 
-   .. literalinclude:: add_new_optimizers.py.txt
-       :lines: 64-73
+   .. literalinclude:: add_new_optimizers.py.snippets
+       :lines: 73-82
        :language: python
