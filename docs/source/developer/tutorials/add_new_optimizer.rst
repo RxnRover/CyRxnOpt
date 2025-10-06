@@ -89,13 +89,8 @@ Creating a New Optimizer Class
 Adding New Optimizer to CyRxnOpt
 --------------------------------
 
-<<<<<<< HEAD
-   Then, when you want to use the imported library, you can access it through the
-   `self._imports` dictionary.
-=======
 After implementing your optimizer class, update the ``OptimizerController.py``
 file to use your optimizer.
->>>>>>> 592d385 (Apply docstrfmt, fixing code syntax errors by moving to separate file)
 
 1. At the top of this file, add the optimizer import line, replacing
    ``OptimizerName`` with the name of your optimizer class:
