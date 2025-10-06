@@ -28,45 +28,46 @@ Creating a New Optimizer Class
 4. Check that the ``install()`` and ``check_install()`` functions do not need to
    be modified:
 
-   ``install()`` - Install function is designed to add all the necessary
-   packages for given optimizer class. When we run optimizer class first time,
-   Install function will first create new virtual environment, and then install
-   all the packages from pip commands. When we use them install function will
-   activate relevant virtual environment.
+   ``install()`` - This function will install an optimizer and its dependencies
+   optimizer class. When we run an optimizer for the first time, the install
+   function will create a new virtual environment to contain the installation,
+   then install all the packages using pip. When we use an optimizer, it will
+   activate the relevant virtual environment.
 
-   ``check install()`` - This function is checking whether necessary packages
-   are install or not and return Boolean output.
+   ``check_install()`` - This function checks whether necessary packages are
+   installed or not.
 
 5. In the ``get_config()`` function, you need to update the configuration
-   dictionary. This function is designed to maintain common configuration
-   dictionary for all the optimization algorithms and It will helps to design
-   common front-end for all the optimization algorithms. Here you can add more
-   variables that are only used by your algorithm and it should dynamically
-   change the front-end user interface.
+   dictionary. This dictionary serves as a description of the configuration
+   options for an optimization algorithm so user-facing programs can dynamically
+   adjust the offered configuration options for different optimization
+   algorithms. Here you can add more variables that are only used by your
+   algorithm and it should dynamically change the front-end user interface.
 
    Add all the necessary configurations and variables required as user input to
    run your optimizer. Follow the same dictionary keys as other optimizer
-   classes. Example get_config dictionary will be like this,
+   classes. The following is an example ``get_config`` dictionary with extra
+   options added:
 
    .. literalinclude:: add_new_optimizers.py.snippets
        :lines: 8-50
        :language: python
 
 6. In the ``set_config()`` function, you need to add the necessary code to
-   handle and initialize the optimizer. This function mainly handles the steps
-   before the optimizer cycle begins. Code lines that you need to generate your
+   handle and initialize the optimizer. This function handles configuring an
+   optimizer before training or prediction begins. Code to generate your
    reaction space, handle the format of configuration data into your algorithm
    format, and generate initial files will go inside ``set_config()`` function.
 7. If your optimizer requires training steps, add the necessary code for
-   training inside the ``train()`` function. For example, AMLRO is required to
-   train the initial ML model before starting the active learning prediction.
-   Therefore, the AMLRO optimizer class ``train()`` function includes code lines
-   to generate training dataset.
-8. In the ``predict()`` function, add the code lines for predicting the optimum
-   reaction conditions. This function will return the optimal reaction
+   training inside the ``train()`` function. For example, AMLRO requires
+   training the initial ML model before starting the active learning prediction.
+   Therefore, the AMLRO optimizer class ``train()`` function includes code to
+   generate training dataset and perform each training step.
+8. In the ``predict()`` function, your algorithm should be called to find the
+   optimal reaction conditions. This function will return the suggested reaction
    conditions that should be run in next cycle. Actual optimization
-   loop/prediction step, code should implement here.
-9. In the ``_import_deps()`` function, write necessary package import lines.
+   loop/prediction step code should be implemented here.
+9. In the ``_import_deps()`` function, write the necessary package import lines.
    Each package should be added to the ``_imports`` dictionary, and for the
    dictionary key, use the package name. As a example, ``numpy`` and ``pandas``
    are imported here:
@@ -76,14 +77,14 @@ Creating a New Optimizer Class
        :language: python
 
    Then, when you want to use the imported library, you can access it through
-   the ``self._imports`` dictionary.
+   the ``self._imports`` dictionary:
 
    .. literalinclude:: add_new_optimizers.py.snippets
        :lines: 62-63
        :language: python
 
 10. Depending on your optimizer workflow, add more class methods as necessary.
-    Refer to how existing optimizer classes are defined, for guidance.
+    Refer to how existing optimizer classes are defined for guidance.
 
 Adding New Optimizer to CyRxnOpt
 --------------------------------
@@ -109,11 +110,11 @@ file to use your optimizer.
        :lines: 69-70
        :language: python
 
-3. All the function parameters should match with the corresponding abstract
-   function defined in ``OptimizerABC``. If you want to add new parameter for
-   any function first add that into the optimizer controller function and give
-   default value as None. For Eexample, if your algorithm predict function
-   requires a new parameter call, learning rate.
+3. All function parameters should match with the corresponding abstract function
+   defined in ``OptimizerABC``. If you want to add a new parameter for any
+   function, first add that into the OptimizerController function and give the
+   default value as ``None``. For example, if your algorithm predict function
+   requires a new parameter, learning rate:
 
    .. literalinclude:: add_new_optimizers.py.snippets
        :lines: 73-82
