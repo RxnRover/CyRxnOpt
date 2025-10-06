@@ -192,7 +192,7 @@ class OptimizerTemplate(OptimizerABC):
         #       suggestions and receive the result of each reaction.
 
     def _import_deps(self) -> None:
-        """Import packages needed to run the optimizer.
+        """Imports packages needed to run the optimizer.
 
         TODO: Import all the required packages here, then add those packages to
         the self._imports dictionary to be used later to access packages as

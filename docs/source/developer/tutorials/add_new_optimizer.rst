@@ -107,9 +107,9 @@ file to use your optimizer.
 
 3. All function parameters should match with the corresponding abstract function
    defined in ``OptimizerABC``. If you want to add a new parameter for any
-   function, first add that into the OptimizerController function and give the
-   default value as ``None``. For example, if your algorithm predict function
-   requires a new parameter, learning rate:
+   function, first add that to ``OptimizerController`` and ``OptimizerABC``,
+   then give the default value as ``None``. For example, if your algorithm
+   predict function requires a new parameter, learning rate:
 
    .. literalinclude:: add_new_optimizers.py.snippets
        :lines: 73-82
