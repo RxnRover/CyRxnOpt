@@ -10,11 +10,11 @@ Glossary
        to be attempted before abandoning the :term:`optimization cycle`.
 
     CyRxnOpt ID
-       The *exact* identifier of an optimizer to use when an optimizer name is required when calling a CyRxnOpt function.
+        The *exact* identifier of an optimizer to use when an optimizer name is required when calling a CyRxnOpt function.
 
     experiment
-       In the context of reaction optimization, we consider an experiment to be
-       one :term:`optimization cycle`.
+        In the context of reaction optimization, we consider an experiment to be
+        one :term:`optimization cycle`.
 
     experiment directory
        Directory containing all files generated for a specific

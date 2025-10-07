@@ -9,14 +9,14 @@ Contents
 .. toctree::
     :maxdepth: 1
 
-    Overview <overview/index>
-    Supported Algorithms <supported_algorithms>
-    Contributions & Help <contributing>
-    Module Reference <api/modules>
-    developer/index
-    License <license>
-    Authors <authors>
-    Glossary <glossary>
+     Overview <overview/index>
+     Supported Algorithms <supported_algorithms>
+     Contributions & Help <contributing>
+     Module Reference <api/modules>
+     Developer <developer/index>
+     License <license>
+     Authors <authors>
+     Glossary <glossary>
 
 Indices and tables
 ------------------
