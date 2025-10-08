@@ -47,7 +47,7 @@ def test_set_config_creates_correct_config(venv_nmsimplex, tmp_path) -> None:
     expected_config_path = tmp_path / "config.json"
 
     config = {
-        "continuous_feature_names": ["f1"],
+        "continuous_feature_names": ["f1", "f2"],
         "continuous_feature_bounds": [[-1, 1], [-1, 1]],
         "direction": "min",
         "budget": 10,
@@ -80,7 +80,7 @@ def test_train_does_nothing(venv_nmsimplex, tmp_path) -> None:
 def test_predict_basic_run(venv_nmsimplex, tmp_path, obj_func_2d) -> None:
     opt = OptimizerNMSimplex(venv_nmsimplex)
     config = config = {
-        "continuous_feature_names": ["f1"],
+        "continuous_feature_names": ["f1", "f2"],
         "continuous_feature_bounds": [[-1, 1], [-1, 1]],
         "direction": "min",
         "budget": 10,

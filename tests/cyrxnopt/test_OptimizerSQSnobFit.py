@@ -47,7 +47,7 @@ def test_set_config_creates_correct_config(venv_sqsnobfit, tmp_path) -> None:
     expected_config_path = tmp_path / "recent_config.json"
 
     config = {
-        "continuous_feature_names": ["f1"],
+        "continuous_feature_names": ["f1", "f2"],
         "continuous_feature_bounds": [[-1, 1], [-1, 1]],
         "direction": "min",
         "budget": 10,
@@ -79,7 +79,7 @@ def test_train_does_nothing(venv_sqsnobfit, tmp_path) -> None:
 def test_predict_basic_run_min(venv_sqsnobfit, tmp_path, obj_func_2d) -> None:
     opt = OptimizerSQSnobFit(venv_sqsnobfit)
     config = {
-        "continuous_feature_names": ["f1"],
+        "continuous_feature_names": ["f1", "f2"],
         "continuous_feature_bounds": [[-1, 1], [-1, 1]],
         "direction": "min",
         "budget": 10,
