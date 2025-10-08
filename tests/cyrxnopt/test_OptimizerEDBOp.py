@@ -1,182 +1,117 @@
-# import os
-# import unittest
+import pytest
+from git import Repo
 
-# from utilities_for_testing.validate_config_description import (
-#     validate_config_description,
-# )
+from cyrxnopt.NestedVenv import NestedVenv
+from cyrxnopt.OptimizerEDBOp import OptimizerEDBOp
+from tests.cyrxnopt.utilities_for_testing.validate_config_description import (
+    validate_config_description_pytest,
+)
 
-# from cyrxnopt.NestedVenv import NestedVenv
-# from cyrxnopt.OptimizerEDBOp import OptimizerEDBOp
+
+@pytest.fixture(scope="session")
+def edboplus_local_path(tmp_path_factory):
+    repo_location = tmp_path_factory.mktemp("edboplus")
+
+    # EDBO+ starts to run into installation issues noticed 2025-10-07.
+    # This, along with never merging in PR #6 with 40x performance improvements,
+    # requires manually downloading an older version/branch of EDBO+.
+    Repo.clone_from(
+        "https://github.com/zachcran/edboplus",
+        repo_location,
+        branch="performance_improvements",
+    )
+
+    return repo_location
 
 
-# class TestOptimizerEDBOp(unittest.TestCase):
-#     @classmethod
-#     def setUpClass(cls):
-#         cls.base_prefix = "tmp"
-#         cls.venv_path = os.path.join(cls.base_prefix, "venv_edbop")
+@pytest.fixture(scope="session")
+def venv_edbop(tmp_path_factory, edboplus_local_path):
+    venv_path = tmp_path_factory.mktemp("venv_edbop")
 
-#         # Create common venv to save time
-#         cls.venv = NestedVenv(cls.venv_path)
+    test_venv = NestedVenv(venv_path)
 
-#         # Always recreate the venv to start with a clean slate for testing
-#         try:
-#             cls.venv.activate()
-#         except RuntimeError as e:
-#             cls.venv.create()
-#             cls.venv.activate()
+    test_venv.create()
+    test_venv.activate()
 
-#         opt = OptimizerEDBOp(cls.venv)
+    assert test_venv.is_active()
+    assert test_venv.is_primary()
 
-#         # This test will fail if this throws an error
-#         opt.install(local_paths={"edboplus": "deps/edbop"})
+    # Didn't solve the issue
+    test_venv.pip_install("setuptools<54.1")
 
-#     @classmethod
-#     def tearDownClass(cls):
-#         # cls.venv.delete()
-#         pass
+    # Preinstall dependencies
+    opt = OptimizerEDBOp(test_venv)
+    # TODO: Fails with no useful error output
+    opt.install(local_paths={"edboplus": edboplus_local_path})
+    assert opt.check_install()
 
-#     def setUp(self) -> None:
-#         self.test_prefix = os.path.join(self.base_prefix, self.id())
+    yield test_venv
 
-#         # self.venv.activate()
+    test_venv.deactivate()
+    assert not test_venv.is_active()
+    test_venv.delete()
 
-#         return super().setUp()
 
-#     def tearDown(self) -> None:
-#         return super().tearDown()
+def test_get_config_returns_valid_description_list(venv_edbop) -> None:
+    opt = OptimizerEDBOp(venv_edbop)
 
-#     def test_get_config(self):
-#         """This test checks that a config of the correct format was provided,
-#         but does not try to validate the actual values of each config
-#         description.
-#         """
+    result = opt.get_config()
 
-#         opt = OptimizerEDBOp(self.venv)
+    validate_config_description_pytest(result)
 
-#         result = opt.get_config()
 
-#         validate_config_description(self, result)
+def test_set_config_creates_correct_config(venv_edbop, tmp_path) -> None:
+    import json
 
-#     def test_set_config(self):
-#         opt = OptimizerEDBOp(self.venv)
+    opt = OptimizerEDBOp(venv_edbop)
 
-#         config = {
-#             "continuous_feature_names": ["f1", "f2"],
-#             "continuous_feature_bounds": [[-1, 1], [-5, 5]],
-#             "continuous_feature_resolutions": [1, 5, 1],
-#             "categorical_feature_names": ["f3"],
-#             "categorical_feature_values": [["a", "b", "c"]],
-#             "budget": 10,
-#             "objectives": ["yield"],
-#             "objective_mode": "min",
-#         }
+    expected_config_path = tmp_path / "config.json"
 
-#         opt.set_config(self.test_prefix, config)
+    config = {
+        "continuous_feature_names": ["f1", "f2"],
+        "continuous_feature_bounds": [[-1, 1], [-1, 1]],
+        "continuous_feature_resolutions": [0.1, 0.1],
+        "categorical_feature_names": ["f3"],
+        "categorical_feature_values": [["a", "b", "c"]],
+        "direction": ["min"],
+        "budget": 10,
+        "objectives": ["yield"],
+    }
 
-#         # Make sure that all files were created
-#         full_combo_file = os.path.join(self.test_prefix, "full_combo_file.txt")
-#         training_combo_file = os.path.join(
-#             self.test_prefix, "training_combo_file.txt"
-#         )
-#         training_set_decoded_file = os.path.join(
-#             self.test_prefix, "training_set_decoded_file.txt"
-#         )
-#         training_set_file = os.path.join(
-#             self.test_prefix, "training_set_file.txt"
-#         )
+    opt.set_config(str(tmp_path), config)
 
-#         self.assertTrue(os.path.exists(full_combo_file))
-#         self.assertTrue(os.path.exists(training_combo_file))
-#         self.assertTrue(os.path.exists(training_set_decoded_file))
-#         self.assertTrue(os.path.exists(training_set_file))
+    # Check if config file was created
+    assert expected_config_path.exists()
 
-#     def test__validate_config_complete_config(self):
-#         opt = OptimizerEDBOp(self.venv)
-#         opt.install()
+    # Check for the correct contents
+    with open(expected_config_path) as fin:
+        content = json.load(fin)
+        assert content == config
 
-#         config = {
-#             "continuous_feature_names": ["f1", "f2"],
-#             "continuous_feature_bounds": [[-1, 1], [-5, 5]],
-#             "continuous_feature_resolutions": [1, 5, 1],
-#             "categorical_feature_names": ["f3"],
-#             "categorical_feature_values": [["a", "b", "c"]],
-#             "budget": 10,
-#             "objectives": ["yield"],
-#             "objective_mode": "min",
-#         }
 
-#         opt._validate_config(config)
+def test_train_does_nothing(venv_edbop, tmp_path) -> None:
+    opt = OptimizerEDBOp(venv_edbop)
+    expected_suggestion = []
 
-#     def test__validate_config_continuous_config(self):
-#         opt = OptimizerEDBOp(self.venv)
-#         opt.install()
+    suggestion = opt.train([], 0, tmp_path, {})
 
-#         config = {
-#             "continuous_feature_names": ["f1", "f2"],
-#             "continuous_feature_bounds": [[-1, 1], [-5, 5]],
-#             "continuous_feature_resolutions": [1, 5, 1],
-#             "budget": 10,
-#         }
+    assert expected_suggestion == suggestion
 
-#         opt._validate_config(config)
 
-#     def test__validate_config_categorical_config(self):
-#         opt = OptimizerEDBOp(self.venv)
-#         opt.install()
+def test_predict_basic_run(venv_edbop, tmp_path, obj_func_3d) -> None:
+    opt = OptimizerEDBOp(venv_edbop)
+    config = config = {
+        "continuous_feature_names": ["f1", "f2"],
+        "continuous_feature_bounds": [[-1, 1], [-1, 1]],
+        "continuous_feature_resolutions": [0.1, 0.1],
+        "categorical_feature_names": ["f3"],
+        "categorical_feature_values": [[0, 1, 2]],
+        "direction": ["min"],
+        "budget": 10,
+        "objectives": ["yield"],
+    }
 
-#         config = {
-#             "categorical_feature_names": ["f3"],
-#             "categorical_feature_values": [["a", "b", "c"]],
-#             "budget": 10,
-#         }
+    result = opt.predict([], 0, tmp_path, config, obj_func_3d)  # noqa: F841
 
-#         opt._validate_config(config)
-
-#     def test__validate_config_missing_parts(self):
-#         opt = OptimizerEDBOp(self.venv)
-#         opt.install()
-
-#         config_no_names = {
-#             "continuous_feature_bounds": [[-1, 1], [-5, 5]],
-#             "continuous_feature_resolutions": [1, 5, 1],
-#             "categorical_feature_values": [["a", "b", "c"]],
-#             "budget": 10,
-#         }
-
-#         self.assertRaises(RuntimeError, opt._validate_config, config_no_names)
-
-#         config_no_continuous_feature_bounds_or_res = {
-#             "continuous_feature_names": ["f1", "f2"],
-#             "budget": 10,
-#         }
-
-#         self.assertRaises(
-#             RuntimeError,
-#             opt._validate_config,
-#             config_no_continuous_feature_bounds_or_res,
-#         )
-
-#         config_no_categorical_feature_values = {
-#             "categorical_feature_names": ["f3"],
-#             "budget": 10,
-#         }
-
-#         self.assertRaises(
-#             RuntimeError,
-#             opt._validate_config,
-#             config_no_categorical_feature_values,
-#         )
-
-#         config_no_budget = {
-#             "continuous_feature_names": ["f1", "f2"],
-#             "continuous_feature_bounds": [[-1, 1], [-5, 5]],
-#             "continuous_feature_resolutions": [1, 5, 1],
-#             "categorical_feature_names": ["f3"],
-#             "categorical_feature_values": [["a", "b", "c"]],
-#         }
-
-#         self.assertRaises(RuntimeError, opt._validate_config, config_no_budget)
-
-#     # TODO: check_install test
-
-#     # TODO: call train and predict tests
+    # We're not verifying the value, since randomness can affect this
+    # assert result == [0, 0]
