@@ -32,8 +32,6 @@ class OptimizerNMSimplex(OptimizerABC):
         :rtype: List[Dict[str, Any]]
         """
 
-        self._import_deps()
-
         config: List[Dict[str, Any]] = [
             {
                 "name": "direction",
