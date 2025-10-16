@@ -75,7 +75,7 @@ class OptimizerSQSnobFit(OptimizerABC):
         Valid configuration options should be retrieved using ``get_config()``
         before calling this function.
 
-        :param experiment_dir: Output directory for the configuration file.
+        :param experiment_dir: Output directory for the configuration file
         :type experiment_dir: str
         :param config: CyRxnOpt-level config for the optimizer
         :type config: Dict[str, Any]
@@ -117,10 +117,10 @@ class OptimizerSQSnobFit(OptimizerABC):
     ) -> List[Any]:
         """Find the desired optimum of the provided objective function.
 
-        :param prev_param: Parameters provided from the previous prediction or
-                           training step
+        :param prev_param: Parameters provided from the previous prediction,
+                           provide an empty list for the first call
         :type prev_param: List[Any]
-        :param yield_value: Result from the previous prediction or training step
+        :param yield_value: Result from the previous prediction
         :type yield_value: float
         :param experiment_dir: Output directory for the optimizer algorithm
         :type experiment_dir: str

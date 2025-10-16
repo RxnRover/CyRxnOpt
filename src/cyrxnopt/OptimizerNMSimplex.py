@@ -125,10 +125,10 @@ class OptimizerNMSimplex(OptimizerABC):
     ) -> List[Any]:
         """Find the desired optimum of the provided objective function.
 
-        :param prev_param: Parameters provided from the previous prediction or
-                           training step
+        :param prev_param: Parameters provided from the previous prediction,
+                           provide an empty list for the first call
         :type prev_param: List[Any]
-        :param yield_value: Result from the previous prediction or training step
+        :param yield_value: Result from the previous prediction
         :type yield_value: float
         :param experiment_dir: Output directory for the optimizer algorithm
         :type experiment_dir: str
