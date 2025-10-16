@@ -68,7 +68,9 @@ class OptimizerABC(ABC):
         for package in self._packages:
             # Install from local path if one is given
             if package in local_paths.keys():
-                self.__venv.pip_install_e(Path(local_paths[package]))
+                self.__venv.pip_install_e(
+                    Path(local_paths[package]), package_name=package
+                )
             else:
                 self.__venv.pip_install(package)
 
