@@ -146,21 +146,22 @@ class OptimizerABC(ABC):
         yield_value: float,
         experiment_dir: str,
         config: Dict[str, Any],
-        obj_func: Optional[Callable] = None,
+        obj_func: Optional[Callable[..., float]] = None,
     ) -> List[Any]:
         """Abstract optimizer training function.
 
-        :param prev_param: experimental parameter combination for previous
-                           experiment
+        :param prev_param: Parameters provided from the previous prediction or
+                           training step.
         :type prev_param: List[Any]
-        :param yield_value: experimental yield
+        :param yield_value: Result from the previous prediction or training
+                            step.
         :type yield_value: float
-        :param experiment_dir: experimental directory for saving data files
+        :param experiment_dir: Output directory for the optimizer algorithm.
         :type experiment_dir: str
         :param config: Optimizer config
         :type config: Dict[str, Any]
-        :param obj_func: Objective function to optimize.
-        :type obj_func: Optional[Callable]
+        :param obj_func: Objective function to optimize, defaults to None
+        :type obj_func: Optional[Callable[..., float]], optional
 
         :returns: The next suggested reaction to perform
         :rtype: List[Any]
