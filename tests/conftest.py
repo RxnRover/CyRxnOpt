@@ -7,14 +7,22 @@ Read more about conftest.py under:
 - https://docs.pytest.org/en/stable/writing_plugins.html
 """
 
-from typing import List
+from collections.abc import Callable
 
 import pytest
 
 
 @pytest.fixture
-def obj_func_2d():
-    def obj_func(xs: List[float]) -> float:
+def obj_func_2d() -> Callable[[list[float]], float]:
+    def obj_func(xs: list[float]) -> float:
         return xs[0] ** 2 + xs[1] ** 2
+
+    return obj_func
+
+
+@pytest.fixture
+def obj_func_3d() -> Callable[[list[float]], float]:
+    def obj_func(xs: list[float]) -> float:
+        return xs[0] ** 2 + xs[1] ** 2 + xs[2]
 
     return obj_func

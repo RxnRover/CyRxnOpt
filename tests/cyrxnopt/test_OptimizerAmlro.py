@@ -1,179 +1,204 @@
-import os
-import unittest
+from typing import TYPE_CHECKING
+
+import pytest
 
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerAmlro import OptimizerAmlro
-
-from .utilities_for_testing.validate_config_description import (
-    validate_config_description,
+from tests.cyrxnopt.utilities_for_testing.validate_config_description import (
+    validate_config_description_pytest,
 )
 
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
-class TestOptimizerAmlro(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.base_prefix = "tmp"
-        cls.venv_path = os.path.join(cls.base_prefix, "venv_amlro")
 
-        # Create common venv to save time
-        cls.venv = NestedVenv(cls.venv_path)
+@pytest.fixture(scope="session")
+def venv_amlro(tmp_path_factory) -> Generator[NestedVenv]:
+    venv_path = tmp_path_factory.mktemp("venv_amlro")
 
-        # Always recreate the venv to start with a clean slate for testing
-        cls.venv.create()
-        cls.venv.activate()
+    test_venv = NestedVenv(venv_path)
 
-        opt = OptimizerAmlro(cls.venv)
+    test_venv.create()
+    test_venv.activate()
 
-        # This test will fail if this throws an error
-        opt.install()
+    # Preinstall dependencies
+    opt = OptimizerAmlro(test_venv)
+    opt.install()
+    assert opt.check_install()
 
-    @classmethod
-    def tearDownClass(cls):
-        cls.venv.delete()
+    yield test_venv
 
-    def setUp(self) -> None:
-        self.test_prefix = os.path.join(self.base_prefix, self.id())
+    test_venv.deactivate()
+    assert not test_venv.is_active()
+    test_venv.delete()
 
-        self.venv.activate()
 
-        return super().setUp()
+def test_get_config_returns_valid_description_list(venv_amlro):
+    opt = OptimizerAmlro(venv_amlro)
 
-    def tearDown(self) -> None:
-        return super().tearDown()
+    result = opt.get_config()
 
-    def test_get_config(self):
-        """This test checks that a config of the correct format was provided,
-        but does not try to validate the actual values of each config
-        description.
-        """
+    validate_config_description_pytest(result)
 
-        opt = OptimizerAmlro(self.venv)
 
-        result = opt.get_config()
+def test_set_config_creates_correct_config(venv_amlro, tmp_path):
+    opt = OptimizerAmlro(venv_amlro)
 
-        validate_config_description(self, result)
+    config = {
+        "continuous_feature_names": ["f1", "f2"],
+        "continuous_feature_bounds": [[-1, 1], [-5, 5]],
+        "continuous_feature_resolutions": [1, 5, 1],
+        "categorical_feature_names": ["f3"],
+        "categorical_feature_values": [["a", "b", "c"]],
+        "budget": 10,
+        "objectives": ["yield"],
+        "direction": "min",
+    }
 
-    def test_set_config(self):
-        opt = OptimizerAmlro(self.venv)
-        opt.install()
+    opt.set_config(str(tmp_path), config)
 
-        config = {
-            "continuous_feature_names": ["f1", "f2"],
-            "continuous_feature_bounds": [[-1, 1], [-5, 5]],
-            "continuous_feature_resolutions": [1, 5, 1],
-            "categorical_feature_names": ["f3"],
-            "categorical_feature_values": [["a", "b", "c"]],
-            "budget": 10,
-            "objectives": ["yield"],
-            "objective_mode": "min",
-        }
+    # Check if files were created during config
+    assert (tmp_path / "full_combo_file.txt").exists()
+    assert (tmp_path / "training_combo_file.txt").exists()
+    assert (tmp_path / "training_set_decoded_file.txt").exists()
+    assert (tmp_path / "training_set_file.txt").exists()
 
-        opt.set_config(self.test_prefix, config)
 
-        # Make sure that all files were created
-        full_combo_file = os.path.join(self.test_prefix, "full_combo_file.txt")
-        training_combo_file = os.path.join(
-            self.test_prefix, "training_combo_file.txt"
-        )
-        training_set_decoded_file = os.path.join(
-            self.test_prefix, "training_set_decoded_file.txt"
-        )
-        training_set_file = os.path.join(
-            self.test_prefix, "training_set_file.txt"
-        )
+def test_train_call(venv_amlro, tmp_path) -> None:
+    opt = OptimizerAmlro(venv_amlro)
+    config = {
+        "continuous_feature_names": ["f1", "f2"],
+        "continuous_feature_bounds": [[-1, 1], [-1, 1]],
+        "continuous_feature_resolutions": [0.1, 0.1],
+        "categorical_feature_names": ["f3"],
+        "categorical_feature_values": [[0, 1, 2]],
+        "direction": "min",
+        "budget": 10,
+        "objectives": ["yield"],
+    }
 
-        self.assertTrue(os.path.exists(full_combo_file))
-        self.assertTrue(os.path.exists(training_combo_file))
-        self.assertTrue(os.path.exists(training_set_decoded_file))
-        self.assertTrue(os.path.exists(training_set_file))
+    opt.set_config(str(tmp_path), config)
+    suggestion = opt.train([], 0, tmp_path, config)
 
-    def test__validate_config_complete_config(self):
-        opt = OptimizerAmlro(self.venv)
-        opt.install()
+    # Can't check exact values since random sampling is used
+    assert len(suggestion) == 3
 
-        config = {
-            "continuous_feature_names": ["f1", "f2"],
-            "continuous_feature_bounds": [[-1, 1], [-5, 5]],
-            "continuous_feature_resolutions": [1, 5, 1],
-            "categorical_feature_names": ["f3"],
-            "categorical_feature_values": [["a", "b", "c"]],
-            "budget": 10,
-            "objectives": ["yield"],
-            "objective_mode": "min",
-        }
 
-        opt._validate_config(config)
+def test_predict_basic_run(venv_amlro, tmp_path, obj_func_3d) -> None:
+    import pandas as pd
 
-    def test__validate_config_continuous_config(self):
-        opt = OptimizerAmlro(self.venv)
-        opt.install()
+    opt = OptimizerAmlro(venv_amlro)
+    config = {
+        "continuous_feature_names": ["f1", "f2"],
+        "continuous_feature_bounds": [[-1, 1], [-1, 1]],
+        "continuous_feature_resolutions": [0.1, 0.1],
+        "categorical_feature_names": ["f3"],
+        "categorical_feature_values": [[0, 1, 2]],
+        "direction": "min",
+        "budget": 10,
+        "objectives": ["yield"],
+    }
 
-        config = {
-            "continuous_feature_names": ["f1", "f2"],
-            "continuous_feature_bounds": [[-1, 1], [-5, 5]],
-            "continuous_feature_resolutions": [1, 5, 1],
-            "budget": 10,
-        }
+    # Set up the necessary files
+    opt.set_config(tmp_path, config)
 
-        opt._validate_config(config)
+    # Perform training
+    next_params: list[float] = []
+    result = 0
+    for i in range(20):
+        next_params = opt.train(next_params, result, tmp_path, config)
+        result = obj_func_3d(next_params)
 
-    def test__validate_config_categorical_config(self):
-        opt = OptimizerAmlro(self.venv)
-        opt.install()
+    # Run two predict steps; one to get parameters, the next to write the result
+    next_params = opt.predict(next_params, result, tmp_path, config)
+    result = obj_func_3d(next_params)
+    next_params = opt.predict(next_params, result, tmp_path, config)
 
-        config = {
-            "categorical_feature_names": ["f3"],
-            "categorical_feature_values": [["a", "b", "c"]],
-            "budget": 10,
-        }
+    # Read the generated dataset so far
+    result_training_set = pd.read_csv(tmp_path / "training_set_file.txt")
 
-        opt._validate_config(config)
+    # Ensure it is the correct length (20 training + 1 predict)
+    assert len(result_training_set) == 21
 
-    def test__validate_config_missing_parts(self):
-        opt = OptimizerAmlro(self.venv)
-        opt.install()
 
-        config_no_names = {
-            "continuous_feature_bounds": [[-1, 1], [-5, 5]],
-            "continuous_feature_resolutions": [1, 5, 1],
-            "categorical_feature_values": [["a", "b", "c"]],
-            "budget": 10,
-        }
+def test__validate_config_complete_config() -> None:
+    opt = OptimizerAmlro(venv_amlro)
 
-        self.assertRaises(RuntimeError, opt._validate_config, config_no_names)
+    config = {
+        "continuous_feature_names": ["f1", "f2"],
+        "continuous_feature_bounds": [[-1, 1], [-5, 5]],
+        "continuous_feature_resolutions": [1, 5, 1],
+        "categorical_feature_names": ["f3"],
+        "categorical_feature_values": [["a", "b", "c"]],
+        "budget": 10,
+        "objectives": ["yield"],
+        "direction": "min",
+    }
 
-        config_no_continuous_feature_bounds_or_res = {
-            "continuous_feature_names": ["f1", "f2"],
-            "budget": 10,
-        }
+    opt._validate_config(config)
 
-        self.assertRaises(
-            RuntimeError,
-            opt._validate_config,
-            config_no_continuous_feature_bounds_or_res,
-        )
 
-        config_no_categorical_feature_values = {
-            "categorical_feature_names": ["f3"],
-            "budget": 10,
-        }
+def test__validate_config_continuous_config() -> None:
+    opt = OptimizerAmlro(venv_amlro)
 
-        self.assertRaises(
-            RuntimeError,
-            opt._validate_config,
-            config_no_categorical_feature_values,
-        )
+    config = {
+        "continuous_feature_names": ["f1", "f2"],
+        "continuous_feature_bounds": [[-1, 1], [-5, 5]],
+        "continuous_feature_resolutions": [1, 5, 1],
+        "budget": 10,
+    }
 
-        config_no_budget = {
-            "continuous_feature_names": ["f1", "f2"],
-            "continuous_feature_bounds": [[-1, 1], [-5, 5]],
-            "continuous_feature_resolutions": [1, 5, 1],
-            "categorical_feature_names": ["f3"],
-            "categorical_feature_values": [["a", "b", "c"]],
-        }
+    opt._validate_config(config)
 
-        self.assertRaises(RuntimeError, opt._validate_config, config_no_budget)
 
-    # TODO: check_install test
+def test__validate_config_categorical_config() -> None:
+    opt = OptimizerAmlro(venv_amlro)
 
-    # TODO: call train and predict tests
+    config = {
+        "categorical_feature_names": ["f3"],
+        "categorical_feature_values": [["a", "b", "c"]],
+        "budget": 10,
+    }
+
+    opt._validate_config(config)
+
+
+def test__validate_config_missing_parts() -> None:
+    opt = OptimizerAmlro(venv_amlro)
+
+    config_no_names = {
+        "continuous_feature_bounds": [[-1, 1], [-5, 5]],
+        "continuous_feature_resolutions": [1, 5, 1],
+        "categorical_feature_values": [["a", "b", "c"]],
+        "budget": 10,
+    }
+
+    with pytest.raises(RuntimeError):
+        opt._validate_config(config_no_names)
+
+    config_no_continuous_feature_bounds_or_res = {
+        "continuous_feature_names": ["f1", "f2"],
+        "budget": 10,
+    }
+
+    with pytest.raises(RuntimeError):
+        opt._validate_config(config_no_continuous_feature_bounds_or_res)
+
+    config_no_categorical_feature_values = {
+        "categorical_feature_names": ["f3"],
+        "budget": 10,
+    }
+
+    with pytest.raises(RuntimeError):
+        opt._validate_config(config_no_categorical_feature_values)
+
+    config_no_budget = {
+        "continuous_feature_names": ["f1", "f2"],
+        "continuous_feature_bounds": [[-1, 1], [-5, 5]],
+        "continuous_feature_resolutions": [1, 5, 1],
+        "categorical_feature_names": ["f3"],
+        "categorical_feature_values": [["a", "b", "c"]],
+    }
+
+    with pytest.raises(RuntimeError):
+        opt._validate_config(config_no_budget)
