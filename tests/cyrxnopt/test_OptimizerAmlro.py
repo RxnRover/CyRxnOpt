@@ -64,7 +64,7 @@ def test_set_config_creates_correct_config(venv_amlro, tmp_path):
     assert (tmp_path / "training_set_file.txt").exists()
 
 
-def test_train_call(venv_amlro, tmp_path) -> None:
+def test_train_call(venv_amlro, tmp_path):
     opt = OptimizerAmlro(venv_amlro)
     config = {
         "continuous_feature_names": ["f1", "f2"],
@@ -84,7 +84,7 @@ def test_train_call(venv_amlro, tmp_path) -> None:
     assert len(suggestion) == 3
 
 
-def test_predict_basic_run(venv_amlro, tmp_path, obj_func_3d) -> None:
+def test_predict_basic_run(venv_amlro, tmp_path, obj_func_3d):
     import pandas as pd
 
     opt = OptimizerAmlro(venv_amlro)
@@ -121,7 +121,7 @@ def test_predict_basic_run(venv_amlro, tmp_path, obj_func_3d) -> None:
     assert len(result_training_set) == 21
 
 
-def test__validate_config_complete_config() -> None:
+def test__validate_config_complete_config():
     opt = OptimizerAmlro(venv_amlro)
 
     config = {
@@ -138,7 +138,7 @@ def test__validate_config_complete_config() -> None:
     opt._validate_config(config)
 
 
-def test__validate_config_continuous_config() -> None:
+def test__validate_config_continuous_config():
     opt = OptimizerAmlro(venv_amlro)
 
     config = {
@@ -151,7 +151,7 @@ def test__validate_config_continuous_config() -> None:
     opt._validate_config(config)
 
 
-def test__validate_config_categorical_config() -> None:
+def test__validate_config_categorical_config():
     opt = OptimizerAmlro(venv_amlro)
 
     config = {
@@ -163,7 +163,7 @@ def test__validate_config_categorical_config() -> None:
     opt._validate_config(config)
 
 
-def test__validate_config_missing_parts() -> None:
+def test__validate_config_missing_parts():
     opt = OptimizerAmlro(venv_amlro)
 
     config_no_names = {
