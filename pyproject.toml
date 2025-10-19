@@ -53,6 +53,8 @@ exclude_lines = [
 
 [tool.mypy]
 disallow_untyped_defs = true
+# Any changes to exclude here need to be made in .pre-commit-config.yaml, too!
+# This exclude list doesn't work because of the way pre-commit invokes mypy
 exclude = [
     '^setup.py$',
     '^build',
