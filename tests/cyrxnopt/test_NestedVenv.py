@@ -1,7 +1,6 @@
 import sys
 import unittest
 from pathlib import Path
-from typing import List
 
 from cyrxnopt.NestedVenv import NestedVenv
 
@@ -15,7 +14,7 @@ class TestNestedVenv(unittest.TestCase):
         self.venv_path = Path(str(self.venv_path) + self.id())
 
         # List of venvs created in the test
-        self.venvs: List[NestedVenv] = []
+        self.venvs: list[NestedVenv] = []
 
         self.test_asset_path = Path("tests/cyrxnopt/test_assets").resolve()
 

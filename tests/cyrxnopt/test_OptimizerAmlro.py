@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from collections.abc import Generator
 
 import pytest
 
@@ -7,9 +7,6 @@ from cyrxnopt.OptimizerAmlro import OptimizerAmlro
 from tests.cyrxnopt.utilities_for_testing.validate_config_description import (
     validate_config_description_pytest,
 )
-
-if TYPE_CHECKING:
-    from collections.abc import Generator
 
 
 @pytest.fixture(scope="session")

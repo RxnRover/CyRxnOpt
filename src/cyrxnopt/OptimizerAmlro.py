@@ -1,6 +1,7 @@
 import logging
 import os
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from typing import Any, Optional
 
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerABC import OptimizerABC
@@ -28,38 +29,38 @@ class OptimizerAmlro(OptimizerABC):
 
         super().__init__(venv)
 
-    def get_config(self) -> List[Dict[str, Any]]:
+    def get_config(self) -> list[dict[str, Any]]:
         """This function will return the configurations which are needed
         to initialize an optimizer through `set_config()`.
 
         :return: Configuration option descriptions.
-        :rtype: List[Dict[str, Any]]
+        :rtype: list[dict[str, Any]]
         """
 
-        config: List[Dict[str, Any]] = [
+        config: list[dict[str, Any]] = [
             {
                 "name": "continuous_feature_names",
-                "type": "List[str]",
+                "type": "list[str]",
                 "value": [],
             },
             {
                 "name": "continuous_feature_bounds",
-                "type": "List[List[float]]",
+                "type": "list[list[float]]",
                 "value": [],
             },
             {
                 "name": "continuous_feature_resolutions",
-                "type": "List[float]",
+                "type": "list[float]",
                 "value": [],
             },
             {
                 "name": "categorical_feature_names",
-                "type": "List[str]",
+                "type": "list[str]",
                 "value": [],
             },
             {
                 "name": "categorical_feature_values",
-                "type": "List[List[str]]",
+                "type": "list[list[str]]",
                 "value": [],
             },
             {
@@ -69,7 +70,7 @@ class OptimizerAmlro(OptimizerABC):
             },
             {
                 "name": "objectives",
-                "type": "List[str]",
+                "type": "list[str]",
                 "value": ["yield"],
             },
             {
@@ -87,13 +88,13 @@ class OptimizerAmlro(OptimizerABC):
 
         return config
 
-    def set_config(self, experiment_dir: str, config: Dict[str, Any]) -> None:
+    def set_config(self, experiment_dir: str, config: dict[str, Any]) -> None:
         """Generate all the necessary data files based on the given config.
 
         :param experiment_dir: Experimental directory for saving data files.
         :type experiment_dir: str
         :param config: Configuration settings defined from `get_config()`.
-        :type config: Dict[str, Any]
+        :type config: dict[str, Any]
         """
 
         self._import_deps()
@@ -152,12 +153,12 @@ class OptimizerAmlro(OptimizerABC):
 
     def train(
         self,
-        prev_param: List[Any],
+        prev_param: list[Any],
         yield_value: float,
         experiment_dir: str,
-        config: Dict[str, Any],
+        config: dict[str, Any],
         obj_func: Optional[Callable[..., float]] = None,
-    ) -> List[Any]:
+    ) -> list[Any]:
         """generate initial training dataset needed for AMLRO model training.
 
         :param prev_param: experimental parameter combination for previous experiment,
@@ -168,11 +169,11 @@ class OptimizerAmlro(OptimizerABC):
         :param experiment_dir: experimental directory for saving data files
         :type experiment_dir: str
         :param config: Initial reaction feature configurations
-        :type config: Dict
+        :type config: dict
 
         :return: Next parameter combination to perform, or an empty list (``[]``)
                  if all training points have been performed
-        :rtype: List[Any]
+        :rtype: list[Any]
         """
 
         print("----- DEBUG train() called -----")
@@ -232,26 +233,26 @@ class OptimizerAmlro(OptimizerABC):
 
     def predict(
         self,
-        prev_param: List[Any],
+        prev_param: list[Any],
         yield_value: float,
         experiment_dir: str,
-        config: Dict[str, Any],
+        config: dict[str, Any],
         obj_func: Optional[Callable[..., float]] = None,
-    ) -> List[Any]:
+    ) -> list[Any]:
         """prediction of next best combination of parameters and
          traning machine learning model from last experimental data for active learning.
 
         :param prev_param: experimental parameter combination for previous experiment
-        :type prev_param: List[Any]
+        :type prev_param: list[Any]
         :param yield_value: experimental yield
         :type yield_value: float
         :param experiment_dir: experimental directory for saving data files
         :type experiment_dir: str
         :param config: Initial reaction feature configurations
-        :type config: Dict[str, Any]
+        :type config: dict[str, Any]
 
         :return: best predicted parameter combination
-        :rtype: List[Any]
+        :rtype: list[Any]
         """
 
         self._import_deps()

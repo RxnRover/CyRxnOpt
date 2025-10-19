@@ -1,7 +1,8 @@
 import logging
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Optional
 
 from cyrxnopt.NestedVenv import NestedVenv
 
@@ -15,7 +16,7 @@ class OptimizerABC(ABC):
 
     # Private static data member to list dependency packages required
     # by this class. This should be overwritten in children.
-    _packages: List[str] = []
+    _packages: list[str] = []
 
     def __init__(self, venv: NestedVenv) -> None:
         """Instantiates general Optimizer properties.
@@ -24,7 +25,7 @@ class OptimizerABC(ABC):
         :type venv: cyrxnopt.NestedVenv
         """
 
-        self._imports: Dict[str, Any] = {}  # Populated in self._import_deps()
+        self._imports: dict[str, Any] = {}  # Populated in self._import_deps()
         self.__venv = venv
 
     def check_install(self) -> bool:
@@ -46,7 +47,7 @@ class OptimizerABC(ABC):
 
         return True
 
-    def install(self, local_paths: Dict[str, str] = {}) -> None:
+    def install(self, local_paths: dict[str, str] = {}) -> None:
         """Install the optimizer and its dependencies.
 
         The list of packages to be installed can be checked with the
@@ -56,7 +57,7 @@ class OptimizerABC(ABC):
             packages to be installed. The package names in the mapping must
             match a name returned by ``OptimizerABC.dependencies``.
             Defaults to {}
-        :type local_paths: Dict[str, str], optional
+        :type local_paths: dict[str, str], optional
         """
 
         logger.info("Installing {}...".format(self.__class__.__name__))
@@ -78,7 +79,7 @@ class OptimizerABC(ABC):
         self._import_deps()
 
     @abstractmethod
-    def get_config(self) -> List[Dict[str, Any]]:
+    def get_config(self) -> list[dict[str, Any]]:
         """This abstract method should be included function calls for returning
         all the initial configuration requires for optimizer.
 
@@ -121,7 +122,7 @@ class OptimizerABC(ABC):
         pass
 
     @abstractmethod
-    def set_config(self, experiment_dir: str, config: Dict[str, Any]) -> None:
+    def set_config(self, experiment_dir: str, config: dict[str, Any]) -> None:
         """This abstract method should be included function calls required for
         genereting initial configurations and files for optimizer.
 
@@ -132,7 +133,7 @@ class OptimizerABC(ABC):
         :param experiment_dir: Experimental directory for saving data files.
         :type experiment_dir: str
         :param config: Configuration settings defined from `get_config()`.
-        :type config: Dict[str, Any]
+        :type config: dict[str, Any]
         """
 
         pass
@@ -140,29 +141,29 @@ class OptimizerABC(ABC):
     @abstractmethod
     def train(
         self,
-        prev_param: List[Any],
+        prev_param: list[Any],
         yield_value: float,
         experiment_dir: str,
-        config: Dict[str, Any],
+        config: dict[str, Any],
         obj_func: Optional[Callable[..., float]] = None,
-    ) -> List[Any]:
+    ) -> list[Any]:
         """Abstract optimizer training function.
 
         :param prev_param: Parameters provided from the previous prediction or
                            training step.
-        :type prev_param: List[Any]
+        :type prev_param: list[Any]
         :param yield_value: Result from the previous prediction or training
                             step.
         :type yield_value: float
         :param experiment_dir: Output directory for the optimizer algorithm.
         :type experiment_dir: str
         :param config: Optimizer config
-        :type config: Dict[str, Any]
+        :type config: dict[str, Any]
         :param obj_func: Objective function to optimize, defaults to None
         :type obj_func: Optional[Callable[..., float]], optional
 
         :returns: The next suggested reaction to perform
-        :rtype: List[Any]
+        :rtype: list[Any]
         """
 
         pass
@@ -170,27 +171,27 @@ class OptimizerABC(ABC):
     @abstractmethod
     def predict(
         self,
-        prev_param: List[Any],
+        prev_param: list[Any],
         yield_value: float,
         experiment_dir: str,
-        config: Dict[str, Any],
+        config: dict[str, Any],
         obj_func: Optional[Callable] = None,
-    ) -> List[Any]:
+    ) -> list[Any]:
         """Abstract optimizer prediction function.
 
         :param prev_param: Previous suggested reaction conditions
-        :type prev_param: List[Any]
+        :type prev_param: list[Any]
         :param yield_value: Yield value from previous reaction conditions
         :type yield_value: float
         :param experiment_dir: Output directory for the current experiment
         :type experiment_dir: str
         :param config: Optimizer configuration
-        :type config: Dict[str, Any]
+        :type config: dict[str, Any]
         :param obj_func: Objective function to optimize, defaults to None
         :type obj_func: Optional[Callable], optional
 
         :returns: The next suggested conditions to perform
-        :rtype: List[Any]
+        :rtype: list[Any]
         """
 
         pass
@@ -201,11 +202,11 @@ class OptimizerABC(ABC):
 
         pass
 
-    def _validate_config(self, config: Dict[str, Any]) -> None:
+    def _validate_config(self, config: dict[str, Any]) -> None:
         """Verifies that an optimizer configuration is valid.
 
         :param config: Optimizer configuration to check
-        :type config: Dict[str, Any]
+        :type config: dict[str, Any]
         :raises RuntimeError: Invalid optimizer configuration
         """
 
@@ -259,11 +260,11 @@ class OptimizerABC(ABC):
             raise RuntimeError("'budget' must be provided in the config.")
 
     @property
-    def dependencies(self) -> List[str]:
+    def dependencies(self) -> list[str]:
         """Dependencies required by this optimizer.
 
         :return: Dependency package names
-        :rtype: List[str]
+        :rtype: list[str]
         """
 
         return self._packages

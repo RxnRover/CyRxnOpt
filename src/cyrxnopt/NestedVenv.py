@@ -11,7 +11,7 @@ import venv
 from importlib.machinery import ModuleSpec
 from pathlib import Path
 from subprocess import CalledProcessError
-from typing import Any, List, Optional, Union, cast
+from typing import Any, Optional, Union, cast
 
 # from cyrxnopt.util.reset_module import reset_module
 logger = logging.getLogger(__name__)
@@ -210,7 +210,7 @@ class NestedVenv(venv.EnvBuilder):
 
         return is_primary
 
-    def pip_freeze(self) -> List[str]:
+    def pip_freeze(self) -> list[str]:
         """Returns the list of modules in the virtual environment as
         they would be returned by 'pip freeze'.
 
@@ -278,7 +278,7 @@ class NestedVenv(venv.EnvBuilder):
                 pre_args.append("-e")
 
             # Create the command list
-            cmd: List[str] = [str(self.python), "-m", "pip", "install"]
+            cmd: list[str] = [str(self.python), "-m", "pip", "install"]
             cmd.extend(pre_args)
             cmd.append(package)
             cmd.append("--upgrade")
@@ -469,14 +469,14 @@ class NestedVenv(venv.EnvBuilder):
 
         return python_version
 
-    def _unimport_packages(self) -> List[str]:
+    def _unimport_packages(self) -> list[str]:
         """Unimports all packages that originate from this virtual environment.
 
         This code is based on information provided by DeepSOIC and wjandrea
         on StackOverflow: https://stackoverflow.com/a/57891909.
 
         :return: Names of packages that were unimported by this function.
-        :rtype: List[str]
+        :rtype: list[str]
         """
 
         # TODO: Add logging

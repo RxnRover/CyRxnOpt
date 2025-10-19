@@ -1,7 +1,8 @@
 import json
 import logging
 import os
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from typing import Any, Optional
 
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerABC import OptimizerABC
@@ -24,15 +25,15 @@ class OptimizerNMSimplex(OptimizerABC):
 
         super().__init__(venv)
 
-    def get_config(self) -> List[Dict[str, Any]]:
+    def get_config(self) -> list[dict[str, Any]]:
         """Get the configuration options available for this optimizer.
 
         :return: List of configuration options with option name, data type,
                  and information about which values are allowed/defaulted.
-        :rtype: List[Dict[str, Any]]
+        :rtype: list[dict[str, Any]]
         """
 
-        config: List[Dict[str, Any]] = [
+        config: list[dict[str, Any]] = [
             {
                 "name": "direction",
                 "type": "str",
@@ -77,7 +78,7 @@ class OptimizerNMSimplex(OptimizerABC):
 
         return config
 
-    def set_config(self, experiment_dir: str, config: Dict[str, Any]) -> None:
+    def set_config(self, experiment_dir: str, config: dict[str, Any]) -> None:
         """Set the configuration for this instance of the optimizer.
 
         Valid configuration options should be retrieved using ``get_config()``
@@ -86,7 +87,7 @@ class OptimizerNMSimplex(OptimizerABC):
         :param experiment_dir: Output directory for the configuration file.
         :type experiment_dir: str
         :param config: Configuration options for this optimizer instance.
-        :type config: Dict[str, Any]
+        :type config: dict[str, Any]
         """
 
         self._import_deps()
@@ -101,44 +102,44 @@ class OptimizerNMSimplex(OptimizerABC):
 
     def train(
         self,
-        prev_param: List[Any],
+        prev_param: list[Any],
         yield_value: float,
         experiment_dir: str,
-        config: Dict[str, Any],
+        config: dict[str, Any],
         obj_func: Optional[Callable] = None,
-    ) -> List[Any]:
+    ) -> list[Any]:
         """No training step for this algorithm.
 
         :returns: List will always be empty.
-        :rtype: List[Any]
+        :rtype: list[Any]
         """
 
         return []
 
     def predict(
         self,
-        prev_param: List[Any],
+        prev_param: list[Any],
         yield_value: float,
         experiment_dir: str,
-        config: Dict[str, Any],
+        config: dict[str, Any],
         obj_func: Optional[Callable[..., float]] = None,
-    ) -> List[Any]:
+    ) -> list[Any]:
         """Find the desired optimum of the provided objective function.
 
         :param prev_param: Parameters provided from the previous prediction,
                            provide an empty list for the first call
-        :type prev_param: List[Any]
+        :type prev_param: list[Any]
         :param yield_value: Result from the previous prediction
         :type yield_value: float
         :param experiment_dir: Output directory for the optimizer algorithm
         :type experiment_dir: str
         :param config: CyRxnOpt-level config for the optimizer
-        :type config: Dict[str, Any]
+        :type config: dict[str, Any]
         :param obj_func: Objective function to optimize, defaults to None
         :type obj_func: Optional[Callable[..., float]], optional
 
         :returns: The next suggested reaction to perform
-        :rtype: List[Any]
+        :rtype: list[Any]
         """
 
         self._import_deps()
@@ -172,7 +173,7 @@ class OptimizerNMSimplex(OptimizerABC):
             callback=self._create_writer(experiment_dir),
         )
 
-        raw_results: List = []
+        raw_results: list = []
         with open(os.path.join(experiment_dir, "results.csv")) as fin:
             for row in fin.readlines():
                 row_list = row.split(",")
