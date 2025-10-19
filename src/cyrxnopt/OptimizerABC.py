@@ -127,11 +127,7 @@ class OptimizerABC(ABC):
 
         The key for each option must match the corresponding "name" field
         and the value type must match the one assigned in the "type" field
-        from ``get_config()``. Options prefixed with "continuous" or
-        "categorical" should be stored as the name with the prefix removed
-        under either the "continuous" or "categorical" key. For example,
-        the "continuous_feature_names" config option should be stored in a
-        ``config`` dict as ``config["continuous"]["feature_names"]``.
+        from ``get_config()``.
 
         :param experiment_dir: Experimental directory for saving data files.
         :type experiment_dir: str
