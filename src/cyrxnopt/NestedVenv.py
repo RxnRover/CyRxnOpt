@@ -252,7 +252,7 @@ class NestedVenv(venv.EnvBuilder):
         :raises CalledProcessError: An error occurred when running pip freeze
         """
 
-        # TODO: Add logging
+        logging.info(f"Installing {package_name}")
 
         # NOTE: In the 'importlib' package, it is noted that `import_module()`
         #       should be used instead of `__import__()`. Maybe it is better
@@ -260,8 +260,12 @@ class NestedVenv(venv.EnvBuilder):
         #
         # Source: https://docs.python.org/3/library/importlib.html#importlib.__import__
         try:
+            logging.debug(f"Attempting to import {package_name}")
             __import__(package_name)
+            logging.debug("Import succeeded")
         except ModuleNotFoundError:
+            logging.debug("Import failed; attempting to install via pip")
+
             # Decide whether this is a local path or PyPI package
             if package_path is not None:
                 package: str = str(package_path)
@@ -291,9 +295,9 @@ class NestedVenv(venv.EnvBuilder):
                 # Raises CalledProcessError if the return code is non-zero
                 completed_process.check_returncode()
             except CalledProcessError as e:
-                logger.debug("Return code nonzero: {}".format(e))
-                logger.debug("stdout: {}".format(completed_process.stdout))
-                logger.debug("stderr: {}".format(completed_process.stderr))
+                logger.error("Return code nonzero: {}".format(e))
+                logger.error("stdout: {}".format(completed_process.stdout))
+                logger.error("stderr: {}".format(completed_process.stderr))
 
     def pip_install_e(self, package_path: Path, package_name: str = "") -> None:
         """Install a package to the active virtual environment using
@@ -314,6 +318,12 @@ class NestedVenv(venv.EnvBuilder):
         # explicitly provided
         if package_name == "":
             package_name = package_path.stem
+            logging.info(
+                (
+                    f"Defaulting to package name of {package_name}",
+                    f"from the package path: {package_path}",
+                )
+            )
 
         # Attempt to install the package
         self.pip_install(package_name, package_path, editable=True)
