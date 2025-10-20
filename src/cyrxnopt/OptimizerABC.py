@@ -51,11 +51,11 @@ class OptimizerABC(ABC):
         """Install the optimizer and its dependencies.
 
         The list of packages to be installed can be checked with the
-        ``OptimizerABC.dependencies`` property.
+        :py:meth:`OptimizerABC.dependencies` property.
 
         :param local_paths: Mapping of package names to local paths to the
             packages to be installed. The package names in the mapping must
-            match a name returned by ``OptimizerABC.dependencies``.
+            match a name returned by :py:meth:`OptimizerABC.dependencies`.
             Defaults to {}
         :type local_paths: dict[str, str], optional
         """
@@ -80,8 +80,14 @@ class OptimizerABC(ABC):
 
     @abstractmethod
     def get_config(self) -> list[dict[str, Any]]:
-        """This abstract method should be included function calls for returning
-        all the initial configuration requires for optimizer.
+        """Provides descriptions for valid configuration settings for an optimizer.
+
+        This method provides information about the possible configuration options
+        and their default values for a given optimizer. The intent is for this
+        method to provide the necessary information for a user-facing program to
+        present the configuration options to the user. Once the user has chosen
+        their desired configurations, they can be set for the optimizer using
+        :py:meth:`~OptimizerABC.set_config`.
 
         The configuration descriptions returned by this function are
         dictionaries with three keys, "name", "type", and "value":
@@ -123,12 +129,13 @@ class OptimizerABC(ABC):
 
     @abstractmethod
     def set_config(self, experiment_dir: str, config: dict[str, Any]) -> None:
-        """This abstract method should be included function calls required for
-        genereting initial configurations and files for optimizer.
+        """Generates initial configurations and files for an optimizer.
 
+        Valid configuration options should be retrieved using
+        :py:meth:`~OptimizerABC.get_config` before calling this function.
         The key for each option must match the corresponding "name" field
         and the value type must match the one assigned in the "type" field
-        from ``get_config()``.
+        from the optimizer's :py:meth:`~OptimizerABC.get_config` method.
 
         :param experiment_dir: Experimental directory for saving data files.
         :type experiment_dir: str
