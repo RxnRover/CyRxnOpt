@@ -36,7 +36,7 @@ class OptimizerAmlro(OptimizerABC):
         config descriptions returned by this method and for general usage
         information.
 
-        :return: Configuration option descriptions.
+        :return: Configuration option descriptions
         :rtype: list[dict[str, Any]]
         """
 

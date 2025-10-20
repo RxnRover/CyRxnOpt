@@ -19,14 +19,18 @@ class OptimizerNMSimplex(OptimizerABC):
         """Optimizer class for the Nelder-Mead Simplex algorithm from the
         ``scipy`` package.
 
-        :param venv: Virtual environment manager to use, defaults to None
-        :type venv: cyrxnopt.NestedVenv, optional
+        :param venv: Virtual environment manager to use
+        :type venv: NestedVenv
         """
 
         super().__init__(venv)
 
     def get_config(self) -> list[dict[str, Any]]:
-        """Get the configuration options available for this optimizer.
+        """Gets the configuration options available for this optimizer.
+
+        See :py:meth:`OptimizerABC.get_config` for more information about the
+        config descriptions returned by this method and for general usage
+        information.
 
         :return: List of configuration options with option name, data type,
                  and information about which values are allowed/defaulted.
@@ -79,14 +83,14 @@ class OptimizerNMSimplex(OptimizerABC):
         return config
 
     def set_config(self, experiment_dir: str, config: dict[str, Any]) -> None:
-        """Set the configuration for this instance of the optimizer.
+        """Sets the configuration for this instance of the optimizer.
 
-        Valid configuration options should be retrieved using ``get_config()``
-        before calling this function.
+        See :py:meth:`OptimizerABC.set_config` for more information about how
+        to form the config dictionary and for general usage information.
 
-        :param experiment_dir: Output directory for the configuration file.
+        :param experiment_dir: Output directory for the configuration file
         :type experiment_dir: str
-        :param config: Configuration options for this optimizer instance.
+        :param config: Configuration options for this optimizer instance
         :type config: dict[str, Any]
         """
 
