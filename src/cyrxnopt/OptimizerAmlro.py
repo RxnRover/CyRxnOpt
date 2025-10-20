@@ -21,17 +21,20 @@ class OptimizerAmlro(OptimizerABC):
     ]
 
     def __init__(self, venv: NestedVenv) -> None:
-        """initializing optimizer AMLRO object
+        """Optimizer class for the AMLRO package.
 
-        :param venv: Virtual envirement class object
+        :param venv: Virtual environment to install the optimizer
         :type venv: NestedVenv
         """
 
         super().__init__(venv)
 
     def get_config(self) -> list[dict[str, Any]]:
-        """This function will return the configurations which are needed
-        to initialize an optimizer through `set_config()`.
+        """Gets the configuration options available for this optimizer.
+
+        See :py:meth:`OptimizerABC.get_config` for more information about the
+        config descriptions returned by this method and for general usage
+        information.
 
         :return: Configuration option descriptions.
         :rtype: list[dict[str, Any]]
@@ -89,11 +92,14 @@ class OptimizerAmlro(OptimizerABC):
         return config
 
     def set_config(self, experiment_dir: str, config: dict[str, Any]) -> None:
-        """Generate all the necessary data files based on the given config.
+        """Generates necessary data files based on the given config.
 
-        :param experiment_dir: Experimental directory for saving data files.
+        See :py:meth:`OptimizerABC.set_config` for more information about how
+        to form the config dictionary and for general usage information.
+
+        :param experiment_dir: Output directory for generated files
         :type experiment_dir: str
-        :param config: Configuration settings defined from `get_config()`.
+        :param config: Configuration options for this optimizer instance
         :type config: dict[str, Any]
         """
 
@@ -159,24 +165,36 @@ class OptimizerAmlro(OptimizerABC):
         config: dict[str, Any],
         obj_func: Optional[Callable[..., float]] = None,
     ) -> list[Any]:
-        """generate initial training dataset needed for AMLRO model training.
+        """Suggests and records training data points needed for AMLRO.
 
-        :param prev_param: experimental parameter combination for previous experiment,
-            provide an empty list for the first call
-        :type prev_param: list
-        :param yield_value: experimental yield
+        :py:meth:`OptimizerAmlro.set_config` must be called prior to this method
+        to generate the necessary files.
+
+        The previous parameter+result is recorded during the *next*
+        call to either :py:meth:`~OptimizerAmlro.train` or
+        :py:meth:`~OptimizerAmlro.predict`. This means that on the first call
+        here, the ``prev_param`` and ``yield_value`` values provided are
+        ignored. Importantly, this also means that the last suggested
+        parameter+result pair from training will not be recorded unless either
+        another :py:meth:`~OptimizerAmlro.train` or a subsequent
+        :py:meth:`~OptimizerAmlro.predict` call are made afterward!
+
+        :param prev_param: Experimental parameter combination from the previous
+            experiment, provide an empty list for the first call
+        :type prev_param: list[Any]
+        :param yield_value: Experimental yield
         :type yield_value: float
-        :param experiment_dir: experimental directory for saving data files
+        :param experiment_dir: Output directory for saving data files
         :type experiment_dir: str
-        :param config: Initial reaction feature configurations
-        :type config: dict
+        :param config: CyRxnOpt-level config for the optimizer
+        :type config: dict[str, Any]
+        :param obj_func: Ignored for this optimizer, defaults to None
+        :type obj_func: Optional[Callable[..., float]], optional
 
         :return: Next parameter combination to perform, or an empty list (``[]``)
                  if all training points have been performed
         :rtype: list[Any]
         """
-
-        print("----- DEBUG train() called -----")
 
         self._import_deps()
 
@@ -239,19 +257,32 @@ class OptimizerAmlro(OptimizerABC):
         config: dict[str, Any],
         obj_func: Optional[Callable[..., float]] = None,
     ) -> list[Any]:
-        """prediction of next best combination of parameters and
-         traning machine learning model from last experimental data for active learning.
+        """Searches for the best parameters and records results from prior steps.
 
-        :param prev_param: experimental parameter combination for previous experiment
+        :py:meth:`OptimizerAmlro.set_config` and :py:meth:`OptimizerAmlro.train`
+        must be called prior to this method to generate the necessary files and
+        initial training data for the model.
+
+        The previous parameter+result is recorded during the *next*
+        call to :py:meth:`~OptimizerAmlro.predict`. The ``prev_param`` and
+        ``yield_value`` values provided here are always recorded. Importantly,
+        this also means that the last suggested parameter+result pair from
+        prediction will not be recorded unless either another
+        :py:meth:`~OptimizerAmlro.predict` call is made afterward!
+
+        :param prev_param: Parameters provided from the previous prediction
+                           or from the final call to :py:meth:`OptimizerAmlro.train`
         :type prev_param: list[Any]
-        :param yield_value: experimental yield
+        :param yield_value: Result from the previous suggested conditions
         :type yield_value: float
-        :param experiment_dir: experimental directory for saving data files
+        :param experiment_dir: Output directory for saving data files
         :type experiment_dir: str
-        :param config: Initial reaction feature configurations
+        :param config: CyRxnOpt-level config for the optimizer
         :type config: dict[str, Any]
+        :param obj_func: Ignored for this optimizer, defaults to None
+        :type obj_func: Optional[Callable[..., float]], optional
 
-        :return: best predicted parameter combination
+        :return: The next suggested reaction to perform
         :rtype: list[Any]
         """
 
