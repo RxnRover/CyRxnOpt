@@ -6,6 +6,7 @@ from typing import Any, Optional
 
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerABC import OptimizerABC
+from cyrxnopt.utilities.config.transforms import use_subkeys
 
 logger = logging.getLogger(__name__)
 
@@ -102,7 +103,7 @@ class OptimizerEDBOp(OptimizerABC):
             os.makedirs(experiment_dir)
 
         # Get reaction scope configurations from general config
-        config = self.config_translate(config)
+        config = self._config_translate(config)
 
         # generate reaction scope for EDBO+
         self._imports["EDBOplus"]().generate_reaction_scope(
@@ -193,12 +194,10 @@ class OptimizerEDBOp(OptimizerABC):
         :rtype: list[Any]
         """
 
-        config = self.config_translate(
-            config
-        )  # get reaction scope configurations
-        # from general config file
+        # Get reaction scope configurations from general config file
+        config = self._config_translate(config)
 
-        # reading optimization file with reaction conditions
+        # Read optimization file with reaction conditions
         df_edbo = self._imports["pd"].read_csv(
             os.path.join(experiment_dir, self._edbop_filename)
         )
@@ -247,7 +246,7 @@ class OptimizerEDBOp(OptimizerABC):
 
         return next_combo
 
-    def config_translate(self, config: dict[str, Any]) -> dict[str, Any]:
+    def _config_translate(self, config: dict[str, Any]) -> dict[str, Any]:
         """Convers general config into EDBO+ reaction scope config format.
 
         :param config: General configuration dictionary
@@ -260,43 +259,44 @@ class OptimizerEDBOp(OptimizerABC):
         self._import_deps()
         reaction_components = {}
 
+        config = use_subkeys(config)
         # If the keys are returned as they were given in `get_config` then
         # translate them to the format that works here
-        config["continuous"] = {}
-        if (
-            "continuous_feature_names" in config
-            and len(config["continuous_feature_names"]) > 0
-        ):
-            config["continuous"] = {}
+        # config["continuous"] = {}
+        # if (
+        #     "continuous_feature_names" in config
+        #     and len(config["continuous_feature_names"]) > 0
+        # ):
+        #     config["continuous"] = {}
 
-            config["continuous"]["feature_names"] = config[
-                "continuous_feature_names"
-            ]
-            config["continuous"]["bounds"] = config["continuous_feature_bounds"]
-            config["continuous"]["resolutions"] = config[
-                "continuous_feature_resolutions"
-            ]
-        else:
-            config["continuous"]["feature_names"] = []
-            config["continuous"]["bounds"] = []
-            config["continuous"]["resolutions"] = []
+        #     config["continuous"]["feature_names"] = config[
+        #         "continuous_feature_names"
+        #     ]
+        #     config["continuous"]["bounds"] = config["continuous_feature_bounds"]
+        #     config["continuous"]["resolutions"] = config[
+        #         "continuous_feature_resolutions"
+        #     ]
+        # else:
+        #     config["continuous"]["feature_names"] = []
+        #     config["continuous"]["bounds"] = []
+        #     config["continuous"]["resolutions"] = []
 
-        config["categorical"] = {}
-        if (
-            "categorical_feature_names" in config
-            and len(config["categorical_feature_names"]) > 0
-        ):
-            config["categorical"] = {}
+        # config["categorical"] = {}
+        # if (
+        #     "categorical_feature_names" in config
+        #     and len(config["categorical_feature_names"]) > 0
+        # ):
+        #     config["categorical"] = {}
 
-            config["categorical"]["feature_names"] = config[
-                "categorical_feature_names"
-            ]
-            config["categorical"]["values"] = config[
-                "categorical_feature_values"
-            ]
-        else:
-            config["categorical"]["feature_names"] = []
-            config["categorical"]["values"] = []
+        #     config["categorical"]["feature_names"] = config[
+        #         "categorical_feature_names"
+        #     ]
+        #     config["categorical"]["values"] = config[
+        #         "categorical_feature_values"
+        #     ]
+        # else:
+        #     config["categorical"]["feature_names"] = []
+        #     config["categorical"]["values"] = []
 
         for i in range(len(config["continuous"]["feature_names"])):
             low_bound = config["continuous"]["bounds"][i][0]
