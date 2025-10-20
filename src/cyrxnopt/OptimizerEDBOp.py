@@ -1,9 +1,13 @@
+import logging
 import os
 import random
-from typing import Any, Dict, List
+from collections.abc import Callable
+from typing import Any, Optional
 
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerABC import OptimizerABC
+
+logger = logging.getLogger(__name__)
 
 
 class OptimizerEDBOp(OptimizerABC):
@@ -12,65 +16,69 @@ class OptimizerEDBOp(OptimizerABC):
     _packages = ["benchmarking", "edboplus", "pandas"]
 
     # overidding methods
-    def __init__(self, venv: NestedVenv = None) -> None:
-        """initializing optimizer EDBO+ object
+    def __init__(self, venv: NestedVenv) -> None:
+        """Optimizer class for the EDBO+ algorithm.
 
-        :param venv: Virtual envirement class object, defaults to None
-        :type venv: NestedVenv, optional
+        :param venv: Virtual environment to install the optimizer
+        :type venv: NestedVenv
         """
 
-        super(OptimizerEDBOp, self).__init__(venv)
+        super().__init__(venv)
 
         self._edbop_filename = "my_optimization.csv"
         self._reaction_order_filename = "reaction_order.csv"
 
-    def get_config(self):
-        """This function will return the configurations which are needed
-        to initialize an optimizer through `set_config()`.
+    def get_config(self) -> list[dict[str, Any]]:
+        """Get the configuration options available for this optimizer.
 
-        :return: Configuration option descriptions.
-        :rtype: List[Dict[str, Any]]
+        See :py:meth:`OptimizerABC.get_config` for more information about the
+        config descriptions returned by this method and for general usage
+        information.
+
+        :return: List of configuration options with option name, data type,
+                 and information about which values are allowed/defaulted.
+        :rtype: list[dict[str, Any]]
         """
 
-        config = [
+        config: list[dict[str, Any]] = [
             {
                 "name": "continuous_feature_names",
-                "type": List[str],
+                "type": "list[str]",
                 "value": [],
             },
             {
                 "name": "continuous_feature_bounds",
-                "type": List[List[float]],
+                "type": "list[list[float]]",
                 "value": [],
             },
             {
                 "name": "continuous_feature_resolutions",
-                "type": List[float],
+                "type": "list[float]",
                 "value": [],
             },
             {
                 "name": "categorical_feature_names",
-                "type": List[str],
+                "type": "list[str]",
                 "value": [],
             },
             {
                 "name": "categorical_feature_values",
-                "type": List[List[str]],
+                "type": "list[list[str]]",
                 "value": [],
             },
             {
                 "name": "budget",
-                "type": int,
+                "type": "int",
                 "value": 100,
             },
             {
                 "name": "objectives",
-                "type": List[str],
+                "type": "list[str]",
                 "value": ["yield"],
             },
             {
                 "name": "direction",
-                "type": List[str],
+                "type": "list[str]",
                 "value": ["min"],
                 "range": ["min", "max"],
             },
@@ -78,23 +86,25 @@ class OptimizerEDBOp(OptimizerABC):
 
         return config
 
-    def set_config(self, experiment_dir: str, config: Dict) -> None:
-        """Generate all the nessasry data files
+    def set_config(self, experiment_dir: str, config: dict[str, Any]) -> None:
+        """Generate all the necessary data files based on the given configuration.
 
-        :param experiment_dir: experimental directory for saving data files
+        See :py:meth:`OptimizerABC.set_config` for more information about how
+        to form the config dictionary and for general usage information.
+
+        :param experiment_dir: Output directory for the configuration file
         :type experiment_dir: str
-        :param config: configuration dict which required for initializing edbo+
-        :type config: dict
+        :param config: CyRxnOpt-level config for the optimizer
+        :type config: dict[str, Any]
         """
+
         if not os.path.exists(experiment_dir):
             os.makedirs(experiment_dir)
 
-        config = self.config_translate(
-            config
-        )  # get reaction scope configurations
-        # from general config file
+        # Get reaction scope configurations from general config
+        config = self.config_translate(config)
 
-        # generate reaction scope for EDBOp
+        # generate reaction scope for EDBO+
         self._imports["EDBOplus"]().generate_reaction_scope(
             components=config["reaction_components"],
             directory=experiment_dir,
@@ -102,18 +112,23 @@ class OptimizerEDBOp(OptimizerABC):
             check_overwrite=False,
         )
 
-        # initialize the edbop optimization file will be use for prediction
+        # Initialize the EDBO+ file to be used for prediction
         self._imports["EDBOplus"]().run(
             directory=experiment_dir,
-            filename=self._edbop_filename,  # Previously generated scope.
-            objectives=config["objectives"],  # ['yield', 'ee', 'side_product'],
-            # Objectives to be optimized.
-            objective_mode=config["direction"],  # ['max', 'max', 'min'],
-            # Maximize yield and ee but minimize side_product.
-            batch=1,  # Number of experiments in parallel that
-            # we want to perform in this round.
-            columns_features="all",  # features to be included in the model.
-            init_sampling_method="seed",  # initialization method.
+            # Previously generated scope
+            filename=self._edbop_filename,
+            # Objectives to be optimized
+            # For example, maximize yield and ee but minimize side_product:
+            # objectives=['yield', 'ee', 'side_product'],
+            # objective_mode=['max', 'max', 'min'],
+            objectives=config["objectives"],
+            objective_mode=config["direction"],
+            # Number of experiments in parallel to perform in this round
+            batch=1,
+            # Features to be included in the model
+            columns_features="all",
+            # Initialization method
+            init_sampling_method="seed",
             seed=random.randint(0, 2**32 - 1),
         )
 
@@ -131,58 +146,52 @@ class OptimizerEDBOp(OptimizerABC):
             headers = feature_names
             headers.extend(objectives)
 
-            fout.write(",".join(headers), "\n")
+            fout.write(",".join(headers) + "\n")
 
     def train(
         self,
-        prev_param: List[Any],
-        yield_value: List[float],
-        itr: int,
+        prev_param: list[Any],
+        yield_value: float,
         experiment_dir: str,
-        config: Dict,
-        obj_func=None,
-    ) -> List[Any]:
-        """generate initial training dataset needed for optmizer. EDBOP doesent need
-        initial training. traning function should be pass or empty.
+        config: dict[str, Any],
+        obj_func: Optional[Callable[..., float]] = None,
+    ) -> list[Any]:
+        """No training step for this algorithm.
 
-        :param prev_param: experimental parameter combination for previous experiment
-        :type prev_param: list
-        :param yield_value: experimental yield
-        :type yield_value: float
-        :param itr: experimental cycle number for training
-        :type itr: int
-        :param experiment_dir: experimental directory for saving data files
-        :type experiment_dir: str
-        :param config: Initial reaction feature configurations
-        :type config: Dict
-        :return: next parameter combination for next experimental cycle.
-        :rtype: list
+        :returns: List will always be empty.
+        :rtype: list[Any]
         """
-        pass
+
+        return []
 
     def predict(
         self,
-        prev_param: List[Any],
-        yield_value: List[float],
+        prev_param: list[Any],
+        yield_value: float,
         experiment_dir: str,
-        config: Dict,
-        obj_func=None,
-    ) -> List[Any]:
-        """prediction of next best combination of parameters and
-         traning machine learning model from last experimental data for active learning.
+        config: dict[str, Any],
+        obj_func: Optional[Callable[..., float]] = None,
+    ) -> list[Any]:
+        """Searches for the best parameters and records results from prior steps.
 
-        :param prev_param: experimental parameter combination for previous experiment
-        :type prev_param: list
-        :param yield_value: experimental yield
+        :py:meth:`OptimizerEDBOp.set_config` must be called prior to this method
+        to generate the necessary files.
+
+        :param prev_param: Parameters provided from the previous prediction,
+                           provide an empty list for the first call
+        :type prev_param: list[Any]
+        :param yield_value: Experimental yield
         :type yield_value: float
-        :param experiment_dir: experimental directory for saving data files
+        :param experiment_dir: Output directory for any generated files
         :type experiment_dir: str
-        :param config: Initial reaction feature configurations
-        :type config: Dict
-        :return: best predicted parameter combination
-        :rtype: list
+        :param config: CyRxnOpt-level config for the optimizer
+        :type config: dict[str, Any]
+        :param obj_func: Ignored for this optimizer, defaults to None
+        :type obj_func: Optional[Callable[..., float]], optional
+
+        :returns: The next suggested reaction to perform
+        :rtype: list[Any]
         """
-        filename = "my_optimization.csv"
 
         config = self.config_translate(
             config
@@ -191,7 +200,7 @@ class OptimizerEDBOp(OptimizerABC):
 
         # reading optimization file with reaction conditions
         df_edbo = self._imports["pd"].read_csv(
-            os.path.join(experiment_dir, filename)
+            os.path.join(experiment_dir, self._edbop_filename)
         )
 
         # TODO: Writing the entire dataframe of shape (2085136, 6),
@@ -201,55 +210,53 @@ class OptimizerEDBOp(OptimizerABC):
             # [df_edbo.loc[0,config['objectives'][i]] =
             # yield_value[i] for i in range(len(yield_value))]
             df_edbo.loc[0, config["objectives"][0]] = yield_value
-            df_edbo.to_csv(os.path.join(experiment_dir, filename), index=False)
+            df_edbo.to_csv(
+                os.path.join(experiment_dir, self._edbop_filename), index=False
+            )
 
             # Write the reaction parameters and results to the file preserving
             # reaction order
             # TODO: Rework this when we switch to multi-objective!
             with open(self._reaction_order_filename, "a") as fout:
                 line = prev_param
-                line.extend(yield_value)
+                line.extend([yield_value])
                 fout.write(",".join(line))
                 fout.write("\n")
 
-        # running the edbop prediction
+        # Run one EDBO+ prediction
         self._imports["EDBOplus"]().run(
             directory=experiment_dir,
-            filename=filename,  # Previously generated scope.
-            objectives=config[
-                "objectives"
-            ],  # ['yield', 'ee', 'side_product'],  # Objectives to be optimized.
-            objective_mode=config["direction"],  # ['max', 'max', 'min'],
-            # Maximize yield and ee but minimize side_product.
-            batch=1,  # Number of experiments in parallel that
-            # we want to perform in this round.
-            columns_features="all",  # features to be included in the model.
-            init_sampling_method="seed",  # initialization method.
+            filename=self._edbop_filename,
+            objectives=config["objectives"],
+            objective_mode=config["direction"],
+            batch=1,
+            columns_features="all",
+            init_sampling_method="seed",
             seed=random.randint(0, 2**32 - 1),
             write_extra_data=False,
         )
 
-        # after one cycle of prediction again read the reaction condition file to
-        #  getting the next reaction condition.
+        # After one cycle of prediction, read the reaction condition file to
+        # get the next reaction condition
         df_edbo = self._imports["pd"].read_csv(
-            os.path.join(experiment_dir, filename)
+            os.path.join(experiment_dir, self._edbop_filename)
         )
 
         next_combo = df_edbo.iloc[:1].values.tolist()
         next_combo = next_combo[0][:-2]
-        print("Next combo:", next_combo)
 
         return next_combo
 
-    def config_translate(self, config: Dict) -> Dict:
-        """This function convert general config dictionary into
-        EDBOp reaction scope config dictionary format.
+    def config_translate(self, config: dict[str, Any]) -> dict[str, Any]:
+        """Convers general config into EDBO+ reaction scope config format.
 
-        :param config: general configuration dict
-        :type config: Dict
-        :return: translated configuration dict
-        :rtype: Dict
+        :param config: General configuration dictionary
+        :type config: dict[str, Any]
+
+        :return: Translated configuration dictionary
+        :rtype: dict[str, Any]
         """
+
         self._import_deps()
         reaction_components = {}
 
@@ -330,12 +337,10 @@ class OptimizerEDBOp(OptimizerABC):
         return edbo_config
 
     def _import_deps(self) -> None:
-        """importing all the packages and libries needed for running amlro
-        optimizer
-        """
+        """Import packages needed to run the optimizer."""
 
-        import numpy as np
-        import pandas as pd
-        from edbo.plus.optimizer_botorch import EDBOplus
+        import numpy as np  # type: ignore
+        import pandas as pd  # type: ignore
+        from edbo.plus.optimizer_botorch import EDBOplus  # type: ignore
 
         self._imports = {"EDBOplus": EDBOplus, "np": np, "pd": pd}
