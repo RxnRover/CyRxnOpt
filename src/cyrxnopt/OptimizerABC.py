@@ -259,6 +259,9 @@ class OptimizerABC(ABC):
         if "budget" not in config:
             raise RuntimeError("'budget' must be provided in the config.")
 
+        if "direction" not in config:
+            raise RuntimeError("'direction' must be provided in the config.")
+
     @property
     def dependencies(self) -> list[str]:
         """Dependencies required by this optimizer.
