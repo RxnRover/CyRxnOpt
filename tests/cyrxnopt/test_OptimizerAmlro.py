@@ -142,6 +142,7 @@ def test__validate_config_continuous_config():
         "continuous_feature_names": ["f1", "f2"],
         "continuous_feature_bounds": [[-1, 1], [-5, 5]],
         "continuous_feature_resolutions": [1, 5, 1],
+        "direction": "min",
         "budget": 10,
     }
 
@@ -155,6 +156,7 @@ def test__validate_config_categorical_config():
         "categorical_feature_names": ["f3"],
         "categorical_feature_values": [["a", "b", "c"]],
         "budget": 10,
+        "direction": "min",
     }
 
     opt._validate_config(config)
@@ -167,6 +169,7 @@ def test__validate_config_missing_parts():
         "continuous_feature_bounds": [[-1, 1], [-5, 5]],
         "continuous_feature_resolutions": [1, 5, 1],
         "categorical_feature_values": [["a", "b", "c"]],
+        "direction": "min",
         "budget": 10,
     }
 
@@ -175,6 +178,7 @@ def test__validate_config_missing_parts():
 
     config_no_continuous_feature_bounds_or_res = {
         "continuous_feature_names": ["f1", "f2"],
+        "direction": "min",
         "budget": 10,
     }
 
@@ -183,6 +187,7 @@ def test__validate_config_missing_parts():
 
     config_no_categorical_feature_values = {
         "categorical_feature_names": ["f3"],
+        "direction": "min",
         "budget": 10,
     }
 
@@ -195,7 +200,20 @@ def test__validate_config_missing_parts():
         "continuous_feature_resolutions": [1, 5, 1],
         "categorical_feature_names": ["f3"],
         "categorical_feature_values": [["a", "b", "c"]],
+        "direction": "min",
     }
 
     with pytest.raises(RuntimeError):
         opt._validate_config(config_no_budget)
+
+    config_no_direction = {
+        "continuous_feature_names": ["f1", "f2"],
+        "continuous_feature_bounds": [[-1, 1], [-5, 5]],
+        "continuous_feature_resolutions": [1, 5, 1],
+        "categorical_feature_names": ["f3"],
+        "categorical_feature_values": [["a", "b", "c"]],
+        "budget": 10,
+    }
+
+    with pytest.raises(RuntimeError):
+        opt._validate_config(config_no_direction)
