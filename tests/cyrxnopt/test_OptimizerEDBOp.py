@@ -36,12 +36,8 @@ def venv_edbop(tmp_path_factory, edboplus_local_path):
     assert test_venv.is_active()
     assert test_venv.is_primary()
 
-    # Didn't solve the issue
-    test_venv.pip_install("setuptools<54.1")
-
     # Preinstall dependencies
     opt = OptimizerEDBOp(test_venv)
-    # TODO: Fails with no useful error output
     opt.install(local_paths={"edboplus": edboplus_local_path})
     assert opt.check_install()
 

@@ -291,6 +291,9 @@ class NestedVenv(venv.EnvBuilder):
                 encoding="utf-8",  # Dencode the stdout and stderr bytestrings
             )
 
+            logger.debug("stdout: {}".format(completed_process.stdout))
+            logger.debug("stderr: {}".format(completed_process.stderr))
+
             try:
                 # Raises CalledProcessError if the return code is non-zero
                 completed_process.check_returncode()
