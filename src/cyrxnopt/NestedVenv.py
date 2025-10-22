@@ -26,6 +26,7 @@ class NestedVenv(venv.EnvBuilder):
         """
 
         self.prefix = Path(virtual_dir)
+        self.env_path_sep = ";" if sys.platform == "win32" else "bin"
 
         # Call the EnvBuilder constructor
         super().__init__(
@@ -60,7 +61,9 @@ class NestedVenv(venv.EnvBuilder):
             #       scope
             #
             # Source: https://groups.google.com/g/python-virtualenv/c/FfipsFBqvq4?pli=1
-            env_path = [Path(p) for p in os.environ["PATH"].split(":")]
+            env_path = [
+                Path(p) for p in os.environ["PATH"].split(self.env_path_sep)
+            ]
             env_path.insert(0, self.binary_directory)
 
             # Determine available modules before activating this, then
@@ -81,7 +84,9 @@ class NestedVenv(venv.EnvBuilder):
         else:
             raise RuntimeError("Virtual environment has not been created yet!")
 
-        os.environ["PATH"] = ":".join([str(p.resolve()) for p in env_path])
+        os.environ["PATH"] = self.env_path_sep.join(
+            [str(p.resolve()) for p in env_path]
+        )
 
     def create(self, env_dir: Any = "") -> None:
         """Creates the virtual environment at the given location.
@@ -119,12 +124,16 @@ class NestedVenv(venv.EnvBuilder):
             logger.debug("Venv is not active.")
             return
 
-        env_path = [Path(p) for p in os.environ["PATH"].split(":")]
+        env_path = [
+            Path(p) for p in os.environ["PATH"].split(self.env_path_sep)
+        ]
 
         # Remove all instances of the virtual environment from the path
         env_path = [path for path in env_path if path != self.binary_directory]
 
-        os.environ["PATH"] = ":".join([str(p.resolve()) for p in env_path])
+        os.environ["PATH"] = self.env_path_sep.join(
+            [str(p.resolve()) for p in env_path]
+        )
 
         # TODO: We need to remove the virtual environment from sys.path
         #       and unimport the packages from it without affecting
@@ -158,10 +167,10 @@ class NestedVenv(venv.EnvBuilder):
                 # reset_module(pkg)
                 logger.debug("Successfully reimported: {}".format(pkg))
             except (KeyError, ModuleNotFoundError) as e:
-                logger.debug("Could not reimport: {}".format(pkg))
-                logger.debug(
-                    "Reimport exception: {}({})".format(e.__class__.__name__, e)
-                )
+                # logger.debug("Could not reimport: {}".format(pkg))
+                # logger.debug(
+                #     "Reimport exception: {}({})".format(e.__class__.__name__, e)
+                # )
                 continue
 
     def delete(self) -> None:
@@ -182,7 +191,9 @@ class NestedVenv(venv.EnvBuilder):
         :rtype: bool
         """
 
-        env_path = [Path(p) for p in os.environ["PATH"].split(":")]
+        env_path = [
+            Path(p) for p in os.environ["PATH"].split(self.env_path_sep)
+        ]
 
         is_active = self.binary_directory in env_path
 
@@ -204,7 +215,9 @@ class NestedVenv(venv.EnvBuilder):
         :rtype: bool
         """
 
-        env_path = [Path(p) for p in os.environ["PATH"].split(":")]
+        env_path = [
+            Path(p) for p in os.environ["PATH"].split(self.env_path_sep)
+        ]
 
         is_primary = env_path[0].resolve() == self.binary_directory
 
@@ -509,7 +522,7 @@ class NestedVenv(venv.EnvBuilder):
                 modulespec.origin is not None
                 and str(self.site_packages) in modulespec.origin
             ):
-                logger.debug("Unimporting: {}".format(pkg))
+                # logger.debug("Unimporting: {}".format(pkg))
                 sys.modules.pop(pkg)
 
                 venv_modules.append(pkg)
