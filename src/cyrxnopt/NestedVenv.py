@@ -26,7 +26,7 @@ class NestedVenv(venv.EnvBuilder):
         """
 
         self.prefix = Path(virtual_dir)
-        self.env_path_sep = ";" if sys.platform == "win32" else "bin"
+        self.env_path_sep = ";" if sys.platform == "win32" else ":"
 
         # Call the EnvBuilder constructor
         super().__init__(
@@ -166,7 +166,7 @@ class NestedVenv(venv.EnvBuilder):
                 # importlib.reload(pkg)
                 # reset_module(pkg)
                 logger.debug("Successfully reimported: {}".format(pkg))
-            except (KeyError, ModuleNotFoundError) as e:
+            except (KeyError, ModuleNotFoundError):
                 # logger.debug("Could not reimport: {}".format(pkg))
                 # logger.debug(
                 #     "Reimport exception: {}({})".format(e.__class__.__name__, e)
