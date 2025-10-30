@@ -8,6 +8,7 @@ Read more about conftest.py under:
 """
 
 from collections.abc import Callable
+from pathlib import Path
 
 import pytest
 
@@ -26,3 +27,10 @@ def obj_func_3d() -> Callable[[list[float]], float]:
         return xs[0] ** 2 + xs[1] ** 2 + xs[2]
 
     return obj_func
+
+
+@pytest.fixture(scope="session")
+def test_assets_path():
+    this_file = Path(__file__)
+
+    return this_file.parent / "cyrxnopt" / "test_assets"

@@ -268,7 +268,7 @@ def test_pip_install_numpy(test_venv) -> None:
     assert venv.check_package("numpy")
 
 
-def test_pip_install_e(test_venv) -> None:
+def test_pip_install_e(test_venv, test_assets_path) -> None:
     """This test attempts to self-install this package into a new
     virtual environment using an editable install.
     """
@@ -278,13 +278,13 @@ def test_pip_install_e(test_venv) -> None:
     venv.create()
     venv.activate()
 
-    # venv.pip_install_e(self.test_asset_path / "test_project")
+    venv.pip_install_e(test_assets_path / "test_project")
 
     # assert venv.check_package("test_project")
     assert venv.check_package("numpy")
 
 
-def test_pip_install_r(test_venv) -> None:
+def test_pip_install_r(test_venv, test_assets_path) -> None:
     """This test attempts to self-install this package's requirements.txt
     file into a new virtual environment using
     'pip install -r requirements.txt'.
@@ -295,7 +295,7 @@ def test_pip_install_r(test_venv) -> None:
     venv.create()
     venv.activate()
 
-    # venv.pip_install_r(self.test_asset_path / "requirements.txt")
+    venv.pip_install_r(test_assets_path / "requirements.txt")
 
     # assert venv.check_package("test_project")
     assert venv.check_package("numpy")
