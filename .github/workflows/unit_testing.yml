@@ -14,12 +14,43 @@ on:
   #   - cron: '0 0 1,16 * *'
 
 jobs:
-  unit_testing:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: RxnRover/.github/.github/workflows/python_unit_testing_tox_main.yml@main
+  # Define the matrix of platforms and python versions to test on for
+  # the unit testing jobs below.
+  # See GitHub how-to on a shared strategy matrix for more info on this solution.
+  # https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/run-job-variations
+  define_matrix:
+    runs-on: "ubuntu-latest"
 
-      - name: individual_tests
+    outputs:
+      platforms: ${{ steps.platforms.output.platforms }}
+      python: ${{ steps.python.output.python }}
+
+    steps:
+      - name: Define platforms to test on
+        id: platforms
         run: |
-          tox -- tests/cyrxnopt/test_NestedVenv.py::test_pip_install_numpy_first_of_two_venvs
-          tox -- tests/cyrxnopt/test_NestedVenv.py::test_pip_install_numpy_two_versions
+          echo 'platforms=["ubuntu-latest"]' >> "$GITHUB_OUTPUT"
+      - name: Define Python versions to test on
+        id: python
+        run: |
+          echo 'python=["3.9"]' >> "$GITHUB_OUTPUT"
+
+  unit_testing:
+    needs: define_matrix
+    strategy:
+      matrix:
+        platform: ${{ fromJSON(needs.define_matrix.outputs.platforms) }}
+        python: ${{ fromJSON(needs.define_matrix.outputs.python) }}
+    uses: RxnRover/.github/.github/workflows/python_unit_testing_tox_main.yml@main
+    with:
+      platform: platform
+      python: python
+      tox_args: 'run -- -m "not individual"'
+
+  individually_run_tests:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Run tests that need to be run individually
+        run: |
+          tox run -- tests/cyrxnopt/test_NestedVenv.py::test_pip_install_numpy_first_of_two_venvs
+          tox run -- tests/cyrxnopt/test_NestedVenv.py::test_pip_install_numpy_two_versions
