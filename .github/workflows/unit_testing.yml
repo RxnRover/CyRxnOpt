@@ -15,4 +15,11 @@ on:
 
 jobs:
   unit_testing:
-    uses: RxnRover/.github/.github/workflows/python_unit_testing_tox_main.yml@main
+    runs-on: ubuntu-latest
+    steps:
+      - uses: RxnRover/.github/.github/workflows/python_unit_testing_tox_main.yml@main
+
+      - name: individual_tests
+        run: |
+          tox -- tests/cyrxnopt/test_NestedVenv.py::test_pip_install_numpy_first_of_two_venvs
+          tox -- tests/cyrxnopt/test_NestedVenv.py::test_pip_install_numpy_two_versions
