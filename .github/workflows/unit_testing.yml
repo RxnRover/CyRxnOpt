@@ -5,9 +5,9 @@ on:
     # Avoid using all the resources/limits available by checking only
     # relevant branches and tags. Other branches can be checked via PRs.
     branches: [main]
-    tags: ['v[0-9]*', '[0-9]+.[0-9]+*']  # Match tags that resemble a version
-  pull_request:  # Run in every PR
-  workflow_dispatch:  # Allow manually triggering the workflow
+    tags: ["v[0-9]*", "[0-9]+.[0-9]+*"] # Match tags that resemble a version
+  pull_request: # Run in every PR
+  workflow_dispatch: # Allow manually triggering the workflow
   # schedule:
   #   # Run roughly every 15 days at 00:00 UTC
   #   # (useful to check if updates on dependencies break the package)
@@ -48,9 +48,18 @@ jobs:
       tox_args: 'run -- -m "not individual"'
 
   individually_run_tests:
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: Run tests that need to be run individually
-        run: |
-          tox run -- tests/cyrxnopt/test_NestedVenv.py::test_pip_install_numpy_first_of_two_venvs
-          tox run -- tests/cyrxnopt/test_NestedVenv.py::test_pip_install_numpy_two_versions
+    needs: define_matrix
+    strategy:
+      matrix:
+        platform: ${{ fromJSON(needs.define_matrix.outputs.platforms) }}
+        python: ${{ fromJSON(needs.define_matrix.outputs.python) }}
+        tox_args:
+          [
+            "run -- tests/cyrxnopt/test_NestedVenv.py::test_pip_install_numpy_first_of_two_venvs",
+            "run -- tests/cyrxnopt/test_NestedVenv.py::test_pip_install_numpy_two_versions",
+          ]
+    uses: RxnRover/.github/.github/workflows/python_unit_testing_tox_main.yml@main
+    with:
+      platform: platform
+      python: python
+      tox_args: tox_args
