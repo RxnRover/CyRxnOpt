@@ -22,8 +22,8 @@ jobs:
     runs-on: "ubuntu-latest"
 
     outputs:
-      platforms: ${{ steps.platforms.output.platforms }}
-      python: ${{ steps.python.output.python }}
+      platforms: ${{ steps.platforms.outputs.platforms }}
+      python: ${{ steps.python.outputs.python }}
 
     steps:
       - name: Define platforms to test on
