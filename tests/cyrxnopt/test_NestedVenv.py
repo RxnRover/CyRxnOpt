@@ -302,6 +302,7 @@ def test_pip_install_r(test_venv, test_assets_path) -> None:
     assert venv.check_package("requests")
 
 
+@pytest.mark.individual
 def test_pip_install_numpy_first_of_two_venvs(test_venv) -> None:
     venv1 = NestedVenv(Path(str(test_venv) + "_1"))
     venv2 = NestedVenv(Path(str(test_venv) + "_2"))
@@ -324,6 +325,7 @@ def test_pip_install_numpy_first_of_two_venvs(test_venv) -> None:
     assert not venv2.check_package("numpy")
 
 
+@pytest.mark.individual
 def test_pip_install_numpy_two_versions(test_venv) -> None:
     venv1 = NestedVenv(Path(str(test_venv) + "_1"))
     venv2 = NestedVenv(Path(str(test_venv) + "_2"))

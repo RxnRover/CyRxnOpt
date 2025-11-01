@@ -12,6 +12,10 @@ version_scheme = "no-guess-dev"
 # Enable log display during test runs
 # See: https://docs.pytest.org/en/latest/how-to/logging.html#live-logs
 log_cli = true
+addopts = "--strict-markers"
+markers = [
+    "individual: Marks tests that need to run in an individual pytest run"
+]
 
 [tool.black]
 line-length = 80
