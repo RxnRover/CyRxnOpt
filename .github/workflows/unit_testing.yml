@@ -36,7 +36,7 @@ jobs:
           echo 'python=["3.9"]' >> "$GITHUB_OUTPUT"
 
   unit_testing:
-    needs: define_matrix
+    needs: [define_matrix, unit_testing]
     strategy:
       matrix:
         platform: ${{ fromJSON(needs.define_matrix.outputs.platforms) }}
