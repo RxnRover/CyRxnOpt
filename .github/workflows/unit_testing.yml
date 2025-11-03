@@ -43,8 +43,8 @@ jobs:
         python: ${{ fromJSON(needs.define_matrix.outputs.python) }}
     uses: RxnRover/.github/.github/workflows/python_unit_testing_tox_main.yml@main
     with:
-      platform: platform
-      python: python
+      platform: ${{ matrix.platform }}
+      python: ${{ matrix.python }}
       tox_args: 'run -- -m "not individual"'
 
   individually_run_tests:
@@ -60,6 +60,6 @@ jobs:
           ]
     uses: RxnRover/.github/.github/workflows/python_unit_testing_tox_main.yml@main
     with:
-      platform: platform
-      python: python
+      platform: ${{ matrix.platform }}
+      python: ${{ matrix.python }}
       tox_args: tox_args
