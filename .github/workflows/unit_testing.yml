@@ -62,4 +62,4 @@ jobs:
     with:
       platform: ${{ matrix.platform }}
       python: ${{ matrix.python }}
-      tox_args: tox_args
+      tox_args: ${{ tox_args }}
