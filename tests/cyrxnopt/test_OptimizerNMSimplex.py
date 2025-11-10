@@ -79,7 +79,7 @@ def test_train_does_nothing(venv_nmsimplex, tmp_path) -> None:
 
 def test_predict_basic_run(venv_nmsimplex, tmp_path, obj_func_2d) -> None:
     opt = OptimizerNMSimplex(venv_nmsimplex)
-    config = config = {
+    config = {
         "continuous_feature_names": ["f1", "f2"],
         "continuous_feature_bounds": [[-1, 1], [-1, 1]],
         "direction": "min",
