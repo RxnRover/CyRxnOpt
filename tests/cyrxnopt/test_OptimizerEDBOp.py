@@ -1,3 +1,5 @@
+import sys
+
 import pytest
 from git import Repo
 
@@ -5,6 +7,14 @@ from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerEDBOp import OptimizerEDBOp
 from tests.cyrxnopt.utilities_for_testing.validate_config_description import (
     validate_config_description_pytest,
+)
+
+skip_libtorch_error = pytest.mark.skipif(
+    sys.platform.startswith("win"),
+    reason=(
+        "Issue with libtorch_cpu.so on Linux prevents successful import "
+        "of EDBO+ during testing."
+    ),
 )
 
 
@@ -48,6 +58,7 @@ def venv_edbop(tmp_path_factory, edboplus_local_path):
     test_venv.delete()
 
 
+@skip_libtorch_error
 def test_get_config_returns_valid_description_list(venv_edbop) -> None:
     opt = OptimizerEDBOp(venv_edbop)
 
@@ -56,6 +67,7 @@ def test_get_config_returns_valid_description_list(venv_edbop) -> None:
     validate_config_description_pytest(result)
 
 
+@skip_libtorch_error
 def test_set_config_creates_correct_config(venv_edbop, tmp_path) -> None:
     import json
 
@@ -85,6 +97,7 @@ def test_set_config_creates_correct_config(venv_edbop, tmp_path) -> None:
         assert content == config
 
 
+@skip_libtorch_error
 def test_train_does_nothing(venv_edbop, tmp_path) -> None:
     opt = OptimizerEDBOp(venv_edbop)
     expected_suggestion = []
@@ -94,6 +107,7 @@ def test_train_does_nothing(venv_edbop, tmp_path) -> None:
     assert expected_suggestion == suggestion
 
 
+@skip_libtorch_error
 def test_predict_basic_run(venv_edbop, tmp_path, obj_func_3d) -> None:
     opt = OptimizerEDBOp(venv_edbop)
     config = config = {
