@@ -14,7 +14,7 @@ class OptimizerAmlro(OptimizerABC):
     # Private static data member to list dependency packages required
     # by this class
     _packages = [
-        "git+ssh://git@github.com/RxnRover/amlo",
+        "git+https://github.com/RxnRover/amlo",
         "numpy",
         "pandas",
         "joblib",
