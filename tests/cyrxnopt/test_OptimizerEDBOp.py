@@ -92,6 +92,7 @@ def test_set_config_creates_correct_config(venv_edbop, tmp_path) -> None:
 
     # Check if config file was created
     assert (tmp_path / "my_optimization.csv").exists()
+    assert (tmp_path / "reaction_order.csv").exists()
 
 
 @skip_libtorch_error

@@ -2,6 +2,7 @@ import logging
 import os
 import random
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any, Optional
 
 from cyrxnopt.NestedVenv import NestedVenv
@@ -135,7 +136,9 @@ class OptimizerEDBOp(OptimizerABC):
 
         # Create file for preserving reaction order
         # TODO: Rework this when we switch to multi-objective!
-        with open(self._reaction_order_filename, "w") as fout:
+        with open(
+            Path(experiment_dir) / self._reaction_order_filename, "w"
+        ) as fout:
             feature_names = config["continuous"]["feature_names"]
             # If categorical feature names is an empty list, list.extend leaves
             # the list unchanged
@@ -216,7 +219,9 @@ class OptimizerEDBOp(OptimizerABC):
             # Write the reaction parameters and results to the file preserving
             # reaction order
             # TODO: Rework this when we switch to multi-objective!
-            with open(self._reaction_order_filename, "a") as fout:
+            with open(
+                Path(experiment_dir) / self._reaction_order_filename, "a"
+            ) as fout:
                 line = prev_param
                 line.extend([yield_value])
                 fout.write(",".join(line))
