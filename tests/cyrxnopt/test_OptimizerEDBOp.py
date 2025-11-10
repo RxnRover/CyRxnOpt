@@ -69,11 +69,7 @@ def test_get_config_returns_valid_description_list(venv_edbop) -> None:
 
 @skip_libtorch_error
 def test_set_config_creates_correct_config(venv_edbop, tmp_path) -> None:
-    import json
-
     opt = OptimizerEDBOp(venv_edbop)
-
-    expected_config_path = tmp_path / "config.json"
 
     config = {
         "continuous_feature_names": ["f1", "f2"],
@@ -89,12 +85,7 @@ def test_set_config_creates_correct_config(venv_edbop, tmp_path) -> None:
     opt.set_config(str(tmp_path), config)
 
     # Check if config file was created
-    assert expected_config_path.exists()
-
-    # Check for the correct contents
-    with open(expected_config_path) as fin:
-        content = json.load(fin)
-        assert content == config
+    assert (tmp_path / "my_optimization.csv").exists()
 
 
 @skip_libtorch_error

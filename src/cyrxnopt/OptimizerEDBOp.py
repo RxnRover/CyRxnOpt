@@ -260,43 +260,6 @@ class OptimizerEDBOp(OptimizerABC):
         reaction_components = {}
 
         config = use_subkeys(config)
-        # If the keys are returned as they were given in `get_config` then
-        # translate them to the format that works here
-        # config["continuous"] = {}
-        # if (
-        #     "continuous_feature_names" in config
-        #     and len(config["continuous_feature_names"]) > 0
-        # ):
-        #     config["continuous"] = {}
-
-        #     config["continuous"]["feature_names"] = config[
-        #         "continuous_feature_names"
-        #     ]
-        #     config["continuous"]["bounds"] = config["continuous_feature_bounds"]
-        #     config["continuous"]["resolutions"] = config[
-        #         "continuous_feature_resolutions"
-        #     ]
-        # else:
-        #     config["continuous"]["feature_names"] = []
-        #     config["continuous"]["bounds"] = []
-        #     config["continuous"]["resolutions"] = []
-
-        # config["categorical"] = {}
-        # if (
-        #     "categorical_feature_names" in config
-        #     and len(config["categorical_feature_names"]) > 0
-        # ):
-        #     config["categorical"] = {}
-
-        #     config["categorical"]["feature_names"] = config[
-        #         "categorical_feature_names"
-        #     ]
-        #     config["categorical"]["values"] = config[
-        #         "categorical_feature_values"
-        #     ]
-        # else:
-        #     config["categorical"]["feature_names"] = []
-        #     config["categorical"]["values"] = []
 
         for i in range(len(config["continuous"]["feature_names"])):
             low_bound = config["continuous"]["bounds"][i][0]
@@ -307,9 +270,9 @@ class OptimizerEDBOp(OptimizerABC):
                 low_bound, upper_bound + increment, increment
             )
 
-            reaction_components[
-                config["continuous"]["feature_names"][i]
-            ] = values
+            reaction_components[config["continuous"]["feature_names"][i]] = (
+                values
+            )
 
         if bool(config["categorical"]["feature_names"]):
             for i in range(len(config["categorical"]["feature_names"])):
@@ -333,6 +296,8 @@ class OptimizerEDBOp(OptimizerABC):
             "objectives": config["objectives"],
             "direction": config["direction"],
         }
+
+        edbo_config = config | edbo_config
 
         return edbo_config
 
