@@ -110,7 +110,7 @@ def test_train_does_nothing(venv_edbop, tmp_path) -> None:
 @skip_error_on_install_import
 def test_predict_basic_run(venv_edbop, tmp_path, obj_func_3d) -> None:
     opt = OptimizerEDBOp(venv_edbop)
-    config = config = {
+    config = {
         "continuous_feature_names": ["f1", "f2"],
         "continuous_feature_bounds": [[-1, 1], [-1, 1]],
         "continuous_feature_resolutions": [0.1, 0.1],
