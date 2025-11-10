@@ -109,6 +109,8 @@ def test_train_does_nothing(venv_edbop, tmp_path) -> None:
 @skip_libtorch_error
 @skip_error_on_install_import
 def test_predict_basic_run(venv_edbop, tmp_path, obj_func_3d) -> None:
+    import pandas as pd
+
     opt = OptimizerEDBOp(venv_edbop)
     config = {
         "continuous_feature_names": ["f1", "f2"],
@@ -121,7 +123,15 @@ def test_predict_basic_run(venv_edbop, tmp_path, obj_func_3d) -> None:
         "objectives": ["yield"],
     }
 
-    result = opt.predict([], 0, tmp_path, config, obj_func_3d)  # noqa: F841
+    next_params: list[float] = []
+    result = 0
 
-    # We're not verifying the value, since randomness can affect this
-    # assert result == [0, 0]
+    next_params = opt.predict(next_params, result, tmp_path, config)
+    result = obj_func_3d(next_params)
+    next_params = opt.predict(next_params, result, tmp_path, config)
+
+    # Read the generated dataset so far
+    result_training_set = pd.read_csv(tmp_path / "reaction_order.csv")
+
+    # Ensure it is the correct length (20 training + 1 predict)
+    assert len(result_training_set) == 1
