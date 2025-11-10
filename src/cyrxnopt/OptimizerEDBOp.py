@@ -17,7 +17,6 @@ class OptimizerEDBOp(OptimizerABC):
     # by this class
     _packages = ["benchmarking", "edboplus", "pandas"]
 
-    # overidding methods
     def __init__(self, venv: NestedVenv) -> None:
         """Optimizer class for the EDBO+ algorithm.
 
