@@ -10,7 +10,7 @@ from tests.cyrxnopt.utilities_for_testing.validate_config_description import (
 )
 
 skip_libtorch_error = pytest.mark.skipif(
-    sys.platform.startswith("win"),
+    not sys.platform.startswith("win"),
     reason=(
         "Issue with libtorch_cpu.so on Linux prevents successful import "
         "of EDBO+ during testing."
