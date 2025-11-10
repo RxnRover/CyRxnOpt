@@ -143,7 +143,7 @@ class OptimizerEDBOp(OptimizerABC):
             # the list unchanged
             feature_names.extend(config["categorical"]["feature_names"])
 
-            objectives = config["objectives"][0]
+            objectives = config["objectives"]
 
             # Collect the feature names and objective names as headers
             headers = feature_names
@@ -223,6 +223,7 @@ class OptimizerEDBOp(OptimizerABC):
             ) as fout:
                 line = prev_param
                 line.extend([yield_value])
+                line = [str(element) for element in line]
                 fout.write(",".join(line))
                 fout.write("\n")
 
