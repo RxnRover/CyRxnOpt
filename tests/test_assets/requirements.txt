@@ -1,2 +1,0 @@
--e tests/test_assets/test_project
-requests==2.31.0
