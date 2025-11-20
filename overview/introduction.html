@@ -1,0 +1,169 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction &mdash; CyRxnOpt 0.0.post1.dev1+g997b2c5ac documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=494a0f73"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="Overview" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            CyRxnOpt
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html"> Overview</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/index.html">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../supported_algorithms.html"> Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html"> Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/modules.html"> Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html"> Developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html"> License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html"> Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html"> Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CyRxnOpt</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Overview</a></li>
+      <li class="breadcrumb-item active">Introduction</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/overview/introduction.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="introduction">
+<span id="id1"></span><h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h1>
+<p>Optimization algorithms experience widespread application in economics,
+molecular modeling, and industrial processes. In chemistry, optimization of
+reactions for objectives like desired product yield, selectivity, cost
+efficiency, and conversion is a necessity as well. This is typically performed
+using a chemist’s intuition combined with one variable at a time (OVAT) or
+Design of Experiments (DoE) techniques. Mathematical optimization algorithms
+designed in other fields have found success when applied to chemical reaction
+optimization, but the various interfaces, programming skills, and technical
+debugging, and installation methods required to use an optimization algorithm is
+usually not considered worth the effort by most chemists. When targeting
+reaction optimization, the algorithms are expected to be used in the laboratory,
+likely by someone without much programming experience. Compounded on these
+issues, there is no one-size-fits-all algorithm so chemists need to switch
+algorithms based on which will perform the best on their reaction of interest,
+with each new algorithm bringing its unique twist on the challenges enumerated
+above. With these challenges in mind, aside from a few exemplary laboratories,
+reaction optimization algorithms have still not achieved widespread use in the
+field of basic chemistry.</p>
+<p>To lower the barrier of entry between chemists and reaction optimization
+algorithms, user-friendly interfaces need to be designed between the chemist and
+the algorithm on multiple levels. EDBO+ provides a great example of this by
+providing a web interface as well as a relatively straightforward API. Our team
+has also designed Rxn Rover, a reaction automation platform that strives to
+create a user-friendly program to allow chemists to connect optimization
+algorithms directly to their reactors in a flexible way.</p>
+<p>However, both approaches currently have issues. The EDBO+ web interface only
+works for the EDBO+ algorithm, which may not be the best choice for all
+reactions. Rxn Rover provides plugins for different optimization algorithms that
+are easily loaded in the program, but each of these plugins is difficult and
+time consuming to produce. On a level between these user interfaces and the
+optimization algorithms, there is a need for an abstracted interface that allows
+access to multiple optimization algorithms through common commands and
+formatting. It must also be relatively straightforward to add new optimization
+algorithm support to this interface.</p>
+<p>Due to the myriad possible applications, implementations, data formats, and
+programming languages, it is likely impossible to define one abstract interface
+that will unilaterraly apply to all optimization algorithms in all fields.
+However, narrowing the scope to chemical reaction optimization, algorithms are
+commonly implemented in Python with one application in mind, optimize a reaction
+for <em>x</em>, <em>y</em>, <em>z</em> results. This significantly reduces the number of challenges
+in creating an abstract optimization algorithm interface.</p>
+<p>CyRxnOpt aims to provide a single software interface that can provide access to
+many different optimization algorithms, mainly designed for use in chemical
+reaction optimization. It breaks chemical reaction optimization in to four main
+steps: Installation, Configuration, Training, Prediction. This allows users to
+program to a single software interface, simplifying the development of
+user-friendly tools and interfaces to lower the barrier of entry into reaction
+optimization.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, CyRxnOpt Authors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

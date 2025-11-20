@@ -1,0 +1,305 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyrxnopt.OptimizerSQSnobFit &mdash; CyRxnOpt 0.0.post1.dev1+g997b2c5ac documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=494a0f73"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CyRxnOpt
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html"> Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supported_algorithms.html"> Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html"> Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html"> Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html"> Developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html"> License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html"> Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html"> Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CyRxnOpt</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cyrxnopt.OptimizerSQSnobFit</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyrxnopt.OptimizerSQSnobFit</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">cyrxnopt.NestedVenv</span><span class="w"> </span><span class="kn">import</span> <span class="n">NestedVenv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cyrxnopt.OptimizerABC</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimizerABC</span>
+
+
+<div class="viewcode-block" id="OptimizerSQSnobFit">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerSQSnobFit.OptimizerSQSnobFit">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OptimizerSQSnobFit</span><span class="p">(</span><span class="n">OptimizerABC</span><span class="p">):</span>
+    <span class="c1"># Private static data member to list dependency packages required</span>
+    <span class="c1"># by this class</span>
+    <span class="n">_packages</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SQSnobFit&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">venv</span><span class="p">:</span> <span class="n">NestedVenv</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Optimizer class for the SQSnobFit algorithm from the ``SQSnobFit`` package.</span>
+
+<span class="sd">        :param venv: Virtual environment manager to use</span>
+<span class="sd">        :type venv: NestedVenv</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">venv</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OptimizerSQSnobFit.get_config">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerSQSnobFit.OptimizerSQSnobFit.get_config">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the configuration options available for this optimizer.</span>
+
+<span class="sd">        See :py:meth:`OptimizerABC.get_config` for more information about the</span>
+<span class="sd">        config descriptions returned by this method and for general usage</span>
+<span class="sd">        information.</span>
+
+<span class="sd">        :return: List of configuration options with option name, data type,</span>
+<span class="sd">                 and information about which values are allowed/defaulted.</span>
+<span class="sd">        :rtype: list[dict[str, Any]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">config</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;direction&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">],</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;continuous_feature_names&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;continuous_feature_bounds&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list[list]&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[[]],</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;budget&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;param_init&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;maxfail&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;verbose&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">config</span></div>
+
+
+<div class="viewcode-block" id="OptimizerSQSnobFit.set_config">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerSQSnobFit.OptimizerSQSnobFit.set_config">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the configuration for this instance of the optimizer.</span>
+
+<span class="sd">        See :py:meth:`OptimizerABC.set_config` for more information about how</span>
+<span class="sd">        to form the config dictionary and for general usage information.</span>
+
+<span class="sd">        :param experiment_dir: Output directory for the configuration file</span>
+<span class="sd">        :type experiment_dir: str</span>
+<span class="sd">        :param config: CyRxnOpt-level config for the optimizer</span>
+<span class="sd">        :type config: dict[str, Any]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_import_deps</span><span class="p">()</span>
+
+        <span class="c1"># TODO: config validation should be performed</span>
+
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">experiment_dir</span><span class="p">,</span> <span class="s2">&quot;recent_config.json&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Write the configuration to a file for later use</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">fout</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OptimizerSQSnobFit.train">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerSQSnobFit.OptimizerSQSnobFit.train">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">train</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">prev_param</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">yield_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">experiment_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">obj_func</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;No training step for this algorithm.</span>
+
+<span class="sd">        :returns: List will always be empty.</span>
+<span class="sd">        :rtype: list[Any]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="OptimizerSQSnobFit.predict">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerSQSnobFit.OptimizerSQSnobFit.predict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">prev_param</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">yield_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">experiment_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">obj_func</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the desired optimum of the provided objective function.</span>
+
+<span class="sd">        :param prev_param: Parameters provided from the previous prediction,</span>
+<span class="sd">                           provide an empty list for the first call</span>
+<span class="sd">        :type prev_param: list[Any]</span>
+<span class="sd">        :param yield_value: Result from the previous prediction</span>
+<span class="sd">        :type yield_value: float</span>
+<span class="sd">        :param experiment_dir: Output directory for the optimizer algorithm</span>
+<span class="sd">        :type experiment_dir: str</span>
+<span class="sd">        :param config: CyRxnOpt-level config for the optimizer</span>
+<span class="sd">        :type config: dict[str, Any]</span>
+<span class="sd">        :param obj_func: Objective function to optimize, defaults to None</span>
+<span class="sd">        :type obj_func: Optional[Callable[..., float]], optional</span>
+
+<span class="sd">        :returns: The next suggested reaction to perform</span>
+<span class="sd">        :rtype: list[Any]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_import_deps</span><span class="p">()</span>
+
+        <span class="c1"># Load the config file</span>
+        <span class="c1"># with open(os.path.join(experiment_dir, &quot;recent_config.json&quot;)) as fout:</span>
+        <span class="c1">#     config = json.load(fout)</span>
+
+        <span class="c1"># Convert initial parameters to tuple</span>
+        <span class="c1"># param_init = tuple(config[&quot;param_init&quot;])</span>
+        <span class="n">param_init</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;param_init&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Convert bounds list to sequence of tuples</span>
+        <span class="c1"># bounds = tuple([tuple(bound_list) for bound_list in config[&quot;bounds&quot;]])</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;continuous_feature_bounds&quot;</span><span class="p">]</span>
+
+        <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;minfcall&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;maxmp&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;maxfail&quot;</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;maxfail&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;verbose&quot;</span><span class="p">:</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;verbose&quot;</span><span class="p">],</span>
+        <span class="p">}</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imports</span><span class="p">[</span><span class="s2">&quot;SQSnobFit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">optset</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+
+        <span class="c1"># Call the minimization function</span>
+        <span class="n">result</span><span class="p">,</span> <span class="n">history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imports</span><span class="p">[</span><span class="s2">&quot;SQSnobFit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span>
+            <span class="n">obj_func</span><span class="p">,</span>
+            <span class="n">param_init</span><span class="p">,</span>
+            <span class="n">bounds</span><span class="p">,</span>
+            <span class="n">config</span><span class="p">[</span><span class="s2">&quot;budget&quot;</span><span class="p">],</span>
+            <span class="n">options</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">result</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="n">history</span>
+
+        <span class="c1"># TODO: This is returning a result object, not the next suggested params</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_import_deps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Import package needed to run the optimizer.&quot;&quot;&quot;</span>
+
+        <span class="kn">import</span><span class="w"> </span><span class="nn">SQSnobFit</span>  <span class="c1"># type: ignore</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_imports</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;SQSnobFit&quot;</span><span class="p">:</span> <span class="n">SQSnobFit</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, CyRxnOpt Authors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

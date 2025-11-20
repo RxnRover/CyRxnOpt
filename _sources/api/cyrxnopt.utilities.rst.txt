@@ -1,0 +1,12 @@
+cyrxnopt.utilities namespace
+============================
+
+.. py:module:: cyrxnopt.utilities
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   cyrxnopt.utilities.config

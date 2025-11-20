@@ -1,0 +1,737 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyrxnopt.NestedVenv &mdash; CyRxnOpt 0.0.post1.dev1+g997b2c5ac documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=494a0f73"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CyRxnOpt
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html"> Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supported_algorithms.html"> Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html"> Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html"> Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html"> Developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html"> License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html"> Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html"> Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CyRxnOpt</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cyrxnopt.NestedVenv</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyrxnopt.NestedVenv</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib.util</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">site</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">venv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib.machinery</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModuleSpec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">subprocess</span><span class="w"> </span><span class="kn">import</span> <span class="n">CalledProcessError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
+
+<span class="c1"># from cyrxnopt.util.reset_module import reset_module</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="NestedVenv">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.NestedVenv.NestedVenv">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NestedVenv</span><span class="p">(</span><span class="n">venv</span><span class="o">.</span><span class="n">EnvBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">virtual_dir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;initializing the virtual environment directory</span>
+
+<span class="sd">        :param virtual_dir: path to the virtual env directory</span>
+<span class="sd">        :type virtual_dir: str | Path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">virtual_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env_path_sep</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span> <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span> <span class="k">else</span> <span class="s2">&quot;:&quot;</span>
+
+        <span class="c1"># Call the EnvBuilder constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">system_site_packages</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">symlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">upgrade</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">with_pip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">prompt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">upgrade_deps</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="NestedVenv.activate">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.NestedVenv.NestedVenv.activate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">activate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Activates the current virtual environment as the primary virtual</span>
+<span class="sd">        environment. If the venv is active but not primary, it will be</span>
+<span class="sd">        reactivated as the primary venv.</span>
+
+<span class="sd">        :raises RuntimeError: The virtual environment does not exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Activating virtual environment at: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">))</span>
+
+        <span class="c1"># Return early if already active</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Venv already active.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="c1"># NOTE: This os.environ[&quot;PATH&quot;] stuff is from a Google Groups</span>
+            <span class="c1">#       conversation between users &quot;voltron&quot; and &quot;Ian Bicking&quot;</span>
+            <span class="c1">#       but it doesn&#39;t seem to actually bring the venv into</span>
+            <span class="c1">#       scope</span>
+            <span class="c1">#</span>
+            <span class="c1"># Source: https://groups.google.com/g/python-virtualenv/c/FfipsFBqvq4?pli=1</span>
+            <span class="n">env_path</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">Path</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_path_sep</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">env_path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_directory</span><span class="p">)</span>
+
+            <span class="c1"># Determine available modules before activating this, then</span>
+            <span class="c1"># available packages afterward to diff what packages were</span>
+            <span class="c1"># added by this virtual environment</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prior_site_packages</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">getsitepackages</span><span class="p">()</span>
+
+            <span class="c1"># TODO: This adds the site to the end of sys.path. It should</span>
+            <span class="c1">#       go before any other venv site paths to be the primary venv.</span>
+            <span class="c1"># Activates the virtual environment, adding it to sys.path</span>
+            <span class="n">site</span><span class="o">.</span><span class="n">addsitedir</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">site_packages</span><span class="o">.</span><span class="n">resolve</span><span class="p">()))</span>
+            <span class="c1"># NOTE: This sitedir stuff is from the SO answer here:</span>
+            <span class="c1">#       https://stackoverflow.com/a/68173529, which points</span>
+            <span class="c1">#       to this in dcreager/virtualenv on GitHub:</span>
+            <span class="c1">#       https://github.com/dcreager/virtualenv/blob/master/virtualenv_support/activate_this.py</span>
+            <span class="c1">#</span>
+            <span class="c1"># Docs for site: https://docs.python.org/3/library/site.html</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Virtual environment has not been created yet!&quot;</span><span class="p">)</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_path_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">env_path</span><span class="p">]</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NestedVenv.create">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.NestedVenv.NestedVenv.create">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_dir</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates the virtual environment at the given location.</span>
+
+<span class="sd">        :param env_dir: Desired venv directory</span>
+<span class="sd">        :type env_dir: AnyPath</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">prefix</span> <span class="o">=</span> <span class="n">env_dir</span>
+
+        <span class="c1"># Default to the provided prefix provided on instantiation</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">env_dir</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;env_dir argument not given, defaulting to: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating virtual environment at: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NestedVenv.deactivate">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.NestedVenv.NestedVenv.deactivate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">deactivate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deactivates the virtual environment regardless of if it is the</span>
+<span class="sd">        primary virtual environment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Deactivating virtual environment at: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Do nothing if the virtual environment is not active</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Venv is not active.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">env_path</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Path</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_path_sep</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Remove all instances of the virtual environment from the path</span>
+        <span class="n">env_path</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">env_path</span> <span class="k">if</span> <span class="n">path</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_directory</span><span class="p">]</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_path_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">env_path</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># TODO: We need to remove the virtual environment from sys.path</span>
+        <span class="c1">#       and unimport the packages from it without affecting</span>
+        <span class="c1">#       other virtual environments. Troubles might arise from</span>
+        <span class="c1">#       venv1 and venv2 both having the same package. How do</span>
+        <span class="c1">#       we determine if both venvs have the package?</span>
+        <span class="c1">#</span>
+        <span class="c1"># Remove module: https://stackoverflow.com/a/57891909</span>
+
+        <span class="c1"># Remove this venv from the sys.path</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">site_packages</span><span class="o">.</span><span class="n">resolve</span><span class="p">()))</span>
+
+        <span class="c1"># A start is to invalidate the internal cache to guarantee that</span>
+        <span class="c1"># import finders will notice new modules</span>
+        <span class="n">importlib</span><span class="o">.</span><span class="n">invalidate_caches</span><span class="p">()</span>
+
+        <span class="c1"># Unimport packages that originate from this venv</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Removing deactivated venv packages...&quot;</span><span class="p">)</span>
+        <span class="n">venv_modules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unimport_packages</span><span class="p">()</span>
+
+        <span class="c1"># Attempt to reimport modules from other venvs</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Attempting to reimport packages still active in other venvs...&quot;</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">pkg</span> <span class="ow">in</span> <span class="n">venv_modules</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span>
+                <span class="c1"># __import__(pkg)</span>
+                <span class="c1"># import pkg</span>
+                <span class="c1"># importlib.reload(pkg)</span>
+                <span class="c1"># reset_module(pkg)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Successfully reimported: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pkg</span><span class="p">))</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
+                <span class="c1"># logger.debug(&quot;Could not reimport: {}&quot;.format(pkg))</span>
+                <span class="c1"># logger.debug(</span>
+                <span class="c1">#     &quot;Reimport exception: {}({})&quot;.format(e.__class__.__name__, e)</span>
+                <span class="c1"># )</span>
+                <span class="k">continue</span></div>
+
+
+<div class="viewcode-block" id="NestedVenv.delete">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.NestedVenv.NestedVenv.delete">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Deleting virtual environment at: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">deactivate</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NestedVenv.is_active">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.NestedVenv.NestedVenv.is_active">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_active</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if the virtual environment is active or not.</span>
+
+<span class="sd">        This checks if the virtual environment path is in the PATH</span>
+<span class="sd">        environment variable or not.</span>
+
+<span class="sd">        :return: Whether the venv is active (True) or not (False).</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">env_path</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Path</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_path_sep</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="n">is_active</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_directory</span> <span class="ow">in</span> <span class="n">env_path</span>
+
+        <span class="k">return</span> <span class="n">is_active</span></div>
+
+
+<div class="viewcode-block" id="NestedVenv.is_primary">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.NestedVenv.NestedVenv.is_primary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_primary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if the virtual environment is the primary active</span>
+<span class="sd">        virtual environment.</span>
+
+<span class="sd">        This checks if the virtual environment path is the first entry</span>
+<span class="sd">        in the PATH environment variable. This menas its packages</span>
+<span class="sd">        will be found first.</span>
+
+<span class="sd">        TODO: Recognize other virtual environments to ensure we are</span>
+<span class="sd">              the first virtual environment without needing to be the</span>
+<span class="sd">              first element in the PATH environment variable.</span>
+
+<span class="sd">        :return: Whether the venv is primary (True) or not (False).</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">env_path</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Path</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_path_sep</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="n">is_primary</span> <span class="o">=</span> <span class="n">env_path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_directory</span>
+
+        <span class="k">return</span> <span class="n">is_primary</span></div>
+
+
+<div class="viewcode-block" id="NestedVenv.pip_freeze">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.NestedVenv.NestedVenv.pip_freeze">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pip_freeze</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the list of modules in the virtual environment as</span>
+<span class="sd">        they would be returned by &#39;pip freeze&#39;.</span>
+
+<span class="sd">        :raises CalledProcessError: An error occurred when running pip freeze</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: Add logging</span>
+
+        <span class="c1"># Run ``pip freeze`` and capture the output</span>
+        <span class="n">completed_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">python</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;freeze&quot;</span><span class="p">],</span>
+            <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Capture stdout and stderr</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>  <span class="c1"># Dencode the stdout and stderr bytestrings</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Raises CalledProcessError if the return code is non-zero</span>
+        <span class="n">completed_process</span><span class="o">.</span><span class="n">check_returncode</span><span class="p">()</span>
+
+        <span class="c1"># The response is split by newlines since one package is</span>
+        <span class="c1"># printed on each line</span>
+        <span class="k">return</span> <span class="n">completed_process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="NestedVenv.pip_install">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.NestedVenv.NestedVenv.pip_install">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pip_install</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">package_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">editable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Install a package to the active virtual environment using</span>
+<span class="sd">        ``pip install`` for an editable install.</span>
+
+<span class="sd">        :param package_name: Name of the package</span>
+<span class="sd">        :type package_name: str</span>
+<span class="sd">        :param package_path: Path to the package location</span>
+<span class="sd">        :type package_path: Path</span>
+<span class="sd">        :param editable: Whether to use an editable install</span>
+<span class="sd">        :type editable: bool</span>
+
+<span class="sd">        :raises CalledProcessError: An error occurred when running pip freeze</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Installing </span><span class="si">{</span><span class="n">package_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># NOTE: In the &#39;importlib&#39; package, it is noted that `import_module()`</span>
+        <span class="c1">#       should be used instead of `__import__()`. Maybe it is better</span>
+        <span class="c1">#       to use that here, too. More research needed.</span>
+        <span class="c1">#</span>
+        <span class="c1"># Source: https://docs.python.org/3/library/importlib.html#importlib.__import__</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attempting to import </span><span class="si">{</span><span class="n">package_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">__import__</span><span class="p">(</span><span class="n">package_name</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Import succeeded&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Import failed; attempting to install via pip&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Decide whether this is a local path or PyPI package</span>
+            <span class="k">if</span> <span class="n">package_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">package</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">package_path</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">package</span> <span class="o">=</span> <span class="n">package_name</span>
+
+            <span class="c1"># Do we need to prepend ``-e`` for an editable install?</span>
+            <span class="n">pre_args</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">editable</span><span class="p">:</span>
+                <span class="n">pre_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;-e&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Create the command list</span>
+            <span class="n">cmd</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">python</span><span class="p">),</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">]</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">pre_args</span><span class="p">)</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--upgrade&quot;</span><span class="p">)</span>
+
+            <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Running command: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
+
+            <span class="n">completed_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="n">cmd</span><span class="p">,</span>
+                <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Capture stdout and stderr</span>
+                <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>  <span class="c1"># Dencode the stdout and stderr bytestrings</span>
+            <span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;stdout: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">completed_process</span><span class="o">.</span><span class="n">stdout</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;stderr: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">completed_process</span><span class="o">.</span><span class="n">stderr</span><span class="p">))</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Raises CalledProcessError if the return code is non-zero</span>
+                <span class="n">completed_process</span><span class="o">.</span><span class="n">check_returncode</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Return code nonzero: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;stdout: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">completed_process</span><span class="o">.</span><span class="n">stdout</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;stderr: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">completed_process</span><span class="o">.</span><span class="n">stderr</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="NestedVenv.pip_install_e">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.NestedVenv.NestedVenv.pip_install_e">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pip_install_e</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">package_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Install a package to the active virtual environment using</span>
+<span class="sd">        ``pip install`` for an editable install.</span>
+
+<span class="sd">        :param package_path: Path to the package location</span>
+<span class="sd">        :type package_path: Path</span>
+<span class="sd">        :param package_name: Name of the package, defaults to &quot;&quot;. If not provided,</span>
+<span class="sd">            the package name is assumed to the the last part of ``package_path``.</span>
+<span class="sd">        :type package_name: str, optional</span>
+
+<span class="sd">        :raises CalledProcessError: An error occurred when running ``pip install``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: Add logging</span>
+
+        <span class="c1"># Derive the package name from the package path if a name is not</span>
+        <span class="c1"># explicitly provided</span>
+        <span class="k">if</span> <span class="n">package_name</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">package_name</span> <span class="o">=</span> <span class="n">package_path</span><span class="o">.</span><span class="n">stem</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Defaulting to package name of </span><span class="si">{</span><span class="n">package_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;from the package path: </span><span class="si">{</span><span class="n">package_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Attempt to install the package</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pip_install</span><span class="p">(</span><span class="n">package_name</span><span class="p">,</span> <span class="n">package_path</span><span class="p">,</span> <span class="n">editable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NestedVenv.pip_install_r">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.NestedVenv.NestedVenv.pip_install_r">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pip_install_r</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Installs package requirements from a &quot;requirements.txt&quot;-style file.</span>
+
+<span class="sd">        :param req_file: Requirements file to use</span>
+<span class="sd">        :type req_file: str</span>
+
+<span class="sd">        :raises CalledProcessError: An error occurred when running</span>
+<span class="sd">            ``pip install`` for a package</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: Add logging</span>
+
+        <span class="c1"># Read each line of the requirements file and install the packages</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">req_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">fin</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;-e&quot;</span><span class="p">):</span>
+                    <span class="n">package_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-e&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                    <span class="n">package_name</span> <span class="o">=</span> <span class="n">package_path</span><span class="o">.</span><span class="n">stem</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pip_install</span><span class="p">(</span>
+                        <span class="n">package_name</span><span class="p">,</span>
+                        <span class="n">package_path</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                        <span class="n">editable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">package</span> <span class="o">=</span> <span class="n">line</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pip_install</span><span class="p">(</span><span class="n">package</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NestedVenv.check_package">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.NestedVenv.NestedVenv.check_package">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_package</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">package</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># TODO: Should this be allowed even if the venv is inactive at</span>
+        <span class="c1">#       the time of calling? I think it can still be checked without</span>
+        <span class="c1">#       affecting anything, so I am allowing it on inactive venvs</span>
+        <span class="c1">#       for now.</span>
+
+        <span class="c1"># TODO: Add logging and docstring!</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Checking for &#39;</span><span class="si">{}</span><span class="s2">&#39; in venv: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">package</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Default to the package being found</span>
+        <span class="n">package_found</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Get the original, full PATH variable</span>
+        <span class="n">og_env_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span>
+        <span class="n">og_sys_path</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="c1"># Remove other virtual environment site-packages paths temporarily</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;site-packages&quot;</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="c1"># Replace the PATH variable with only the virtual environment</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary_directory</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">site_packages</span><span class="o">.</span><span class="n">resolve</span><span class="p">()))</span>
+
+        <span class="n">importlib</span><span class="o">.</span><span class="n">invalidate_caches</span><span class="p">()</span>
+
+        <span class="n">og_sys_modules</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
+
+        <span class="n">venv_modules</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">loaded_package_modules</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+        <span class="k">for</span> <span class="n">pkg</span> <span class="ow">in</span> <span class="n">loaded_package_modules</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># If the spec is None, skip the entry</span>
+                <span class="k">if</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+            <span class="c1"># Sometimes a ValueError is raised if no .__spec__ member</span>
+            <span class="c1"># is found</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Check if valid packages associated with the package by</span>
+            <span class="c1"># checking if the first part of the module path matches.</span>
+            <span class="c1"># For example, &quot;numpy.random.mtrand&quot; would match when searching</span>
+            <span class="c1"># for package &quot;numpy&quot;.</span>
+            <span class="k">if</span> <span class="n">package</span> <span class="o">==</span> <span class="n">pkg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span>
+
+                <span class="n">venv_modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># print(&quot;Attempting import of&quot;, package)</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">package</span><span class="p">)</span>
+
+            <span class="c1"># TODO: This version checking could be much more complex</span>
+            <span class="c1">#       to allow for the full versioning syntax that pip can use.</span>
+            <span class="c1">#       For example, a user could specify version &quot;&gt;=1.25&quot; instead</span>
+            <span class="c1">#       of only matching a specific version.</span>
+            <span class="k">if</span> <span class="n">version</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">package_found</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">module</span><span class="o">.</span><span class="n">__version__</span> <span class="o">==</span> <span class="n">version</span> <span class="k">else</span> <span class="kc">False</span>
+            <span class="c1"># print(&quot;Import succeeded.&quot;)</span>
+        <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+            <span class="c1"># print(&quot;Import failed.&quot;)</span>
+            <span class="n">package_found</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">og_env_path</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">og_sys_path</span>
+
+        <span class="n">importlib</span><span class="o">.</span><span class="n">invalidate_caches</span><span class="p">()</span>
+
+        <span class="n">sys</span><span class="o">.</span><span class="n">modules</span> <span class="o">=</span> <span class="n">og_sys_modules</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">package</span><span class="p">,</span> <span class="s2">&quot;found&quot;</span> <span class="k">if</span> <span class="n">package_found</span> <span class="k">else</span> <span class="s2">&quot;not found&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">package_found</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_site_package_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+        <span class="c1"># TODO: Add logging and docstring!</span>
+
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+            <span class="n">site_package_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">/</span> <span class="s2">&quot;Lib&quot;</span> <span class="o">/</span> <span class="s2">&quot;site-packages&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">site_package_path</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span>
+                <span class="o">/</span> <span class="s2">&quot;lib&quot;</span>
+                <span class="o">/</span> <span class="s2">&quot;python</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_python_version</span><span class="p">())</span>
+                <span class="o">/</span> <span class="s2">&quot;site-packages&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">site_package_path</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_python_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="c1"># TODO: Add logging and docstring!</span>
+
+        <span class="c1"># This grabs the full semver, for example, &quot;3.11.3&quot;</span>
+        <span class="n">python_version</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Remove the patch version</span>
+        <span class="n">python_version</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">python_version</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[:</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">python_version</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_unimport_packages</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Unimports all packages that originate from this virtual environment.</span>
+
+<span class="sd">        This code is based on information provided by DeepSOIC and wjandrea</span>
+<span class="sd">        on StackOverflow: https://stackoverflow.com/a/57891909.</span>
+
+<span class="sd">        :return: Names of packages that were unimported by this function.</span>
+<span class="sd">        :rtype: list[str]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: Add logging</span>
+
+        <span class="n">venv_modules</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">loaded_package_modules</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+
+        <span class="k">for</span> <span class="n">pkg</span> <span class="ow">in</span> <span class="n">loaded_package_modules</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">modulespec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span>
+
+                <span class="c1"># If the spec is None, skip the entry</span>
+                <span class="k">if</span> <span class="n">modulespec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+            <span class="c1"># Sometimes a ValueError is raised if no .__spec__ member</span>
+            <span class="c1"># is found. Skip the entry as well</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># We can guarantee that importlib.util.find_spec(pkg) is not</span>
+            <span class="c1"># None from the checks above</span>
+            <span class="n">modulespec</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">ModuleSpec</span><span class="p">,</span> <span class="n">modulespec</span><span class="p">)</span>
+
+            <span class="c1"># Check if valid packages are from this virtual environment</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">modulespec</span><span class="o">.</span><span class="n">origin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">site_packages</span><span class="p">)</span> <span class="ow">in</span> <span class="n">modulespec</span><span class="o">.</span><span class="n">origin</span>
+            <span class="p">):</span>
+                <span class="c1"># logger.debug(&quot;Unimporting: {}&quot;.format(pkg))</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span>
+
+                <span class="n">venv_modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span>
+
+        <span class="n">venv_modules</span>
+
+        <span class="k">return</span> <span class="n">venv_modules</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">binary_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The venv subdirectory containing binaries based on operating system.</span>
+
+<span class="sd">        :return: Full path to the venv binary directory</span>
+<span class="sd">        :rtype: Path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binary_directory_name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The prefix directory for this venv.</span>
+
+<span class="sd">        :return: Full path to the prefix directory for this venv</span>
+<span class="sd">        :rtype: Path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span>
+
+    <span class="nd">@prefix</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">full_prefix</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Setting venv prefix to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">full_prefix</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="n">full_prefix</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">python</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The python binary of the venv based on operatingsystem.</span>
+
+<span class="sd">        :return: Full path to the Python binary of the venv</span>
+<span class="sd">        :rtype: Path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary_directory</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_python_binary_file_name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">site_packages</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_site_package_path</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_python_binary_file_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The python binary file name based on operating system.</span>
+
+<span class="sd">        :return: Python binary file name</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="s2">&quot;python.exe&quot;</span> <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span> <span class="k">else</span> <span class="s2">&quot;python&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_binary_directory_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The name of the venv subdirectory containing binaries based on</span>
+<span class="sd">        operating system.</span>
+
+<span class="sd">        :return: Virtual environment binary directory</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="s2">&quot;Scripts&quot;</span> <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span> <span class="k">else</span> <span class="s2">&quot;bin&quot;</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, CyRxnOpt Authors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

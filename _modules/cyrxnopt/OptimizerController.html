@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyrxnopt.OptimizerController &mdash; CyRxnOpt 0.0.post1.dev1+g997b2c5ac documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=494a0f73"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CyRxnOpt
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html"> Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supported_algorithms.html"> Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html"> Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html"> Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html"> Developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html"> License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html"> Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html"> Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CyRxnOpt</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cyrxnopt.OptimizerController</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyrxnopt.OptimizerController</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">cyrxnopt.NestedVenv</span><span class="w"> </span><span class="kn">import</span> <span class="n">NestedVenv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cyrxnopt.OptimizerABC</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimizerABC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cyrxnopt.OptimizerAmlro</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimizerAmlro</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cyrxnopt.OptimizerEDBOp</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimizerEDBOp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cyrxnopt.OptimizerNMSimplex</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimizerNMSimplex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cyrxnopt.OptimizerSQSnobFit</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimizerSQSnobFit</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="check_install">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerController.check_install">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_install</span><span class="p">(</span><span class="n">optimizer_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">venv</span><span class="p">:</span> <span class="n">NestedVenv</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if an optimizer is installed in the given environment.</span>
+
+<span class="sd">    :param optimizer_name: Name of the optimizer algorithm</span>
+<span class="sd">    :type optimizer_name: str</span>
+<span class="sd">    :param venv: Environment containing the optimizer installation</span>
+<span class="sd">    :type venv: NestedVenv</span>
+
+<span class="sd">    :return: Whether the optimizer is installed (True) or not (False)</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">get_optimizer</span><span class="p">(</span><span class="n">optimizer_name</span><span class="p">,</span> <span class="n">venv</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">opt</span><span class="o">.</span><span class="n">check_install</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="install">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerController.install">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">install</span><span class="p">(</span>
+    <span class="n">optimizer_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">venv</span><span class="p">:</span> <span class="n">NestedVenv</span><span class="p">,</span> <span class="n">local_paths</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Installs an optimizer into the given environment.</span>
+
+<span class="sd">    :param optimizer_name: Name of the optimizer algorithm</span>
+<span class="sd">    :type optimizer_name: str</span>
+<span class="sd">    :param venv: Environment containing the optimizer installation</span>
+<span class="sd">    :type venv: NestedVenv</span>
+<span class="sd">    :param local_paths: Mapping of package names to local paths to the packages</span>
+<span class="sd">        to be installed, defaults to {}</span>
+<span class="sd">    :type local_paths: dict[str, str], optional</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">get_optimizer</span><span class="p">(</span><span class="n">optimizer_name</span><span class="p">,</span> <span class="n">venv</span><span class="p">)</span>
+
+    <span class="n">opt</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">local_paths</span><span class="o">=</span><span class="n">local_paths</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_config">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerController.get_config">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_config</span><span class="p">(</span><span class="n">optimizer_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">venv</span><span class="p">:</span> <span class="n">NestedVenv</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets the description of the options available for an optimizer.</span>
+
+<span class="sd">    :param optimizer_name: Name of the optimizer algorithm</span>
+<span class="sd">    :type optimizer_name: str</span>
+<span class="sd">    :param venv: Environment containing the optimizer installation</span>
+<span class="sd">    :type venv: NestedVenv</span>
+
+<span class="sd">    :return: Descriptions for valid configuration values of the optimizer.</span>
+<span class="sd">    :rtype: list[dict[str, Any]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">get_optimizer</span><span class="p">(</span><span class="n">optimizer_name</span><span class="p">,</span> <span class="n">venv</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">opt</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="set_config">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerController.set_config">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_config</span><span class="p">(</span>
+    <span class="n">optimizer_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">venv</span><span class="p">:</span> <span class="n">NestedVenv</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">experiment_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets the provided options for the given optimizer.</span>
+
+<span class="sd">    :param optimizer_name: Name of the optimizer algorithm</span>
+<span class="sd">    :type optimizer_name: str</span>
+<span class="sd">    :param venv: Environment containing the optimizer installation</span>
+<span class="sd">    :type venv: NestedVenv</span>
+<span class="sd">    :param config: Desired optimizer configuration</span>
+<span class="sd">    :type config: dict[str, Any]</span>
+<span class="sd">    :param experiment_dir: Directory to be used for the current experiment.</span>
+<span class="sd">        This is where the config files will be output.</span>
+<span class="sd">    :type experiment_dir: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">get_optimizer</span><span class="p">(</span><span class="n">optimizer_name</span><span class="p">,</span> <span class="n">venv</span><span class="p">)</span>
+
+    <span class="n">opt</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">experiment_dir</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="train">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerController.train">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">train</span><span class="p">(</span>
+    <span class="n">optimizer_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">venv</span><span class="p">:</span> <span class="n">NestedVenv</span><span class="p">,</span>
+    <span class="n">prev_param</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+    <span class="n">yield_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">experiment_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">obj_func</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Predicts new reaction conditions using the given optimizer.</span>
+
+<span class="sd">    :param optimizer_name: Name of the optimizer algorithm</span>
+<span class="sd">    :type optimizer_name: str</span>
+<span class="sd">    :param venv: Environment containing the optimizer installation</span>
+<span class="sd">    :type venv: NestedVenv</span>
+<span class="sd">    :param prev_param: Previous suggested reaction conditions</span>
+<span class="sd">    :type prev_param: list[Any]</span>
+<span class="sd">    :param yield_value: Yield value from previous reaction conditions</span>
+<span class="sd">    :type yield_value: float</span>
+<span class="sd">    :param experiment_dir: Output directory for the current experiment</span>
+<span class="sd">    :type experiment_dir: str</span>
+<span class="sd">    :param config: Optimizer configuration</span>
+<span class="sd">    :type config: dict[str, Any]</span>
+<span class="sd">    :param obj_func: Objective function to optimize, defaults to None</span>
+<span class="sd">    :type obj_func: Optional[Callable], optional</span>
+
+<span class="sd">    :returns: The next suggested conditions to perform</span>
+<span class="sd">    :rtype: list[Any]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">get_optimizer</span><span class="p">(</span><span class="n">optimizer_name</span><span class="p">,</span> <span class="n">venv</span><span class="p">)</span>
+
+    <span class="n">opt</span><span class="o">.</span><span class="n">check_install</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">opt</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">prev_param</span><span class="p">,</span> <span class="n">yield_value</span><span class="p">,</span> <span class="n">experiment_dir</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">obj_func</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="predict">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerController.predict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span>
+    <span class="n">optimizer_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">venv</span><span class="p">:</span> <span class="n">NestedVenv</span><span class="p">,</span>
+    <span class="n">prev_param</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+    <span class="n">yield_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">experiment_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">obj_func</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Predicts new reaction conditions using the given optimizer.</span>
+
+<span class="sd">    :param optimizer_name: Name of the optimizer algorithm</span>
+<span class="sd">    :type optimizer_name: str</span>
+<span class="sd">    :param venv: Environment containing the optimizer installation</span>
+<span class="sd">    :type venv: NestedVenv</span>
+<span class="sd">    :param prev_param: experimental parameter combination for previous experiment</span>
+<span class="sd">    :type prev_param: list[Any]</span>
+<span class="sd">    :param yield_value: experimental yield</span>
+<span class="sd">    :type yield_value: float</span>
+<span class="sd">    :param experiment_dir: experimental directory for saving data files</span>
+<span class="sd">    :type experiment_dir: str</span>
+<span class="sd">    :param config: Initial reaction feature configurations</span>
+<span class="sd">    :type config: dict[str, Any]</span>
+<span class="sd">    :param obj_func: Objective function needed to optimize, defaults to None</span>
+<span class="sd">    :type obj_func: Optional[Callable], optional</span>
+
+<span class="sd">    :return: Next suggested reaction conditions</span>
+<span class="sd">    :rtype: list[Any]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">opt</span> <span class="o">=</span> <span class="n">get_optimizer</span><span class="p">(</span><span class="n">optimizer_name</span><span class="p">,</span> <span class="n">venv</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">next_suggestion</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+            <span class="n">prev_param</span><span class="p">,</span> <span class="n">yield_value</span><span class="p">,</span> <span class="n">experiment_dir</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">obj_func</span><span class="o">=</span><span class="n">obj_func</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">next_suggestion</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+            <span class="n">prev_param</span><span class="p">,</span> <span class="n">yield_value</span><span class="p">,</span> <span class="n">experiment_dir</span><span class="p">,</span> <span class="n">config</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">next_suggestion</span></div>
+
+
+
+<div class="viewcode-block" id="get_optimizer">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerController.get_optimizer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_optimizer</span><span class="p">(</span><span class="n">optimizer_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">venv</span><span class="p">:</span> <span class="n">NestedVenv</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OptimizerABC</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets an instance of the requested optimizer algorithm</span>
+
+<span class="sd">    :param optimizer_name: Name of the optimizer algorithm</span>
+<span class="sd">    :type optimizer_name: str</span>
+<span class="sd">    :param venv: Environment containing the optimizer installation</span>
+<span class="sd">    :type venv: NestedVenv</span>
+
+<span class="sd">    :raises RuntimeError: Invalid optimizer name given</span>
+
+<span class="sd">    :return: Requested optimizer</span>
+<span class="sd">    :rtype: OptimizerABC</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">optimizer_name</span> <span class="o">=</span> <span class="n">optimizer_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="c1"># Define the initial base type of the optimizer</span>
+    <span class="n">optimizer</span><span class="p">:</span> <span class="n">OptimizerABC</span>
+
+    <span class="c1"># Determine which optimizer to use</span>
+    <span class="k">if</span> <span class="n">optimizer_name</span> <span class="o">==</span> <span class="s2">&quot;amlro&quot;</span><span class="p">:</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">OptimizerAmlro</span><span class="p">(</span><span class="n">venv</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">optimizer_name</span> <span class="o">==</span> <span class="s2">&quot;edbop&quot;</span><span class="p">:</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">OptimizerEDBOp</span><span class="p">(</span><span class="n">venv</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">optimizer_name</span> <span class="o">==</span> <span class="s2">&quot;nmsimplex&quot;</span><span class="p">:</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">OptimizerNMSimplex</span><span class="p">(</span><span class="n">venv</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">optimizer_name</span> <span class="o">==</span> <span class="s2">&quot;sqsnobfit&quot;</span><span class="p">:</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">OptimizerSQSnobFit</span><span class="p">(</span><span class="n">venv</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">&quot;Invalid optimizer name given: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">optimizer_name</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">optimizer</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, CyRxnOpt Authors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

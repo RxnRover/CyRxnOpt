@@ -1,0 +1,173 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Writing Documentation &mdash; CyRxnOpt 0.0.post1.dev1+g997b2c5ac documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=494a0f73"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CyRxnOpt
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html"> Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supported_algorithms.html"> Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html"> Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html"> Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html"> Developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html"> License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html"> Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html"> Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CyRxnOpt</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Writing Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/developer/getting_started/writing_documentation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="writing-documentation">
+<span id="id1"></span><h1>Writing Documentation<a class="headerlink" href="#writing-documentation" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Make sure you know how to <a class="reference external" href="viewing_documentation">view the documentation</a>
+before trying to write any!</p>
+</div>
+<p>We welcome contributions to the CyRxnOpt documentation, whether it be a small
+typo fix or an entirely new tutorial or section. This page covers the things you
+may need to know to make a contribution to the documentation.</p>
+<p>Our documentation is written in <a class="reference external" href="https://docutils.sourceforge.io/rst.html">reStructuredText</a> (reST; file extension: <code class="docutils literal notranslate"><span class="pre">rst</span></code>) and
+generated using <a class="reference external" href="https://www.sphinx-doc.org/en/master/">Sphinx</a>. If you are
+not familiar with reST, Sphinx has a good primer <a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html">here</a>.</p>
+<section id="style-and-formatting">
+<h2>Style and Formatting<a class="headerlink" href="#style-and-formatting" title="Link to this heading"></a></h2>
+<p>Our documentation style and formatting is mainly delegated to our formatting
+tool, <a class="reference external" href="https://github.com/LilSpazJoekp/docstrfmt">docstrfmt</a>. reST files will
+be formatted automatically when you run <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span></code> by pre-commit, but if you
+want to format the before files committing them, reST files in the project can
+be formatted at any time with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tox<span class="w"> </span>-e<span class="w"> </span>docformat
+</pre></div>
+</div>
+<p>Although the formatting will be fixed automatically, it is useful to keep your
+files somewhat close to their final formatting to have an idea what it will look
+like. The main formatting rules to keep in mind are:</p>
+<ul class="simple">
+<li><p>Keep your lines of text under 80 characters</p></li>
+<li><p>Use the following section header characters with no overlines (<a class="reference external" href="https://github.com/LilSpazJoekp/docstrfmt/issues/91">why not Python
+headers?</a>):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">=</span></code> for parts</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-</span></code> for chapters</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">~</span></code> for sections</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">+</span></code> for subsections</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.</span></code> for subsubsections</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">,</span></code> for paragraphs</p></li>
+</ul>
+</li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">-</span></code>, not <code class="docutils literal notranslate"><span class="pre">*</span></code> for bulleted lists</p></li>
+</ul>
+</section>
+<section id="documentation-locations">
+<h2>Documentation Locations<a class="headerlink" href="#documentation-locations" title="Link to this heading"></a></h2>
+<p>The majority of our documentation is organized under <code class="docutils literal notranslate"><span class="pre">docs/source</span></code>, although
+there are a variety of other reST files throughout the project to greet users
+(<code class="docutils literal notranslate"><span class="pre">README.rst</span></code>), explain usage (<code class="docutils literal notranslate"><span class="pre">docs/README.rst</span></code>), or provide important
+information without needing to sift through documentation website
+(<code class="docutils literal notranslate"><span class="pre">AUTHORS.rst</span></code>).</p>
+</section>
+<section id="testing-the-documentation">
+<h2>Testing the Documentation<a class="headerlink" href="#testing-the-documentation" title="Link to this heading"></a></h2>
+<p>The first step in testing the documentation should be to <a class="reference external" href="viewing_documentation">build and preview it</a> on your local system to make sure it builds correctly
+any links work. If you are seeing a lot of warnings or errors during the build,
+you can get a nice summary of warnings and errors by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tox<span class="w"> </span>-e<span class="w"> </span>doctests
+</pre></div>
+</div>
+<p>This can help check for any issues that might be overlooked in manual testing of
+the documentation website. You can also check specifically for broken links to
+internal pages or external websites with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tox<span class="w"> </span>-e<span class="w"> </span>linkcheck
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, CyRxnOpt Authors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

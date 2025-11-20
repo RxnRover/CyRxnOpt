@@ -1,0 +1,285 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creating a New Optimizer Class &mdash; CyRxnOpt 0.0.post1.dev1+g997b2c5ac documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=494a0f73"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="License" href="../../license.html" />
+    <link rel="prev" title="Developer Documentation" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CyRxnOpt
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html"> Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supported_algorithms.html"> Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html"> Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html"> Module Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html"> Developer</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#tutorials">Tutorials</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Creating a New Optimizer Class</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#adding-new-optimizer-to-cyrxnopt">Adding New Optimizer to CyRxnOpt</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html"> License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html"> Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html"> Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CyRxnOpt</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Developer Documentation</a></li>
+      <li class="breadcrumb-item active">Creating a New Optimizer Class</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/developer/tutorials/add_new_optimizer.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="creating-a-new-optimizer-class">
+<span id="add-new-optimizer"></span><h1>Creating a New Optimizer Class<a class="headerlink" href="#creating-a-new-optimizer-class" title="Link to this heading"></a></h1>
+<ol class="arabic">
+<li><p>Make a copy of <code class="docutils literal notranslate"><span class="pre">OptimizerTemplate.py</span></code> and rename it as
+<code class="docutils literal notranslate"><span class="pre">OptimizerName.py</span></code>, replacing <code class="docutils literal notranslate"><span class="pre">Name</span></code> with the name or an abbreviation of
+your optimizer. For example, if this template was being used to add support
+for the optimizer, Nelder-Mead Simplex, we may rename
+<code class="docutils literal notranslate"><span class="pre">OptimizerTemplate.py</span></code> to <code class="docutils literal notranslate"><span class="pre">OptimizerNMSimplex.py</span></code>. You can download the
+file here: <a class="reference download internal" download="" href="../../_downloads/784fbb04446606d5e6558af92638cb62/OptimizerTemplate.py"><code class="xref download docutils literal notranslate"><span class="pre">OptimizerTemplate.py</span></code></a>. It can
+also be found in the CyRxnOpt repository at
+<code class="docutils literal notranslate"><span class="pre">docs/source/developer/tutorials/OptimizerTemplate.py</span></code>.</p></li>
+<li><p>Change the class name to your optimizer class name, for example,
+<code class="docutils literal notranslate"><span class="pre">OptimizerName</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">OptimizerName</span><span class="p">(</span><span class="n">OptimizerABC</span><span class="p">):</span>
+</pre></div>
+</div>
+</li>
+<li><p>Add all the necessary libraries required for your optimizer to the
+<code class="docutils literal notranslate"><span class="pre">__packages</span></code> list in the template file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">_packages</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;package1&quot;</span><span class="p">,</span> <span class="s2">&quot;package2&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+</li>
+<li><p>Check that the <code class="docutils literal notranslate"><span class="pre">install()</span></code> and <code class="docutils literal notranslate"><span class="pre">check_install()</span></code> functions do not need to
+be modified:</p>
+<p><code class="docutils literal notranslate"><span class="pre">install()</span></code> - This function will install an optimizer and its dependencies
+optimizer class. When we run an optimizer for the first time, the install
+function will create a new virtual environment to contain the installation,
+then install all the packages using pip. When we use an optimizer, it will
+activate the relevant virtual environment.</p>
+<p><code class="docutils literal notranslate"><span class="pre">check_install()</span></code> - This function checks whether necessary packages are
+installed or not.</p>
+</li>
+<li><p>In the <code class="docutils literal notranslate"><span class="pre">get_config()</span></code> function, you need to update the configuration
+dictionary. This dictionary serves as a description of the configuration
+options for an optimization algorithm so user-facing programs can dynamically
+adjust the offered configuration options for different optimization
+algorithms. Here you can add more variables that are only used by your
+algorithm and it should dynamically change the front-end user interface.</p>
+<p>Add all the necessary configurations and variables required as user input to
+run your optimizer. Follow the same dictionary keys as other optimizer
+classes. The following is an example <code class="docutils literal notranslate"><span class="pre">get_config</span></code> dictionary with extra
+options added:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;continuous_feature_names&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;continuous_feature_bounds&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;continuous_feature_resolutions&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;categorical_feature_names&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;categorical_feature_values&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;budget&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;objectives&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;yield&quot;</span><span class="p">],</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;direction&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">],</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</li>
+<li><p>In the <code class="docutils literal notranslate"><span class="pre">set_config()</span></code> function, you need to add the necessary code to
+handle and initialize the optimizer. This function handles configuring an
+optimizer before training or prediction begins. Code to generate your
+reaction space, handle the format of configuration data into your algorithm
+format, and generate initial files will go inside <code class="docutils literal notranslate"><span class="pre">set_config()</span></code> function.</p></li>
+<li><p>If your optimizer requires training steps, add the necessary code for
+training inside the <code class="docutils literal notranslate"><span class="pre">train()</span></code> function. For example, AMLRO requires
+training the initial ML model before starting the active learning prediction.
+Therefore, the AMLRO optimizer class <code class="docutils literal notranslate"><span class="pre">train()</span></code> function includes code to
+generate training dataset and perform each training step.</p></li>
+<li><p>In the <code class="docutils literal notranslate"><span class="pre">predict()</span></code> function, your algorithm should be called to find the
+optimal reaction conditions. This function will return the suggested reaction
+conditions that should be run in next cycle. Actual optimization
+loop/prediction step code should be implemented here.</p></li>
+<li><p>In the <code class="docutils literal notranslate"><span class="pre">_import_deps()</span></code> function, write the necessary package import lines.
+Each package should be added to the <code class="docutils literal notranslate"><span class="pre">_imports</span></code> dictionary, and for the
+dictionary key, use the package name. As a example, <code class="docutils literal notranslate"><span class="pre">numpy</span></code> and <code class="docutils literal notranslate"><span class="pre">pandas</span></code>
+are imported here:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_import_deps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_imports</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="n">np</span><span class="p">,</span> <span class="s2">&quot;pd&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Then, when you want to use the imported library, you can access it through
+the <code class="docutils literal notranslate"><span class="pre">self._imports</span></code> dictionary:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">_imports</span><span class="p">[</span><span class="s2">&quot;np&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">array</span><span class="p">()</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">_imports</span><span class="p">[</span><span class="s2">&quot;pd&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>Depending on your optimizer workflow, add more class methods as necessary.
+Refer to how existing optimizer classes are defined for guidance.</p></li>
+</ol>
+<section id="adding-new-optimizer-to-cyrxnopt">
+<h2>Adding New Optimizer to CyRxnOpt<a class="headerlink" href="#adding-new-optimizer-to-cyrxnopt" title="Link to this heading"></a></h2>
+<p>After implementing your optimizer class, update the <code class="docutils literal notranslate"><span class="pre">OptimizerController.py</span></code>
+file to use your optimizer.</p>
+<ol class="arabic">
+<li><p>At the top of this file, add the optimizer import line, replacing
+<code class="docutils literal notranslate"><span class="pre">OptimizerName</span></code> with the name of your optimizer class:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">CyRxnOpt.OptimizerName</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimizerName</span>
+</pre></div>
+</div>
+</li>
+<li><p>Update the <code class="docutils literal notranslate"><span class="pre">get_optimizer()</span></code> function to include your optimizer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">elif</span> <span class="n">optimizer_name</span> <span class="o">==</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">OptimizerName</span><span class="p">(</span><span class="n">venv</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>All function parameters should match with the corresponding abstract function
+defined in <code class="docutils literal notranslate"><span class="pre">OptimizerABC</span></code>. If you want to add a new parameter for any
+function, first add that to <code class="docutils literal notranslate"><span class="pre">OptimizerController</span></code> and <code class="docutils literal notranslate"><span class="pre">OptimizerABC</span></code>,
+then give the default value as <code class="docutils literal notranslate"><span class="pre">None</span></code>. For example, if your algorithm
+predict function requires a new parameter, learning rate:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span>
+    <span class="n">optimizer_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">prev_param</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+    <span class="n">yield_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">experiment_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">venv</span><span class="p">:</span> <span class="n">NestedVenv</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">obj_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Developer Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../license.html" class="btn btn-neutral float-right" title="License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, CyRxnOpt Authors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

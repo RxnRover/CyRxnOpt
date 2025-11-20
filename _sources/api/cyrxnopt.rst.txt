@@ -1,0 +1,69 @@
+cyrxnopt package
+================
+
+Submodules
+----------
+
+cyrxnopt.NestedVenv module
+--------------------------
+
+.. automodule:: cyrxnopt.NestedVenv
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+cyrxnopt.OptimizerABC module
+----------------------------
+
+.. automodule:: cyrxnopt.OptimizerABC
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+cyrxnopt.OptimizerAmlro module
+------------------------------
+
+.. automodule:: cyrxnopt.OptimizerAmlro
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+cyrxnopt.OptimizerController module
+-----------------------------------
+
+.. automodule:: cyrxnopt.OptimizerController
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+cyrxnopt.OptimizerEDBOp module
+------------------------------
+
+.. automodule:: cyrxnopt.OptimizerEDBOp
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+cyrxnopt.OptimizerNMSimplex module
+----------------------------------
+
+.. automodule:: cyrxnopt.OptimizerNMSimplex
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+cyrxnopt.OptimizerSQSnobFit module
+----------------------------------
+
+.. automodule:: cyrxnopt.OptimizerSQSnobFit
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: cyrxnopt
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,237 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Supported Algorithms &mdash; CyRxnOpt 0.0.post1.dev1+g997b2c5ac documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=494a0f73"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contributing" href="contributing.html" />
+    <link rel="prev" title="Command Line Example" href="overview/examples/cli_example.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CyRxnOpt
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview/index.html"> Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"> Supported Algorithms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#amlro">AMLRO</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#edbo">EDBO+</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#nelder-mead-simplex">Nelder-Mead Simplex</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#sqsnobfit">SQSnobFit</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">References</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html"> Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html"> Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/index.html"> Developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html"> License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html"> Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html"> Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CyRxnOpt</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Supported Algorithms</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/supported_algorithms.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="supported-algorithms">
+<span id="id1"></span><h1>Supported Algorithms<a class="headerlink" href="#supported-algorithms" title="Link to this heading"></a></h1>
+<p>CyRxnOpt supports a variety of state-of-the-art optimization algorithms, ranging
+from traditional methods to modern machine learning-driven approaches. These
+algorithms enable efficient exploration of reaction condition landscapes, local
+and global search strategies, and single- or multi-objective decision-making.</p>
+<p>Below are sections briefly describing each supported algorithm, along with the
+<a class="reference internal" href="glossary.html#term-CyRxnOpt-ID"><span class="xref std std-term">CyRxnOpt ID</span></a> associated with each method in CyRxnOpt.</p>
+<section id="amlro">
+<h2>AMLRO<a class="headerlink" href="#amlro" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="glossary.html#term-CyRxnOpt-ID"><span class="xref std std-term">CyRxnOpt ID</span></a>: <code class="docutils literal notranslate"><span class="pre">amlro</span></code></p>
+<p>AMLRO (Active Machine Learning Reaction Optimizer) is our <strong>in-house active
+learning framework</strong> designed for <strong>reaction space optimization</strong>. <a class="reference internal" href="#id3" id="id2"><span>[amlro]</span></a> It
+integrates regression models with iterative candidate selection. AMLRO is
+capable of handling <strong>continuous and categorical features</strong>, dynamic objectives
+with directions (minimization or maximization), and user feedback loops.</p>
+<ul class="simple">
+<li><p><strong>Status:</strong> Source code is currently under development. Public release is
+planned, and the project will be hosted on GitHub (expected link: <em>TBA</em>).</p></li>
+</ul>
+<section id="references">
+<h3>References<a class="headerlink" href="#references" title="Link to this heading"></a></h3>
+<div role="list" class="citation-list">
+<div class="citation" id="id3" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">amlro</a><span class="fn-bracket">]</span></span>
+<p>Manuscript in preparation.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="edbo">
+<h2>EDBO+<a class="headerlink" href="#edbo" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="glossary.html#term-CyRxnOpt-ID"><span class="xref std std-term">CyRxnOpt ID</span></a>: <code class="docutils literal notranslate"><span class="pre">edbop</span></code></p>
+<p>EDBO+ <a class="reference internal" href="#garridotorres2022" id="id4"><span>[garridotorres2022]</span></a> is a <strong>Bayesian optimization</strong> framework specifically
+designed for chemical reaction optimization based on the original EDBO
+(Experimental Design via Bayesian Optimization) algorithm <a class="reference internal" href="#shields2021" id="id5"><span>[shields2021]</span></a> from
+the Doyle group. It leverages Gaussian process models with acquisition functions
+(e.g., Expected Improvement, qEI, and EHVI for multi-objective settings) to
+identify new experiments that are most informative. EDBO+ has been successfully
+applied to <strong>global, multi-objective optimization</strong> of reaction yields,
+selectivity, and sustainability metrics.</p>
+<section id="id6">
+<h3>References<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<div role="list" class="citation-list">
+<div class="citation" id="shields2021" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">shields2021</a><span class="fn-bracket">]</span></span>
+<p>Shields, B. J.; Stevens, J.; Li, J.; Parasram, M.; Damani, F.;
+Alvarado, J. I. M.; Janey, J. M.; Adams, R. P.; Doyle, A. G. Bayesian
+Reaction Optimization as a Tool for Chemical Synthesis. <em>Nature</em> <strong>2021</strong>,
+<em>590</em> (7844), 89–96. DOI: <a class="reference external" href="https://doi.org/10.1038/s41586-021-03213-y">10.1038/s41586-021-03213-y</a>.</p>
+</div>
+<div class="citation" id="garridotorres2022" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">garridotorres2022</a><span class="fn-bracket">]</span></span>
+<p>Garrido Torres, J. A.; Lau, S. H.; Anchuri, P.; Stevens,
+J. M.; Tabora, J. E.; Li, J.; Borovika, A.; Adams, R. P.; Doyle, A. G. A
+Multi-Objective Active Learning Platform and Web App for Reaction
+Optimization. <em>J. Am. Chem. Soc.</em> <strong>2022</strong>, <em>144</em> (43), 19999–20007. DOI:
+<a class="reference external" href="https://doi.org/10.1021/jacs.2c08592">10.1021/jacs.2c08592</a>.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="nelder-mead-simplex">
+<h2>Nelder-Mead Simplex<a class="headerlink" href="#nelder-mead-simplex" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="glossary.html#term-CyRxnOpt-ID"><span class="xref std std-term">CyRxnOpt ID</span></a>: <code class="docutils literal notranslate"><span class="pre">nmsimplex</span></code></p>
+<p>CyRxnOpt uses <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/optimize.minimize-neldermead.html">Scipy’s Python implementation</a>
+of the Nelder-Mead Simpex method (NMSIM). <a class="reference internal" href="#nelder1965" id="id7"><span>[nelder1965]</span></a> NMSIM is a
+<strong>derivative-free, local optimization algorithm</strong> widely used for smooth,
+low-dimensional problems. It iteratively refines a simplex (a polytope with n+1
+vertices in n-dimensional space) through reflection, expansion, contraction, and
+shrink steps to approach a local minimum. While efficient for surfaces or
+regions with a single optimum, noisy surfaces or those with many local optima
+may converge to a local optimum rather than the desired global solution.</p>
+<section id="id8">
+<h3>References<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<div role="list" class="citation-list">
+<div class="citation" id="nelder1965" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">nelder1965</a><span class="fn-bracket">]</span></span>
+<p>Nelder, J. A.; Mead, R. A Simplex Method for Function
+Minimization. <em>The Computer Journal</em> <strong>1965</strong>, <em>7</em> (4), 308–313. DOI:
+<a class="reference external" href="https://doi.org/10.1093/comjnl/7.4.308">10.1093/comjnl/7.4.308</a>.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sqsnobfit">
+<h2>SQSnobFit<a class="headerlink" href="#sqsnobfit" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="glossary.html#term-CyRxnOpt-ID"><span class="xref std std-term">CyRxnOpt ID</span></a>: <code class="docutils literal notranslate"><span class="pre">sqsnobfit</span></code></p>
+<p><a class="reference external" href="https://pypi.org/project/SQSnobFit/">SQSnobFit</a> is scikit-quant’s Python
+implementation of Huyer and Neumaier’s original SNOBFIT (Stable Noisy
+Optimization by Branch and Fit) algorithm. <a class="reference internal" href="#huyer2008" id="id9"><span>[huyer2008]</span></a> SNOBFIT is a <strong>global
+optimization algorithm</strong> particularly well-suited for expensive, noisy black-box
+functions. It combines local quadratic model fitting with global
+space-partitioning to balance <strong>exploration and exploitation</strong>.</p>
+<section id="id10">
+<h3>References<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<div role="list" class="citation-list">
+<div class="citation" id="huyer2008" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id9">huyer2008</a><span class="fn-bracket">]</span></span>
+<p>Huyer, W.; Neumaier, A. SNOBFIT – Stable Noisy Optimization by
+Branch and Fit. <em>ACM Transactions on Mathematical Software</em> <strong>2008</strong>, <em>35</em>
+(2), 1–25. DOI: <a class="reference external" href="https://doi.org/10.1145/1377612.1377613">10.1145/1377612.1377613</a>.</p>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="overview/examples/cli_example.html" class="btn btn-neutral float-left" title="Command Line Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, CyRxnOpt Authors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

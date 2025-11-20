@@ -1,0 +1,539 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cyrxnopt.OptimizerAmlro &mdash; CyRxnOpt 0.0.post1.dev1+g997b2c5ac documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=494a0f73"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CyRxnOpt
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/index.html"> Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../supported_algorithms.html"> Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html"> Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html"> Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer/index.html"> Developer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html"> License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html"> Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html"> Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CyRxnOpt</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cyrxnopt.OptimizerAmlro</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cyrxnopt.OptimizerAmlro</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">cyrxnopt.NestedVenv</span><span class="w"> </span><span class="kn">import</span> <span class="n">NestedVenv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cyrxnopt.OptimizerABC</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptimizerABC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cyrxnopt.utilities.config.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">use_subkeys</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="OptimizerAmlro">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerAmlro.OptimizerAmlro">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OptimizerAmlro</span><span class="p">(</span><span class="n">OptimizerABC</span><span class="p">):</span>
+    <span class="c1"># Private static data member to list dependency packages required</span>
+    <span class="c1"># by this class</span>
+    <span class="n">_packages</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;git+https://github.com/RxnRover/amlo&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;numpy&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pandas&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;joblib&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">venv</span><span class="p">:</span> <span class="n">NestedVenv</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Optimizer class for the AMLRO package.</span>
+
+<span class="sd">        :param venv: Virtual environment to install the optimizer</span>
+<span class="sd">        :type venv: NestedVenv</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">venv</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OptimizerAmlro.get_config">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerAmlro.OptimizerAmlro.get_config">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the configuration options available for this optimizer.</span>
+
+<span class="sd">        See :py:meth:`OptimizerABC.get_config` for more information about the</span>
+<span class="sd">        config descriptions returned by this method and for general usage</span>
+<span class="sd">        information.</span>
+
+<span class="sd">        :return: Configuration option descriptions</span>
+<span class="sd">        :rtype: list[dict[str, Any]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">config</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;continuous_feature_names&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list[str]&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;continuous_feature_bounds&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list[list[float]]&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;continuous_feature_resolutions&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list[float]&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;categorical_feature_names&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list[str]&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;categorical_feature_values&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list[list[str]]&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;budget&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;objectives&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;list[str]&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;yield&quot;</span><span class="p">],</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;direction&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">]</span>
+        <span class="c1"># TODO: Budget should be constrained to numbers greater than</span>
+        <span class="c1">#       zero once that format is solidified.</span>
+        <span class="c1"># TODO: Should the value of this &quot;config&quot; variable be moved into</span>
+        <span class="c1">#       a JSON file to make it easier to modify without changing</span>
+        <span class="c1">#       the code?</span>
+
+        <span class="k">return</span> <span class="n">config</span></div>
+
+
+<div class="viewcode-block" id="OptimizerAmlro.set_config">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerAmlro.OptimizerAmlro.set_config">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates necessary data files based on the given config.</span>
+
+<span class="sd">        See :py:meth:`OptimizerABC.set_config` for more information about how</span>
+<span class="sd">        to form the config dictionary and for general usage information.</span>
+
+<span class="sd">        :param experiment_dir: Output directory for generated files</span>
+<span class="sd">        :type experiment_dir: str</span>
+<span class="sd">        :param config: Configuration options for this optimizer instance</span>
+<span class="sd">        :type config: dict[str, Any]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_import_deps</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">experiment_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">experiment_dir</span><span class="p">)</span>
+
+        <span class="n">full_combo_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imports</span><span class="p">[</span>
+            <span class="s2">&quot;generate_combos&quot;</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">generate_uniform_grid</span><span class="p">(</span><span class="n">use_subkeys</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
+
+        <span class="n">full_combo_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imports</span><span class="p">[</span><span class="s2">&quot;np&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">around</span><span class="p">(</span>
+            <span class="n">full_combo_list</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">4</span>
+        <span class="p">)</span>
+        <span class="n">full_combo_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imports</span><span class="p">[</span><span class="s2">&quot;pd&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">full_combo_list</span><span class="p">)</span>
+        <span class="n">training_combo_df</span> <span class="o">=</span> <span class="n">full_combo_df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;categorical_feature_names&quot;</span><span class="p">]):</span>
+            <span class="n">feature_names_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imports</span><span class="p">[</span><span class="s2">&quot;np&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;continuous_feature_names&quot;</span><span class="p">],</span>
+                    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;categorical_feature_names&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">feature_names_list</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;continuous_feature_names&quot;</span><span class="p">]</span>
+
+        <span class="n">full_combo_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">feature_names_list</span>
+
+        <span class="n">full_combo_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">experiment_dir</span><span class="p">,</span> <span class="s2">&quot;full_combo_file.txt&quot;</span><span class="p">)</span>
+        <span class="n">training_combo_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">experiment_dir</span><span class="p">,</span> <span class="s2">&quot;training_combo_file.txt&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">full_combo_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">full_combo_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">training_combo_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">training_combo_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">training_set_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">experiment_dir</span><span class="p">,</span> <span class="s2">&quot;training_set_file.txt&quot;</span>
+        <span class="p">)</span>
+        <span class="n">training_set_decoded_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">experiment_dir</span><span class="p">,</span> <span class="s2">&quot;training_set_decoded_file.txt&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Write the reaction conditions for training dataset into files</span>
+        <span class="c1"># (encoded and decoded versions)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">training_set_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_object</span><span class="p">:</span>
+            <span class="n">feature_names</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">feature_names_list</span><span class="p">])</span>
+            <span class="n">file_object</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">feature_names</span> <span class="o">+</span> <span class="s2">&quot;,Yield&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">training_set_decoded_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_object</span><span class="p">:</span>
+            <span class="n">feature_names</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">feature_names_list</span><span class="p">])</span>
+            <span class="n">file_object</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">feature_names</span> <span class="o">+</span> <span class="s2">&quot;,Yield&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OptimizerAmlro.train">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerAmlro.OptimizerAmlro.train">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">train</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">prev_param</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">yield_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">experiment_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">obj_func</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Suggests and records training data points needed for AMLRO.</span>
+
+<span class="sd">        :py:meth:`OptimizerAmlro.set_config` must be called prior to this method</span>
+<span class="sd">        to generate the necessary files.</span>
+
+<span class="sd">        The previous parameter+result is recorded during the *next*</span>
+<span class="sd">        call to either :py:meth:`~OptimizerAmlro.train` or</span>
+<span class="sd">        :py:meth:`~OptimizerAmlro.predict`. This means that on the first call</span>
+<span class="sd">        here, the ``prev_param`` and ``yield_value`` values provided are</span>
+<span class="sd">        ignored. Importantly, this also means that the last suggested</span>
+<span class="sd">        parameter+result pair from training will not be recorded unless either</span>
+<span class="sd">        another :py:meth:`~OptimizerAmlro.train` or a subsequent</span>
+<span class="sd">        :py:meth:`~OptimizerAmlro.predict` call are made afterward!</span>
+
+<span class="sd">        :param prev_param: Experimental parameter combination from the previous</span>
+<span class="sd">            experiment, provide an empty list for the first call</span>
+<span class="sd">        :type prev_param: list[Any]</span>
+<span class="sd">        :param yield_value: Experimental yield</span>
+<span class="sd">        :type yield_value: float</span>
+<span class="sd">        :param experiment_dir: Output directory for saving data files</span>
+<span class="sd">        :type experiment_dir: str</span>
+<span class="sd">        :param config: CyRxnOpt-level config for the optimizer</span>
+<span class="sd">        :type config: dict[str, Any]</span>
+<span class="sd">        :param obj_func: Ignored for this optimizer, defaults to None</span>
+<span class="sd">        :type obj_func: Optional[Callable[..., float]], optional</span>
+
+<span class="sd">        :return: Next parameter combination to perform, or an empty list (``[]``)</span>
+<span class="sd">                 if all training points have been performed</span>
+<span class="sd">        :rtype: list[Any]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_import_deps</span><span class="p">()</span>
+
+        <span class="c1"># TODO: Set these as properties?</span>
+        <span class="n">training_set_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">experiment_dir</span><span class="p">,</span> <span class="s2">&quot;training_set_file.txt&quot;</span>
+        <span class="p">)</span>
+        <span class="n">training_set_decoded_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">experiment_dir</span><span class="p">,</span> <span class="s2">&quot;training_set_decoded_file.txt&quot;</span>
+        <span class="p">)</span>
+        <span class="n">training_combo_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">experiment_dir</span><span class="p">,</span> <span class="s2">&quot;training_combo_file.txt&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;direction&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span>
+            <span class="n">yield_value</span> <span class="o">=</span> <span class="o">-</span><span class="n">yield_value</span>
+
+        <span class="c1"># Determine next training row to perform</span>
+        <span class="n">training_combos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imports</span><span class="p">[</span><span class="s2">&quot;pd&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">training_combo_path</span><span class="p">)</span>
+        <span class="n">training_set</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imports</span><span class="p">[</span><span class="s2">&quot;pd&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">training_set_path</span><span class="p">)</span>
+        <span class="n">next_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_next_training_index_by_length</span><span class="p">(</span>
+            <span class="n">training_combos</span><span class="p">,</span> <span class="n">training_set</span>
+        <span class="p">)</span>
+        <span class="c1"># NOTE: Not used due to bug in amlo that causes training_set_file.txt</span>
+        <span class="c1"># to have the decoded feature headers, so training_set_file.txt and</span>
+        <span class="c1"># training_combo_file.txt will never have the prerequisite matching</span>
+        <span class="c1"># column headers.</span>
+        <span class="c1"># next_index = self._get_next_training_index_next_combo(</span>
+        <span class="c1">#     training_combos, training_set</span>
+        <span class="c1"># )</span>
+
+        <span class="c1"># Exit early if all training points have already been performed</span>
+        <span class="k">if</span> <span class="n">next_index</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="c1"># Workaround to avoid being stuck at the first parameter</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_param</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">next_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># training step</span>
+        <span class="n">next_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imports</span><span class="p">[</span>
+            <span class="s2">&quot;training_set_generator&quot;</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">generate_training_data</span><span class="p">(</span>
+            <span class="n">training_set_path</span><span class="p">,</span>
+            <span class="n">training_set_decoded_path</span><span class="p">,</span>
+            <span class="n">training_combo_path</span><span class="p">,</span>
+            <span class="n">use_subkeys</span><span class="p">(</span><span class="n">config</span><span class="p">),</span>
+            <span class="n">prev_param</span><span class="p">,</span>
+            <span class="n">yield_value</span><span class="p">,</span>
+            <span class="n">next_index</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">next_parameters</span></div>
+
+
+<div class="viewcode-block" id="OptimizerAmlro.predict">
+<a class="viewcode-back" href="../../api/cyrxnopt.html#cyrxnopt.OptimizerAmlro.OptimizerAmlro.predict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">prev_param</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">yield_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">experiment_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">obj_func</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Searches for the best parameters and records results from prior steps.</span>
+
+<span class="sd">        :py:meth:`OptimizerAmlro.set_config` and :py:meth:`OptimizerAmlro.train`</span>
+<span class="sd">        must be called prior to this method to generate the necessary files and</span>
+<span class="sd">        initial training data for the model.</span>
+
+<span class="sd">        The previous parameter+result is recorded during the *next*</span>
+<span class="sd">        call to :py:meth:`~OptimizerAmlro.predict`. The ``prev_param`` and</span>
+<span class="sd">        ``yield_value`` values provided here are always recorded. Importantly,</span>
+<span class="sd">        this also means that the last suggested parameter+result pair from</span>
+<span class="sd">        prediction will not be recorded unless either another</span>
+<span class="sd">        :py:meth:`~OptimizerAmlro.predict` call is made afterward!</span>
+
+<span class="sd">        :param prev_param: Parameters provided from the previous prediction</span>
+<span class="sd">                           or from the final call to :py:meth:`OptimizerAmlro.train`</span>
+<span class="sd">        :type prev_param: list[Any]</span>
+<span class="sd">        :param yield_value: Result from the previous suggested conditions</span>
+<span class="sd">        :type yield_value: float</span>
+<span class="sd">        :param experiment_dir: Output directory for saving data files</span>
+<span class="sd">        :type experiment_dir: str</span>
+<span class="sd">        :param config: CyRxnOpt-level config for the optimizer</span>
+<span class="sd">        :type config: dict[str, Any]</span>
+<span class="sd">        :param obj_func: Ignored for this optimizer, defaults to None</span>
+<span class="sd">        :type obj_func: Optional[Callable[..., float]], optional</span>
+
+<span class="sd">        :return: The next suggested reaction to perform</span>
+<span class="sd">        :rtype: list[Any]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_import_deps</span><span class="p">()</span>
+
+        <span class="n">training_set_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">experiment_dir</span><span class="p">,</span> <span class="s2">&quot;training_set_file.txt&quot;</span>
+        <span class="p">)</span>
+        <span class="n">training_set_decoded_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">experiment_dir</span><span class="p">,</span> <span class="s2">&quot;training_set_decoded_file.txt&quot;</span>
+        <span class="p">)</span>
+        <span class="n">full_combo_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">experiment_dir</span><span class="p">,</span> <span class="s2">&quot;full_combo_file.txt&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;direction&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span>
+            <span class="n">yield_value</span> <span class="o">=</span> <span class="o">-</span><span class="n">yield_value</span>
+
+        <span class="c1"># prediction step</span>
+        <span class="n">best_combo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imports</span><span class="p">[</span><span class="s2">&quot;optimizer_main&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get_optimized_parameters</span><span class="p">(</span>
+            <span class="n">training_set_path</span><span class="p">,</span>
+            <span class="n">training_set_decoded_path</span><span class="p">,</span>
+            <span class="n">full_combo_path</span><span class="p">,</span>
+            <span class="n">use_subkeys</span><span class="p">(</span><span class="n">config</span><span class="p">),</span>
+            <span class="n">prev_param</span><span class="p">,</span>
+            <span class="n">yield_value</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">best_combo</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_import_deps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;importing all the packages and libries needed for running amlro optimizer&quot;&quot;&quot;</span>
+
+        <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>  <span class="c1"># type: ignore</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">amlro</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># type: ignore</span>
+            <span class="n">generate_combos</span><span class="p">,</span>
+            <span class="n">optimizer</span><span class="p">,</span>
+            <span class="n">optimizer_main</span><span class="p">,</span>
+            <span class="n">training_set_generator</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_imports</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;generate_combos&quot;</span><span class="p">:</span> <span class="n">generate_combos</span><span class="p">,</span>
+            <span class="s2">&quot;training_set_generator&quot;</span><span class="p">:</span> <span class="n">training_set_generator</span><span class="p">,</span>
+            <span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="n">optimizer</span><span class="p">,</span>
+            <span class="s2">&quot;optimizer_main&quot;</span><span class="p">:</span> <span class="n">optimizer_main</span><span class="p">,</span>
+            <span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="n">np</span><span class="p">,</span>
+            <span class="s2">&quot;pd&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_next_training_index_by_length</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">training_combos</span><span class="p">,</span> <span class="n">training_dataset</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the index for the next training condition to be performed.</span>
+
+<span class="sd">        This is implemented by a simple check on the dataset length. It is</span>
+<span class="sd">        assumed that the only rows present in the dataset are those from the</span>
+<span class="sd">        training combo list. This means that if the dataset has 6 rows, then</span>
+<span class="sd">        the index of the next training combo to perform is also 6.</span>
+
+<span class="sd">        :param training_combos: Training conditions suggested by AMLRO</span>
+<span class="sd">        :type training_combos: pd.DataFrame</span>
+<span class="sd">        :param training_dataset: Current dataset of performed reactions used to</span>
+<span class="sd">                                 train AMLRO</span>
+<span class="sd">        :type training_dataset: pd.DataFrame</span>
+
+<span class="sd">        :returns: Index in the training combo list of the next conditions</span>
+<span class="sd">                  missing from the training dataset. An index of -1 is returned</span>
+<span class="sd">                  if the dataset is longer than the training combo list.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Get the row counts of the training combos and dataset</span>
+        <span class="n">combo_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">training_combos</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">dataset_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">training_dataset</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DEBUG combo_rows, dataset_rows : </span><span class="si">{</span><span class="n">combo_rows</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">dataset_rows</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Simple check assuming the dataset only contains the training combos</span>
+        <span class="c1"># that have been run</span>
+        <span class="k">if</span> <span class="n">dataset_rows</span> <span class="o">&gt;=</span> <span class="n">combo_rows</span><span class="p">:</span>
+            <span class="c1"># No more training points to run</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="c1"># The row count of the dataset will be the next index in the combo</span>
+        <span class="c1"># list due to zero indexing</span>
+        <span class="k">return</span> <span class="n">dataset_rows</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_next_training_index_next_combo</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">training_combos</span><span class="p">,</span> <span class="n">training_dataset</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the index for the next training condition to be performed.</span>
+
+<span class="sd">        This is implemented by checking which training conditions are missing</span>
+<span class="sd">        in the training dataset, then giving the index in the training condition</span>
+<span class="sd">        list for the first missing condition. Importantly, this means that a</span>
+<span class="sd">        training dataset with the correct number of entries, but none matching</span>
+<span class="sd">        the training combo file, will still receive indices and not be</span>
+<span class="sd">        considered &quot;completed&quot; yet.</span>
+
+<span class="sd">        :param training_combos: Training conditions suggested by AMLRO</span>
+<span class="sd">        :type training_combos: pd.DataFrame</span>
+<span class="sd">        :param training_dataset: Current dataset of performed reactions used to</span>
+<span class="sd">                                 train AMLRO</span>
+<span class="sd">        :type training_dataset: pd.DataFrame</span>
+
+<span class="sd">        :returns: Index in the training combo list of the next conditions</span>
+<span class="sd">                  missing from the training dataset. An index of -1 is returned</span>
+<span class="sd">                  if no more training conditions are missing from the dataset.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Merge the current training dataset with the training combos suggested</span>
+        <span class="c1"># by AMLRO. A left merge is used to only use keys from the training</span>
+        <span class="c1"># combos and preserve the row index in the training combos.</span>
+        <span class="n">merged</span> <span class="o">=</span> <span class="n">training_combos</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+            <span class="n">training_dataset</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">indicator</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Determine training combos are missing</span>
+        <span class="n">is_missing</span> <span class="o">=</span> <span class="n">merged</span><span class="p">[</span><span class="s2">&quot;_merge&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="s2">&quot;left_only&quot;</span><span class="p">)</span>
+
+        <span class="c1"># The next line to get the first missing row will return 0 for both</span>
+        <span class="c1"># the first row and if no rows are missing, so exit early with -1</span>
+        <span class="c1"># if no more training combos are missing</span>
+        <span class="k">if</span> <span class="n">is_missing</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="c1"># Get the index of the first training combo not found in the provided</span>
+        <span class="c1"># training dataset. Apparently between True and False, True is the max</span>
+        <span class="c1"># so idxmax() works.</span>
+        <span class="n">first_missing_index</span> <span class="o">=</span> <span class="n">merged</span><span class="p">[</span><span class="s2">&quot;_merge&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="s2">&quot;left_only&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">first_missing_index</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, CyRxnOpt Authors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
