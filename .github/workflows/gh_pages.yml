@@ -8,4 +8,4 @@ on:
 
 jobs:
   gh_pages_generation:
-    uses: RxnRover/.github/.github/workflows/gh_pages_sphinx_main.yml@sphinx_docs_reusable_workflow
+    uses: RxnRover/.github/.github/workflows/gh_pages_sphinx_main.yml@main
