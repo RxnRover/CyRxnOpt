@@ -1,9 +1,14 @@
-|build_status|
+|Documentation|
+|Build Status|
 |Generated with Pyscaffold|
 
-.. |build_status| image:: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml/badge.svg
+.. |Build Status| image:: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml/badge.svg
     :alt: Build Status
     :target: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml
+
+.. |Documentation| image:: https://img.shields.io/badge/Documentation
+    :alt: Documentation link
+    :target: https://rxnrover.github.io/CyRxnOpt/
 
 .. |Generated with Pyscaffold| image:: https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold
     :alt: Project generated with PyScaffold
