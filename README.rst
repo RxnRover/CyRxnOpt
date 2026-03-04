@@ -1,3 +1,14 @@
+|Build Status|
+|Generated with Pyscaffold|
+
+.. |Build Status| image:: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml/badge.svg
+    :alt: Build Status
+    :target: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml
+
+.. |Generated with Pyscaffold| image:: https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold
+    :alt: Project generated with PyScaffold
+    :target: https://pyscaffold.org/
+
 ..
     These are examples of badges you might want to add to your README:
     please update the URLs accordingly
@@ -27,17 +38,6 @@
 .. .. image:: https://api.cirrus-ci.com/github/RxnRover/pyoptimizer_backend.svg?branch=main
 ..     :alt: Built Status
 ..     :target: https://cirrus-ci.com/github/RxnRover/pyoptimizer_backend
-
-.. |Build Status| image:: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml/badge.svg
-    :alt: Build Status
-    :target: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml
-
-.. |Generated with Pyscaffold| image:: https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold
-    :alt: Project generated with PyScaffold
-    :target: https://pyscaffold.org/
-
-|Build Status|
-|Generated with Pyscaffold|
 
 cyrxnopt
 ========
