@@ -1,7 +1,7 @@
-|Build Status|
+|build_status|
 |Generated with Pyscaffold|
 
-.. |Build Status| image:: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml/badge.svg
+.. |build_status| image:: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml/badge.svg
     :alt: Build Status
     :target: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml
 
@@ -39,16 +39,11 @@
 ..     :alt: Built Status
 ..     :target: https://cirrus-ci.com/github/RxnRover/pyoptimizer_backend
 
-cyrxnopt
+CyRxnOpt
 ========
 
     CyRxnOpt provides a single interface to use many reaction optimization
     algorithms.
-
-    CyRxnOpt provides a single interface to use many reaction optimization
-    algorithms.
-
-.. _cyrxnopt_overview_install:
 
 - optimization algorithms have different user interfaces, from web portals to
   software-only interfaces
@@ -65,7 +60,7 @@ cyrxnopt
 .. _cyrxnopt_overview_install:
 
 Installation and Usage
-======================
+----------------------
 
 CyRxnOpt is a Python-based library available for installation from PyPI
 using ``pip``:
@@ -83,7 +78,7 @@ using ``pip``:
 .. _cyrxnopt_overview_cli_install:
 
 Installing an Optimizer
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 The first thing to do when using CyRxnOpt is to create an :term:`experiment
 directory`. The experiment directory will contain the optimizer installation,
@@ -116,7 +111,7 @@ technique applied in early reaction optimization studies.
 .. _cyrxnopt_overview_cli_config:
 
 Configuring an Optimizer
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Once we have the NMSimplex algorithm installed, we can set up the directory
 to store data related to a reaction optimization campaign. This
@@ -155,7 +150,7 @@ be properly read during usage.
 .. _cyrxnopt_overview_cli_training:
 
 Training an Optimizer
----------------------
+~~~~~~~~~~~~~~~~~~~~~
 
 .. todo::
 
@@ -166,7 +161,7 @@ TODO
 .. _cyrxnopt_overview_cli_prediction:
 
 Optimizing a Function
----------------------
+~~~~~~~~~~~~~~~~~~~~~
 
 .. todo::
 
@@ -176,7 +171,7 @@ This is where the optimizer prediction will be described.
 
 
 API Usage
-=========
+---------
 
 For API usage, see :ref:`api_usage`.
 
@@ -192,102 +187,6 @@ CyRxnOpt is a Python-based library available for installation from PyPI using
     Can we easily make this available through conda as well? That would
     be advantageous, but not strictly necessary.
 
-.. _cyrxnopt_overview_cli_install:
-
-Installing an Optimizer
-~~~~~~~~~~~~~~~~~~~~~~~
-
-The first thing to do when using CyRxnOpt is to create an :term:`experiment
-directory`. The experiment directory will contain the optimizer installation,
-optimizer configuration files, reaction data, and other auxiliary files needed
-over the course of an optimization. By default, an instance of the optimization
-algorithm will be installed in each experiment directory to provide a snap shot
-of the software used at the time of the experiment. Sometimes these duplicate
-installations can become too large, so it is also possible to provide an
-alternative installation location for an algorithm, provided it was put there
-using the following ``install`` command so it has the correct structure.
-
-An optimizer can be installed using the ``install`` command. Using a
-:ref:`supported optimizer name<supported_optimizer_list>`, the ``install``
-command will install the given optimization algorithm into a subdirectory to be
-used by future commands. The following command installs the Nelder-Mead Simplex
-algorithm (NMSimplex), a classic, local optimization technique applied in early
-reaction optimization studies.
-
-.. code-block:: bash
-
-    # Installs the Nelder-Mead Simplex algorithm inside of the directory
-    # `./examples/nmsimplex_example`
-    install nmsimplex ./examples/nmsimplex_example
-
-.. todo::
-
-    We need to actually make this install command.
-
-.. _cyrxnopt_overview_cli_config:
-
-Configuring an Optimizer
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-Once we have the NMSimplex algorithm installed, we can set up the directory to
-store data related to a reaction optimization campaign. This data starts with
-the specific configuration of the optimizer. At a minimum, this includes the
-reaction parameters that the optimizer should change, parameter boundaries, the
-maximum number of reactions to attempt (budget), and the optimization direction
-(maximize or minimize).
-
-To create a default configuration file, use the ``create_config`` command. This
-will create a ``default_config.json`` file at the given experiment directory, in
-this example, ``./examples/nmsimplex_example``. Note that this is different than
-where we installed the algorithm! One algorithm installation can typically be
-used for many different experiments.
-
-.. code-block:: bash
-
-    create_config nmsimplex ./examples/nmsimplex_example
-
-Let's say we make a copy of ``default_config.json`` at
-``./examples/nmsimplex_example/my_config.json`` and change some options in the
-file. We then use the ``configure_optimizer`` command to configure NMSimplex for
-our experiment based on the options in the modified ``my_config.json`` file.
-
-.. code-block:: bash
-
-    cd ./examples/nmsimplex_example
-    configure_optimizer nmsimplex ./examples/nmsimplex_example/
-
-The behavior of ``configure_optimizer`` will vary per optimizer being used. Some
-optimizers require additional files that are created here, but for NMSimplex the
-formatting is simply checked to make sure the settings can be properly read
-during usage.
-
-.. _cyrxnopt_overview_cli_training:
-
-Training an Optimizer
-~~~~~~~~~~~~~~~~~~~~~
-
-.. todo::
-
-    write me!
-
-TODO
-
-.. _cyrxnopt_overview_cli_prediction:
-
-Optimizing a Function
-~~~~~~~~~~~~~~~~~~~~~
-
-.. todo::
-
-    write me!
-
-This is where the optimizer prediction will be described.
-
-API Usage
----------
-
-For API usage, see :ref:`api_usage`.
-
 .. _pyscaffold-notes:
 
 Making Changes & Contributing
@@ -299,7 +198,7 @@ any changes or you will not be able to make commits!!!
 .. code-block:: bash
 
    pip install pre-commit
-   cd pyoptimizer_backend
+   cd cyrxnopt
    pre-commit install
 
 It is a good idea to update the hooks to the latest version:
