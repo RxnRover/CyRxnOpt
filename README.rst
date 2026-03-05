@@ -6,7 +6,7 @@
     :alt: Build Status
     :target: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml
 
-.. |Documentation| image:: https://img.shields.io/badge/Documentation-grey
+.. |Documentation| image:: https://img.shields.io/badge/Documentation-darkgrey
     :alt: Documentation link
     :target: https://rxnrover.github.io/CyRxnOpt/
 
