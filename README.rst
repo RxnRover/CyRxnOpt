@@ -1,5 +1,5 @@
-|Documentation|
 |Build Status|
+|Documentation|
 |Python Versions|
 |Generated with Pyscaffold|
 
