@@ -1,21 +1,16 @@
-|Build Status|
-|Documentation|
-|Python Versions|
-|Generated with Pyscaffold|
-
-.. |Build Status| image:: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml/badge.svg
+.. image:: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml/badge.svg
     :alt: Build Status
     :target: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml
 
-.. |Documentation| image:: https://img.shields.io/badge/Documentation-grey
+.. image:: https://img.shields.io/badge/Documentation-grey
     :alt: Documentation link
     :target: https://rxnrover.github.io/CyRxnOpt/
 
-.. |Generated with Pyscaffold| image:: https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold
+.. image:: https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold
     :alt: Project generated with PyScaffold
     :target: https://pyscaffold.org/
 
-.. |Python Versions| image:: https://img.shields.io/badge/Python-3.9-blue
+.. image:: https://img.shields.io/badge/Python-3.9-blue
     :alt: Documentation link
     :target: https://rxnrover.github.io/CyRxnOpt/
 
