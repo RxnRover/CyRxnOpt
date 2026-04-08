@@ -81,13 +81,14 @@ will be installed in each experiment directory to provide a snap shot of the
 software used at the time of the experiment. Sometimes these duplicate
 installations can become too large, so it is also possible to provide an
 alternative installation location for an algorithm, provided it was put there
-using the following ``install`` command so it has the correct structure.
+using the following ``install_optimizer`` command so it has the correct
+structure.
 
-An optimizer can be installed using the ``install`` command. Using a `supported
-optimizer name
+An optimizer can be installed using the ``install_optimizer`` command. Using a
+`supported optimizer name
 <https://rxnrover.github.io/CyRxnOpt/supported_algorithms.html>`__, the
-``install`` command will install the given optimization algorithm into a
-subdirectory to be used by future commands. The following command installs the
+``install_optimizer`` command will install the given optimization algorithm into
+a subdirectory to be used by future commands. The following command installs the
 Nelder-Mead Simplex algorithm (NMSimplex), a classic, local optimization
 technique applied in early reaction optimization studies.
 
@@ -95,11 +96,7 @@ technique applied in early reaction optimization studies.
 
     # Installs the Nelder-Mead Simplex algorithm inside of the directory
     # `./examples/nmsimplex_example`
-    install nmsimplex ./examples/nmsimplex_example
-
-.. todo::
-
-    We need to actually make this install command.
+    install_optimizer nmsimplex -l ./examples/nmsimplex_example
 
 .. _cyrxnopt_overview_cli_config:
 
@@ -121,7 +118,7 @@ used for many different experiments.
 
 .. code-block:: bash
 
-    create_config nmsimplex ./examples/nmsimplex_example
+    create_config nmsimplex -l ./examples/nmsimplex_example
 
 Let's say we make a copy of ``default_config.json`` at
 ``./examples/nmsimplex_example/my_config.json`` and change some options in the
@@ -131,7 +128,7 @@ our experiment based on the options in the modified ``my_config.json`` file.
 .. code-block:: bash
 
     cd ./examples/nmsimplex_example
-    configure_optimizer nmsimplex ./examples/nmsimplex_example/
+    configure_optimizer nmsimplex -c my_config.json
 
 The behavior of ``configure_optimizer`` will vary per optimizer being used. Some
 optimizers require additional files that are created here, but for NMSimplex the
@@ -143,22 +140,31 @@ during usage.
 Training an Optimizer
 =====================
 
-.. todo::
+Once the optimizer is configured, if training is needed, the ``train_optimizer``
+command can be run. A default of 20 training steps are used, which can be
+changed with the ``-t`` flag. This is not needed for the NMSimplex algorithm,
+resulting in a no-op if ``train_optimizer`` is called.
 
-    write me!
+.. code-block:: bash
 
-TODO
+    # If not already there
+    cd ./examples/nmsimplex_example
+
+    # Begin training loop
+    train_optimizer nmsimplex -c my_config.json -t 20
 
 .. _cyrxnopt_overview_cli_prediction:
 
 Optimizing a Function
 =====================
 
-.. todo::
+.. code-block:: bash
 
-    write me!
+    # If not already there
+    cd ./examples/nmsimplex_example
 
-This is where the optimizer prediction will be described.
+    # Begin optimization loop
+    start_optimization nmsimplex -c my_config.json
 
 ***********
  API Usage
