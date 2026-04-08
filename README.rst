@@ -58,17 +58,15 @@ workflows.
  Installation and Usage
 ************************
 
-CyRxnOpt is a Python-based library available for installation from PyPI using
+CyRxnOpt is a Python-based library available for installation from *PyPI* using
 ``pip``:
 
 .. code-block:: bash
 
     pip install cyrxnopt
 
-.. todo::
-
-    Can we easily make this available through conda as well? That would
-    be advantageous, but not strictly necessary.
+Further instructions can be found in `the documentation
+<https://rxnrover.github.io/CyRxnOpt/overview/installation.html>`__.
 
 .. _cyrxnopt_overview_cli_install:
 
