@@ -188,18 +188,8 @@ project automation. Please make sure to install these before making any changes.
     # Install pre-commit hooks
     pre-commit install
 
-The following ease of use commands are provided via tox (run with ``tox r -e
-<command>``), and can be listed at any time using ``tox l`` in a terminal:
-
-.. code-block:: bash
-
-    build     -> Build the package in isolation according to PEP517, see https://github.com/pypa/build
-    clean     -> Remove old distribution files and temporary build artifacts (./build and ./dist)
-    docs      -> Invoke sphinx-build to build the docs
-    docformat -> Invoke docstrfmt to format the documentation
-    doctests  -> Invoke sphinx-build to run doctests
-    viewdocs  -> Build the documentation and starts a local server hosting it
-    linkcheck -> Check for broken links in the documentation
+A list of useful commands are provided via tox (run with ``tox r -e
+<command>``), and can be listed at any time using ``tox l`` in a terminal.
 
 *******
  Paper
