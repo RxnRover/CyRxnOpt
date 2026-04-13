@@ -6,16 +6,16 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>cyrxnopt &mdash; CyRxnOpt 0.0.post1.dev1+g997b2c5ac documentation</title>
+  <title>CyRxnOpt &mdash; CyRxnOpt 0.0.post1.dev1+g1b0a4e92b documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=494a0f73"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/documentation_options.js?v=0683a602"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -65,7 +65,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">cyrxnopt</li>
+      <li class="breadcrumb-item active">CyRxnOpt</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/readme.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -75,135 +75,66 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <span class="target" id="readme"></span><a class="reference external image-reference" href="https://cirrus-ci.com/github/RxnRover/pyoptimizer_backend"><img alt="Built Status" src="https://api.cirrus-ci.com/github/RxnRover/pyoptimizer_backend.svg?branch=main" />
+  <a class="reference external image-reference" href="https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml" id="readme"><img alt="Build Status" src="https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml/badge.svg" />
 </a>
-<a class="reference external image-reference" href="https://cirrus-ci.com/github/RxnRover/pyoptimizer_backend"><img alt="Built Status" src="https://api.cirrus-ci.com/github/RxnRover/pyoptimizer_backend.svg?branch=main" />
+<a class="reference external image-reference" href="https://rxnrover.github.io/CyRxnOpt/"><img alt="Documentation link" src="https://img.shields.io/badge/Documentation-grey" />
+</a>
+<a class="reference external image-reference" href="https://doi.org/10.26434/chemrxiv.15001645/v1"><img alt="ChemRxiv Preprint DOI" src="https://img.shields.io/badge/ChemRxiv-Preprint-lightgray" />
 </a>
 <a class="reference external image-reference" href="https://pyscaffold.org/"><img alt="Project generated with PyScaffold" src="https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold" />
 </a>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
+<a class="reference external image-reference" href="https://rxnrover.github.io/CyRxnOpt/"><img alt="Documentation link" src="https://img.shields.io/badge/Python-3.9-blue" />
+</a>
 <section id="cyrxnopt">
-<h1>cyrxnopt<a class="headerlink" href="#cyrxnopt" title="Link to this heading"></a></h1>
+<h1>CyRxnOpt<a class="headerlink" href="#cyrxnopt" title="Link to this heading"></a></h1>
 <blockquote>
 <div><p>CyRxnOpt provides a single interface to use many reaction optimization
 algorithms.</p>
-<p>CyRxnOpt provides a single interface to use many reaction optimization
-algorithms.</p>
 </div></blockquote>
-<ul class="simple" id="cyrxnopt-overview-install">
-<li><p>optimization algorithms have different user interfaces, from web portals to
-software-only interfaces</p></li>
-<li><p>when targeting reaction optimization, the algorithms are expected to be used
-in the lab, likely by someone without much programming experience</p></li>
-<li><p>trying different algorithms means potentially learning multiple installation
-methods, user interfaces, and data formats</p></li>
-<li><p>CyRxnOpt aims to provide a single software interface that can provide access
-to many different reaction optimization algorithms</p></li>
-<li><p>this allows users to program to a single software interface, simplifying the
-development of user-friendly tools and interfaces to lower the barrier of
-entry into reaction optimization</p></li>
-</ul>
-</section>
+<p>Numerous cutting-edge machine learning algorithms have been developed in recent
+years for efficiently optimizing chemical processes. While many are open-source,
+evaluating and applying them to chemical processes remains challenging due to
+varying, non-standard implementations and interfaces. CyRxnOpt has been
+developed as a general, Python-based interface to install, use, and switch
+between reaction optimization algorithms under a single software interface. By
+integrating optimizers with the CyRxnOpt interface, many state-of-the-art
+reaction optimization algorithms can be more easily used in other software and
+workflows.</p>
 <section id="installation-and-usage">
-<span id="id1"></span><h1>Installation and Usage<a class="headerlink" href="#installation-and-usage" title="Link to this heading"></a></h1>
-<p>CyRxnOpt is a Python-based library available for installation from PyPI
-using <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>cyrxnopt
-</pre></div>
-</div>
-<section id="installing-an-optimizer">
-<span id="cyrxnopt-overview-cli-install"></span><h2>Installing an Optimizer<a class="headerlink" href="#installing-an-optimizer" title="Link to this heading"></a></h2>
-<p>The first thing to do when using CyRxnOpt is to create an <a class="reference internal" href="glossary.html#term-experiment-directory"><span class="xref std std-term">experiment
-directory</span></a>. The experiment directory will contain the optimizer installation,
-optimizer configuration files, reaction data, and other auxiliary files needed
-over the course of an optimization. By default, an instance of the optimization
-algorithm will be installed in each experiment directory to provide a snap shot
-of the software used at the time of the experiment. Sometimes these duplicate
-installations can become too large, so it is also possible to provide an
-alternative installation location for an algorithm, provided it was put there
-using the following <code class="docutils literal notranslate"><span class="pre">install</span></code> command so it has the correct structure.</p>
-<p>An optimizer can be installed using the <code class="docutils literal notranslate"><span class="pre">install</span></code> command.
-Using a <span class="xref std std-ref">supported optimizer name</span>, the
-<code class="docutils literal notranslate"><span class="pre">install</span></code> command will install the given optimization algorithm into a
-subdirectory to be used by future commands. The following command installs
-the Nelder-Mead Simplex algorithm (NMSimplex), a classic, local optimization
-technique applied in early reaction optimization studies.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Installs the Nelder-Mead Simplex algorithm inside of the directory</span>
-<span class="c1"># `./examples/nmsimplex_example`</span>
-install<span class="w"> </span>nmsimplex<span class="w"> </span>./examples/nmsimplex_example
-</pre></div>
-</div>
-</section>
-<section id="configuring-an-optimizer">
-<span id="cyrxnopt-overview-cli-config"></span><h2>Configuring an Optimizer<a class="headerlink" href="#configuring-an-optimizer" title="Link to this heading"></a></h2>
-<p>Once we have the NMSimplex algorithm installed, we can set up the directory
-to store data related to a reaction optimization campaign. This
-data starts with the specific configuration of the optimizer. At a minimum,
-this includes the reaction parameters that the optimizer should change,
-parameter boundaries, the maximum number of reactions to attempt (budget),
-and the optimization direction (maximize or minimize).</p>
-<p>To create a default configuration file, use the <code class="docutils literal notranslate"><span class="pre">create_config</span></code> command.
-This will create a <code class="docutils literal notranslate"><span class="pre">default_config.json</span></code> file at the given experiment
-directory, in this example, <code class="docutils literal notranslate"><span class="pre">./examples/nmsimplex_example</span></code>. Note that this
-is different than where we installed the algorithm! One algorithm installation
-can typically be used for many different experiments.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>create_config<span class="w"> </span>nmsimplex<span class="w"> </span>./examples/nmsimplex_example
-</pre></div>
-</div>
-<p>Let’s say we make a copy of <code class="docutils literal notranslate"><span class="pre">default_config.json</span></code> at
-<code class="docutils literal notranslate"><span class="pre">./examples/nmsimplex_example/my_config.json</span></code> and change some options in the
-file. We then use the <code class="docutils literal notranslate"><span class="pre">configure_optimizer</span></code> command to configure NMSimplex
-for our experiment based on the options in the modified <code class="docutils literal notranslate"><span class="pre">my_config.json</span></code>
-file.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>./examples/nmsimplex_example
-configure_optimizer<span class="w"> </span>nmsimplex<span class="w"> </span>./examples/nmsimplex_example/
-</pre></div>
-</div>
-<p>The behavior of <code class="docutils literal notranslate"><span class="pre">configure_optimizer</span></code> will vary per optimizer being used.
-Some optimizers require additional files that are created here, but for
-NMSimplex the formatting is simply checked to make sure the settings can
-be properly read during usage.</p>
-</section>
-<section id="training-an-optimizer">
-<span id="cyrxnopt-overview-cli-training"></span><h2>Training an Optimizer<a class="headerlink" href="#training-an-optimizer" title="Link to this heading"></a></h2>
-<p>TODO</p>
-</section>
-<section id="optimizing-a-function">
-<span id="cyrxnopt-overview-cli-prediction"></span><h2>Optimizing a Function<a class="headerlink" href="#optimizing-a-function" title="Link to this heading"></a></h2>
-<p>This is where the optimizer prediction will be described.</p>
-</section>
-</section>
-<section id="api-usage">
-<h1>API Usage<a class="headerlink" href="#api-usage" title="Link to this heading"></a></h1>
-<p>For API usage, see <span class="xref std std-ref">api_usage</span>.</p>
-<p>CyRxnOpt is a Python-based library available for installation from PyPI using
+<span id="cyrxnopt-overview-install"></span><h2>Installation and Usage<a class="headerlink" href="#installation-and-usage" title="Link to this heading"></a></h2>
+<p>CyRxnOpt is a Python-based library available for installation from <em>PyPI</em> using
 <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>cyrxnopt
 </pre></div>
 </div>
-<p id="id7">The first thing to do when using CyRxnOpt is to create an <a class="reference internal" href="glossary.html#term-experiment-directory"><span class="xref std std-term">experiment
-directory</span></a>. The experiment directory will contain the optimizer installation,
-optimizer configuration files, reaction data, and other auxiliary files needed
-over the course of an optimization. By default, an instance of the optimization
-algorithm will be installed in each experiment directory to provide a snap shot
-of the software used at the time of the experiment. Sometimes these duplicate
+<p>Further instructions can be found in <a class="reference external" href="https://rxnrover.github.io/CyRxnOpt/overview/installation.html">the documentation</a>.</p>
+<section id="installing-an-optimizer">
+<span id="cyrxnopt-overview-cli-install"></span><h3>Installing an Optimizer<a class="headerlink" href="#installing-an-optimizer" title="Link to this heading"></a></h3>
+<p>The first thing to do when using CyRxnOpt is to create an experiment directory.
+The experiment directory will contain the optimizer installation, optimizer
+configuration files, reaction data, and other auxiliary files needed over the
+course of an optimization. By default, an instance of the optimization algorithm
+will be installed in each experiment directory to provide a snap shot of the
+software used at the time of the experiment. Sometimes these duplicate
 installations can become too large, so it is also possible to provide an
 alternative installation location for an algorithm, provided it was put there
-using the following <code class="docutils literal notranslate"><span class="pre">install</span></code> command so it has the correct structure.</p>
-<p>An optimizer can be installed using the <code class="docutils literal notranslate"><span class="pre">install</span></code> command. Using a
-<span class="xref std std-ref">supported optimizer name</span>, the <code class="docutils literal notranslate"><span class="pre">install</span></code>
-command will install the given optimization algorithm into a subdirectory to be
-used by future commands. The following command installs the Nelder-Mead Simplex
-algorithm (NMSimplex), a classic, local optimization technique applied in early
-reaction optimization studies.</p>
+using the following <code class="docutils literal notranslate"><span class="pre">install_optimizer</span></code> command so it has the correct
+structure.</p>
+<p>An optimizer can be installed using the <code class="docutils literal notranslate"><span class="pre">install_optimizer</span></code> command. Using a
+<a class="reference external" href="https://rxnrover.github.io/CyRxnOpt/supported_algorithms.html">supported optimizer name</a>, the
+<code class="docutils literal notranslate"><span class="pre">install_optimizer</span></code> command will install the given optimization algorithm into
+a subdirectory to be used by future commands. The following command installs the
+Nelder-Mead Simplex algorithm (NMSimplex), a classic, local optimization
+technique applied in early reaction optimization studies.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Installs the Nelder-Mead Simplex algorithm inside of the directory</span>
 <span class="c1"># `./examples/nmsimplex_example`</span>
-install<span class="w"> </span>nmsimplex<span class="w"> </span>./examples/nmsimplex_example
+install_optimizer<span class="w"> </span>nmsimplex<span class="w"> </span>-l<span class="w"> </span>./examples/nmsimplex_example
 </pre></div>
 </div>
-<p id="id9">Once we have the NMSimplex algorithm installed, we can set up the directory to
+</section>
+<section id="configuring-an-optimizer">
+<span id="cyrxnopt-overview-cli-config"></span><h3>Configuring an Optimizer<a class="headerlink" href="#configuring-an-optimizer" title="Link to this heading"></a></h3>
+<p>Once we have the NMSimplex algorithm installed, we can set up the directory to
 store data related to a reaction optimization campaign. This data starts with
 the specific configuration of the optimizer. At a minimum, this includes the
 reaction parameters that the optimizer should change, parameter boundaries, the
@@ -214,7 +145,7 @@ will create a <code class="docutils literal notranslate"><span class="pre">defau
 this example, <code class="docutils literal notranslate"><span class="pre">./examples/nmsimplex_example</span></code>. Note that this is different than
 where we installed the algorithm! One algorithm installation can typically be
 used for many different experiments.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>create_config<span class="w"> </span>nmsimplex<span class="w"> </span>./examples/nmsimplex_example
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>create_config<span class="w"> </span>nmsimplex<span class="w"> </span>-l<span class="w"> </span>./examples/nmsimplex_example
 </pre></div>
 </div>
 <p>Let’s say we make a copy of <code class="docutils literal notranslate"><span class="pre">default_config.json</span></code> at
@@ -222,38 +153,83 @@ used for many different experiments.</p>
 file. We then use the <code class="docutils literal notranslate"><span class="pre">configure_optimizer</span></code> command to configure NMSimplex for
 our experiment based on the options in the modified <code class="docutils literal notranslate"><span class="pre">my_config.json</span></code> file.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>./examples/nmsimplex_example
-configure_optimizer<span class="w"> </span>nmsimplex<span class="w"> </span>./examples/nmsimplex_example/
+configure_optimizer<span class="w"> </span>nmsimplex<span class="w"> </span>-c<span class="w"> </span>my_config.json
 </pre></div>
 </div>
 <p>The behavior of <code class="docutils literal notranslate"><span class="pre">configure_optimizer</span></code> will vary per optimizer being used. Some
 optimizers require additional files that are created here, but for NMSimplex the
 formatting is simply checked to make sure the settings can be properly read
 during usage.</p>
-<p>TODO</p>
-<p>This is where the optimizer prediction will be described.</p>
-<section id="id14">
-<h2>API Usage<a class="headerlink" href="#id14" title="Link to this heading"></a></h2>
-<p>For API usage, see <span class="xref std std-ref">api_usage</span>.</p>
+</section>
+<section id="training-an-optimizer">
+<span id="cyrxnopt-overview-cli-training"></span><h3>Training an Optimizer<a class="headerlink" href="#training-an-optimizer" title="Link to this heading"></a></h3>
+<p>Once the optimizer is configured, if training is needed, the <code class="docutils literal notranslate"><span class="pre">train_optimizer</span></code>
+command can be run for interactive training. A default of 20 training steps are
+used, which can be changed with the <code class="docutils literal notranslate"><span class="pre">-t</span></code> flag. This is not needed for the
+NMSimplex algorithm, resulting in a no-op if <code class="docutils literal notranslate"><span class="pre">train_optimizer</span></code> is called.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># If not already there</span>
+<span class="nb">cd</span><span class="w"> </span>./examples/nmsimplex_example
+
+<span class="c1"># Begin training loop</span>
+train_optimizer<span class="w"> </span>nmsimplex<span class="w"> </span>-c<span class="w"> </span>my_config.json<span class="w"> </span>-t<span class="w"> </span><span class="m">20</span>
+</pre></div>
+</div>
+</section>
+<section id="optimizing-a-function">
+<span id="cyrxnopt-overview-cli-prediction"></span><h3>Optimizing a Function<a class="headerlink" href="#optimizing-a-function" title="Link to this heading"></a></h3>
+<p>Once trained, the interactive optimization loop can be run with
+<code class="docutils literal notranslate"><span class="pre">start_optimization</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># If not already there</span>
+<span class="nb">cd</span><span class="w"> </span>./examples/nmsimplex_example
+
+<span class="c1"># Begin optimization loop</span>
+start_optimization<span class="w"> </span>nmsimplex<span class="w"> </span>-c<span class="w"> </span>my_config.json
+</pre></div>
+</div>
+</section>
+</section>
+<section id="api-usage">
+<h2>API Usage<a class="headerlink" href="#api-usage" title="Link to this heading"></a></h2>
+<p>For API usage, see <a class="reference external" href="https://rxnrover.github.io/CyRxnOpt/api/modules.html">API Reference</a>.</p>
 </section>
 <section id="making-changes-contributing">
-<span id="pyscaffold-notes"></span><h2>Making Changes &amp; Contributing<a class="headerlink" href="#making-changes-contributing" title="Link to this heading"></a></h2>
-<p>This project uses <a class="reference external" href="https://pre-commit.com/">pre-commit</a>, please make sure to install it before making
-any changes or you will not be able to make commits!!!</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pre-commit
-<span class="nb">cd</span><span class="w"> </span>pyoptimizer_backend
+<span id="contributing"></span><h2>Making Changes &amp; Contributing<a class="headerlink" href="#making-changes-contributing" title="Link to this heading"></a></h2>
+<p>This project enforces formatting and style using <a class="reference external" href="https://pre-commit.com/">pre-commit</a> and uses <a class="reference external" href="https://tox.wiki/en/latest/">tox</a> for
+project automation. Please make sure to install these before making any changes.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clone the repo</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/RxnRover/CyRxnOpt<span class="w"> </span>cyrxnopt
+
+<span class="c1"># Install dev prerequisites</span>
+<span class="nb">cd</span><span class="w"> </span>cyrxnopt
+pip<span class="w"> </span>install<span class="w"> </span>pre-commit<span class="w"> </span>tox
+
+<span class="c1"># Install pre-commit hooks</span>
 pre-commit<span class="w"> </span>install
 </pre></div>
 </div>
-<p>It is a good idea to update the hooks to the latest version:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>autoupdate
-</pre></div>
-</div>
-<p>Don’t forget to tell your contributors to also install and use pre-commit.</p>
+<p>A list of useful commands are provided via tox (run with <code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">r</span> <span class="pre">-e</span>
+<span class="pre">&lt;command&gt;</span></code>), and can be listed at any time using <code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">l</span></code> in a terminal.</p>
+</section>
+<section id="paper">
+<h2>Paper<a class="headerlink" href="#paper" title="Link to this heading"></a></h2>
+<p>Comprehensive comparisons of optimization algorithms are crucial for researchers
+to make informed decisions about which algorithm will perform best for their
+process, but there is little information comparing how each algorithm performs
+on differing chemical processes. To demonstrate the use and flexibility of
+CyRxnOpt, it was used to access four optimization algorithms and benchmark their
+performance on standard optimization functions and reaction models built from
+experimental datasets, providing a benchmarking framework which we plan to
+expand to more optimization algorithms.</p>
+<p>ChemRxiv Preprint: <a class="reference external" href="https://doi.org/10.26434/chemrxiv.15001645/v1">https://doi.org/10.26434/chemrxiv.15001645/v1</a></p>
+<p>Please cite preprint as: Zachery Crandall, Dulitha P. Kulathunga, Lun An, et al.
+CyRxnOpt: Generalized Interface for Benchmarking Reaction Optimization
+Algorithms. <em>ChemRxiv</em>. 06 April 2026. DOI:
+<a class="reference external" href="https://doi.org/10.26434/chemrxiv.15001645/v1">https://doi.org/10.26434/chemrxiv.15001645/v1</a></p>
 </section>
 <section id="note">
-<h2>Note<a class="headerlink" href="#note" title="Link to this heading"></a></h2>
+<span id="pyscaffold-note"></span><h2>Note<a class="headerlink" href="#note" title="Link to this heading"></a></h2>
 <p>This project has been set up using PyScaffold 4.3.1. For details and usage
-information on PyScaffold see <a class="reference external" href="https://pyscaffold.org/">https://pyscaffold.org/</a>.</p>
+information on PyScaffold see <a class="reference external" href="https://pyscaffold.org/">pyscaffold</a>.</p>
 </section>
 </section>
 
