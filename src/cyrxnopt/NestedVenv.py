@@ -13,7 +13,7 @@ from pathlib import Path
 from subprocess import CalledProcessError
 from typing import Any, Optional, Union, cast
 
-# from cyrxnopt.util.reset_module import reset_module
+# from cyrxnopt.utilities.reset_module import reset_module
 logger = logging.getLogger(__name__)
 
 

@@ -4,7 +4,7 @@ from typing import List
 
 import zmq
 
-from cyrxnopt.util.zmq.AbortException import AbortException
+from cyrxnopt.utilities.zmq.AbortException import AbortException
 
 
 class zmq_obj_function:

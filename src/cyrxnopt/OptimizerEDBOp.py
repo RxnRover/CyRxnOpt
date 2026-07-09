@@ -8,8 +8,8 @@ from typing import Any, Optional
 
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerABC import OptimizerABC
-from cyrxnopt.util.NpEncoder import NpEncoder
 from cyrxnopt.utilities.config.transforms import use_subkeys
+from cyrxnopt.utilities.NpEncoder import NpEncoder
 
 logger = logging.getLogger(__name__)
 

@@ -11,9 +11,9 @@ import zmq
 from cyrxnopt.apps._utilities.gen_logfile import gen_logfile
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerController import check_install
-from cyrxnopt.util.train_server import train_server
-from cyrxnopt.util.zmq import zmq_helpers
-from cyrxnopt.util.zmq.zmq_obj_function import zmq_obj_function
+from cyrxnopt.utilities.train_server import train_server
+from cyrxnopt.utilities.zmq import zmq_helpers
+from cyrxnopt.utilities.zmq.zmq_obj_function import zmq_obj_function
 
 
 def main():
