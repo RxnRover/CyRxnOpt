@@ -57,12 +57,11 @@ def train_faux_server(
     for i in range(training_steps):
         prev_param = train(
             optimizer_name,
+            venv,
             prev_param,
             yield_value,
-            i,
             output_dir,
             config,
-            venv,
         )
 
         yield_value = obj_func(prev_param)

@@ -23,11 +23,11 @@ def predict_server(
     else:
         results = predict(
             optimizer_name,
+            venv,
             prev_param,
             yield_value,
             output_dir,
             config,
-            venv,
             obj_func,
         )
 
@@ -60,11 +60,11 @@ def predict_faux_server(
     for i in range(config["budget"]):
         prev_param = predict(
             optimizer_name,
+            venv,
             prev_param,
             yield_value,
             output_dir,
             config,
-            venv,
         )
 
         yield_value = obj_func(prev_param)
