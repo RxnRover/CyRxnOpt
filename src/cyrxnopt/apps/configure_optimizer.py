@@ -9,7 +9,7 @@ from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerController import check_install, set_config
 
 
-def main():
+def main() -> int:
     args = parse_args()
 
     logfile = gen_logfile(__file__, args.location)
@@ -46,8 +46,9 @@ def main():
 
     print("Configuring optimizer: {}".format(args.optimizer))
     print("Potential output from the optimizer:")
-    set_config(args.optimizer, config_contents, args.location, venv)
+    set_config(args.optimizer, venv, config_contents, args.location)
 
+    return 0
 
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments"""

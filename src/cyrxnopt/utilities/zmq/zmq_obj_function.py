@@ -25,7 +25,7 @@ class zmq_obj_function:
         self.socket = socket
         self.direction = direction
 
-    def __call__(self, x):
+    def __call__(self, x: List[float]) -> float:
         return self.request_evaluation(x)
 
     def request_evaluation(self, x: List[float]) -> float:
@@ -73,7 +73,7 @@ class zmq_obj_function:
         return self.__direction
 
     @direction.setter
-    def direction(self, value: str):
+    def direction(self, value: str) -> None:
         """Setter for direction.
 
         Valid direction identifiers are "max" and "min".

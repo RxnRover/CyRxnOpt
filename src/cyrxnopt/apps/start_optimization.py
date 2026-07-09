@@ -16,7 +16,7 @@ from cyrxnopt.utilities.zmq import zmq_helpers
 from cyrxnopt.utilities.zmq.zmq_obj_function import zmq_obj_function
 
 
-def main():
+def main() -> int:
     args = parse_args()
 
     logfile = gen_logfile(__file__, args.location)
@@ -72,6 +72,8 @@ def main():
     while user_input_thread.is_alive():
         time.sleep(1)
 
+    return 0
+
 
 def start_optimization_thread(*args, **kwargs):
     # This thread is a daemon because the program should exit when no alive,
@@ -102,7 +104,7 @@ def start_user_input_thread(*args, **kwargs):
     return thread
 
 
-def input_server(training_steps: int):
+def input_server(training_steps: int) -> None:
     SERVER_ENDPOINT = "tcp://*:5555"
 
     # Create the context and socket
@@ -143,12 +145,12 @@ def input_server(training_steps: int):
                 return
 
             else:
-                reply = float(user_input)
+                reply = str(float(user_input)).encode("utf-8")
 
             steps += 1
             reply = json.dumps(reply).encode("utf-8")
 
-        logging.debug("Sending reply: {}".format(reply))
+        logging.debug(f"Sending reply: {reply.decode("utf-8")}")
         socket.send(reply)
 
     print("Training complete!")
