@@ -8,5 +8,65 @@ build-backend = "setuptools.build_meta"
 # check out https://github.com/pypa/setuptools_scm
 version_scheme = "no-guess-dev"
 
+[tool.pytest.ini_options]
+# Enable log display during test runs
+# See: https://docs.pytest.org/en/latest/how-to/logging.html#live-logs
+log_cli = true
+addopts = "--strict-markers"
+markers = [
+    "individual: Marks tests that need to run in an individual pytest run"
+]
+
 [tool.black]
 line-length = 80
+
+[tool.docstrfmt]
+line_length = 80
+
+[tool.isort]
+profile = "black"
+known_first_party = "cyrxnopt"
+multi_line_output = 3
+line_length = 80
+
+[tool.coverage.run]
+branch = true
+source = ["cyrxnopt"]
+# omit = bad_file.py
+
+[tool.coverage.paths]
+source = ["src/", "*/site-packages/"]
+
+[tool.coverage.report]
+exclude_lines = [
+    # Have to re-enable the standard pragma
+    "pragma: no cover",
+
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self\\.debug",
+
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+] # Regexes for lines to exclude from consideration
+
+[tool.mypy]
+disallow_untyped_defs = true
+# Any changes to exclude here need to be made in .pre-commit-config.yaml, too!
+# This exclude list doesn't work because of the way pre-commit invokes mypy
+exclude = [
+    '^setup.py$',
+    '^build',
+    '^venv',
+    '^docs',
+    '^tests'
+]
+
+[[tool.mypy.overrides]]
+module = "cyrxnopt.*"
+disallow_incomplete_defs = true
