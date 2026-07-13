@@ -50,6 +50,7 @@ def main() -> int:
 
     return 0
 
+
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments"""
 

@@ -19,7 +19,7 @@ def predict_server(
     config: dict[str, Any],
     venv: "NestedVenv",
     obj_func: Callable[[list[float]], float],
-) -> list[Any]:
+) -> Union[list[Any], dict[str, Any]]:
     if optimizer_name.lower() in problematic_optimizers:
         results = predict_faux_server(
             optimizer_name,
@@ -52,7 +52,7 @@ def predict_faux_server(
     config: dict[str, Any],
     venv: "NestedVenv",
     obj_func: Callable[[list[float]], float],
-) -> list[Any]:
+) -> Union[list[Any], dict[str, Any]]:
     results = {
         "total_iter": config["budget"],
         "best_coords": None,

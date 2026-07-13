@@ -5,6 +5,7 @@ import os
 import threading
 import time
 from pathlib import Path
+from typing import Any
 
 import zmq
 
@@ -75,7 +76,7 @@ def main() -> int:
     return 0
 
 
-def start_optimization_thread(*args, **kwargs):
+def start_optimization_thread(*args: Any, **kwargs: Any) -> threading.Thread:
     # This thread is a daemon because the program should exit when no alive,
     # non-daemonic threads are left. Once the user input thread is done,
     # this thread should also exit and the program should terminate
@@ -91,7 +92,7 @@ def start_optimization_thread(*args, **kwargs):
     return thread
 
 
-def start_user_input_thread(*args, **kwargs):
+def start_user_input_thread(*args: Any, **kwargs: Any) -> threading.Thread:
     thread = threading.Thread(
         target=input_server,
         name="User Input Thread",

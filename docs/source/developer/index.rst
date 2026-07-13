@@ -1,7 +1,8 @@
 .. _developer_docs:
 
-Developer Documentation
-=======================
+#########################
+ Developer Documentation
+#########################
 
 This is documentation relevant to developers of CyRxnOpt.
 
@@ -9,8 +10,9 @@ This is documentation relevant to developers of CyRxnOpt.
 
     potentially expand this introduction
 
-Tutorials
----------
+***********
+ Tutorials
+***********
 
 .. toctree::
     :maxdepth: 1

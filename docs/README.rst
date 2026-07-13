@@ -1,5 +1,6 @@
-Viewing the Documentation
-=========================
+###########################
+ Viewing the Documentation
+###########################
 
 This guide outlines the steps to build and view the documentation on your local
 computer. Python needs to be installed and you must already have the CyRxnOpt

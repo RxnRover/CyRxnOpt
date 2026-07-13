@@ -1,8 +1,9 @@
 import json
 import logging
-from typing import List
+from typing import List, Union, cast
 
 import zmq
+from numpy.typing import NDArray
 
 from cyrxnopt.utilities.zmq.AbortException import AbortException
 
@@ -28,12 +29,12 @@ class zmq_obj_function:
     def __call__(self, x: List[float]) -> float:
         return self.request_evaluation(x)
 
-    def request_evaluation(self, x: List[float]) -> float:
+    def request_evaluation(self, x: Union[List[float], NDArray]) -> float:
         """Objective function to send parameters to a remote socket and
         receive the result value.
 
         :param x: Parameters to evaluate.
-        :type x: List[float]
+        :type x: Union[List[float], NDArray]
 
         :raises AbortException: The optimization was aborted.
 
@@ -44,6 +45,7 @@ class zmq_obj_function:
         logging.debug("Sending parameters: {}".format(x))
 
         if type(x) is not list:
+            x = cast(NDArray, x)
             x = x.tolist()
 
         self.socket.send(json.dumps(x).encode("utf-8"))

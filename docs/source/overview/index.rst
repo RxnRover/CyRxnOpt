@@ -1,7 +1,8 @@
 .. _overview:
 
-Overview
-========
+##########
+ Overview
+##########
 
 .. toctree::
     :maxdepth: 2

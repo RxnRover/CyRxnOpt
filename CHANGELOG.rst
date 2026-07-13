@@ -1,11 +1,13 @@
-Changelog
-=========
+###########
+ Changelog
+###########
 
-Version 0.3.0
--------------
+***************
+ Version 0.3.0
+***************
 
 Breaking Changes
-~~~~~~~~~~~~~~~~
+================
 
 - ``venv`` argument is now required in all ``OptimizerController.*`` functions.
 - ``venv`` argument of ``set_config``, ``train``, and ``predict`` functions in
@@ -18,7 +20,7 @@ Breaking Changes
   ``OptimizerABC.predict()``
 
 Features
-~~~~~~~~
+========
 
 - Added mypy type checking
 - Added basic software logging
@@ -27,7 +29,7 @@ Features
 - Added and updated testing for all optimizers
 
 Bug Fixes
-~~~~~~~~~
+=========
 
 - Fixed incorrect or missing type hints
 - Updated some docstring wording
