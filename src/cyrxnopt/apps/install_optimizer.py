@@ -69,7 +69,10 @@ def parse_args() -> argparse.Namespace:
         dest="location",
         default=".",
         type=str,
-        help=("Location for experiment data."),
+        help=(
+            "Location for experiment data. This location must exist! "
+            "Defaults to the current working directory."
+        ),
     )
     parser.add_argument(
         "-f",
