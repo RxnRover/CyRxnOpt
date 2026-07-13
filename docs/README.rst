@@ -20,7 +20,7 @@ host it on your local computer for viewing:
 
 .. code-block:: bash
 
-    tox -e viewdocs
+    tox run -e viewdocs
 
 Navigate to ``localhost:3000`` to view the documentation website.
 
@@ -30,4 +30,4 @@ Navigate to ``localhost:3000`` to view the documentation website.
 
     .. code-block:: bash
 
-        tox -e viewdocs --override testenv:viewdocs.setenv+=PORT=<desired_port_number>
+        tox run -e viewdocs --override testenv:viewdocs.setenv+=PORT=<desired_port_number>
