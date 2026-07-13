@@ -1,4 +1,9 @@
+from typing import TYPE_CHECKING, Any, Callable, Tuple
+
 from cyrxnopt.OptimizerController import train
+
+if TYPE_CHECKING:
+    from cyrxnopt.NestedVenv import NestedVenv
 
 problematic_optimizers = [
     "amlro",
@@ -7,15 +12,15 @@ problematic_optimizers = [
 
 
 def train_server(
-    optimizer_name,
-    prev_param,
-    yield_value,
-    training_steps,
-    output_dir,
-    config,
-    venv,
-    obj_func,
-):
+    optimizer_name: str,
+    prev_param: list[Any],
+    yield_value: float,
+    training_steps: int,
+    output_dir: str,
+    config: dict[str, Any],
+    venv: "NestedVenv",
+    obj_func: Callable[[list[float]], float],
+) -> Tuple[list[Any], float]:
     if optimizer_name.lower() in problematic_optimizers:
         prev_param, yield_value = train_faux_server(
             optimizer_name,
@@ -45,15 +50,15 @@ def train_server(
 
 
 def train_faux_server(
-    optimizer_name,
-    prev_param,
-    yield_value,
-    training_steps,
-    output_dir,
-    config,
-    venv,
-    obj_func,
-):
+    optimizer_name: str,
+    prev_param: list[Any],
+    yield_value: float,
+    training_steps: int,
+    output_dir: str,
+    config: dict[str, Any],
+    venv: "NestedVenv",
+    obj_func: Callable[[list[float]], float],
+) -> Tuple[list[Any], float]:
     for i in range(training_steps):
         prev_param = train(
             optimizer_name,

@@ -1,6 +1,10 @@
+from typing import TYPE_CHECKING, Any, Callable
+
 from cyrxnopt.OptimizerController import predict
 
-# TODO: Rename this variable
+if TYPE_CHECKING:
+    from cyrxnopt.NestedVenv import NestedVenv
+
 problematic_optimizers = [
     "amlro",
     "edbop",
@@ -8,8 +12,14 @@ problematic_optimizers = [
 
 
 def predict_server(
-    optimizer_name, prev_param, yield_value, output_dir, config, venv, obj_func
-):
+    optimizer_name: str,
+    prev_param: list[Any],
+    yield_value: float,
+    output_dir: str,
+    config: dict[str, Any],
+    venv: "NestedVenv",
+    obj_func: Callable[[list[float]], float],
+) -> list[Any]:
     if optimizer_name.lower() in problematic_optimizers:
         results = predict_faux_server(
             optimizer_name,
@@ -35,8 +45,14 @@ def predict_server(
 
 
 def predict_faux_server(
-    optimizer_name, prev_param, yield_value, output_dir, config, venv, obj_func
-):
+    optimizer_name: str,
+    prev_param: list[Any],
+    yield_value: float,
+    output_dir: str,
+    config: dict[str, Any],
+    venv: "NestedVenv",
+    obj_func: Callable[[list[float]], float],
+) -> list[Any]:
     results = {
         "total_iter": config["budget"],
         "best_coords": None,
