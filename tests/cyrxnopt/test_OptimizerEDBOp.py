@@ -63,7 +63,7 @@ def venv_edbop(tmp_path_factory, edboplus_local_path):
 
     yield test_venv
 
-    # venv_worker.delete()
+    venv_worker.delete()
 
 
 def test_get_config_returns_valid_description_list(venv_edbop) -> None:
