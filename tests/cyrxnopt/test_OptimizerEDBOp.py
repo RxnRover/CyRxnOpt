@@ -2,8 +2,11 @@ import sys
 
 import pytest
 from git import Repo
+import venv
+import subprocess
 
 from cyrxnopt.NestedVenv import NestedVenv
+from cyrxnopt.VenvWorker import VenvWorker
 from cyrxnopt.OptimizerEDBOp import OptimizerEDBOp
 from tests.cyrxnopt.utilities_for_testing.validate_config_description import (
     validate_config_description_pytest,
@@ -43,27 +46,28 @@ def venv_edbop(tmp_path_factory, edboplus_local_path):
     venv_path = tmp_path_factory.mktemp("venv_edbop")
 
     test_venv = NestedVenv(venv_path)
+    venv_worker = VenvWorker(venv_path)
 
-    test_venv.create()
-    test_venv.activate()
-
-    assert test_venv.is_active()
-    assert test_venv.is_primary()
+    venv_worker.create()
 
     # Preinstall dependencies
     opt = OptimizerEDBOp(test_venv)
-    opt.install(local_paths={"edboplus": edboplus_local_path})
-    assert opt.check_install()
+    # opt.install(local_paths={"edboplus": edboplus_local_path})
+    venv_worker.pip_install("setuptools<82.0.0")
+    venv_worker.pip_install_e(edboplus_local_path)
+    assert venv_worker.check_package("setuptools")
+    assert venv_worker.check_package("edbo")
+
+    # Patch out execstack issue with libtorch_cpu.so
+    subprocess.call(["patchelf", "--clear-execstack", venv_path / "lib/python3.9/site-packages/torch/lib/libtorch_cpu.so"])
 
     yield test_venv
 
-    test_venv.deactivate()
-    assert not test_venv.is_active()
-    test_venv.delete()
+    # venv_worker.delete()
 
 
-@skip_libtorch_error
-@skip_error_on_install_import
+# @skip_libtorch_error
+# @skip_error_on_install_import
 def test_get_config_returns_valid_description_list(venv_edbop) -> None:
     opt = OptimizerEDBOp(venv_edbop)
 
@@ -72,8 +76,8 @@ def test_get_config_returns_valid_description_list(venv_edbop) -> None:
     validate_config_description_pytest(result)
 
 
-@skip_libtorch_error
-@skip_error_on_install_import
+# @skip_libtorch_error
+# @skip_error_on_install_import
 def test_set_config_creates_correct_config(venv_edbop, tmp_path) -> None:
     opt = OptimizerEDBOp(venv_edbop)
 
@@ -95,8 +99,8 @@ def test_set_config_creates_correct_config(venv_edbop, tmp_path) -> None:
     assert (tmp_path / "reaction_order.csv").exists()
 
 
-@skip_libtorch_error
-@skip_error_on_install_import
+# @skip_libtorch_error
+# @skip_error_on_install_import
 def test_train_does_nothing(venv_edbop, tmp_path) -> None:
     opt = OptimizerEDBOp(venv_edbop)
     expected_suggestion = []
@@ -106,8 +110,8 @@ def test_train_does_nothing(venv_edbop, tmp_path) -> None:
     assert expected_suggestion == suggestion
 
 
-@skip_libtorch_error
-@skip_error_on_install_import
+# @skip_libtorch_error
+# @skip_error_on_install_import
 def test_predict_basic_run(venv_edbop, tmp_path, obj_func_3d) -> None:
     import pandas as pd
 
@@ -122,6 +126,7 @@ def test_predict_basic_run(venv_edbop, tmp_path, obj_func_3d) -> None:
         "budget": 10,
         "objectives": ["yield"],
     }
+    opt.set_config(str(tmp_path), config)
 
     next_params: list[float] = []
     result = 0

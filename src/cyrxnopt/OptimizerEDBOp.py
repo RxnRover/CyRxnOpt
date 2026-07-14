@@ -6,6 +6,9 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any, Optional
 
+import numpy as np
+import pandas as pd
+
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerABC import OptimizerABC
 from cyrxnopt.utilities.config.transforms import use_subkeys
@@ -25,7 +28,6 @@ class OptimizerEDBOp(OptimizerABC):
         :param venv: Virtual environment to install the optimizer
         :type venv: NestedVenv
         """
-
         super().__init__(venv)
 
         self._edbop_filename = "my_optimization.csv"
@@ -108,31 +110,61 @@ class OptimizerEDBOp(OptimizerABC):
         config = self._config_translate(config)
 
         # generate reaction scope for EDBO+
-        self._imports["EDBOplus"]().generate_reaction_scope(
-            components=config["reaction_components"],
-            directory=experiment_dir,
-            filename=self._edbop_filename,
-            check_overwrite=False,
+        # self._imports["EDBOplus"]().generate_reaction_scope(
+        #     components=config["reaction_components"],
+        #     directory=experiment_dir,
+        #     filename=self._edbop_filename,
+        #     check_overwrite=False,
+        # )
+        self.venv_worker.run_command(f'''
+from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().generate_reaction_scope(
+    components={config["reaction_components"]},
+    directory="{experiment_dir}",
+    filename="{self._edbop_filename}",
+    check_overwrite=False,
+)
+'''
         )
-
+        
         # Initialize the EDBO+ file to be used for prediction
-        self._imports["EDBOplus"]().run(
-            directory=experiment_dir,
-            # Previously generated scope
-            filename=self._edbop_filename,
-            # Objectives to be optimized
-            # For example, maximize yield and ee but minimize side_product:
-            # objectives=['yield', 'ee', 'side_product'],
-            # objective_mode=['max', 'max', 'min'],
-            objectives=config["objectives"],
-            objective_mode=config["direction"],
-            # Number of experiments in parallel to perform in this round
-            batch=1,
-            # Features to be included in the model
-            columns_features="all",
-            # Initialization method
-            init_sampling_method="seed",
-            seed=random.randint(0, 2**32 - 1),
+        # self._imports["EDBOplus"]().run(
+        #     directory=experiment_dir,
+        #     # Previously generated scope
+        #     filename=self._edbop_filename,
+        #     # Objectives to be optimized
+        #     # For example, maximize yield and ee but minimize side_product:
+        #     # objectives=['yield', 'ee', 'side_product'],
+        #     # objective_mode=['max', 'max', 'min'],
+        #     objectives=config["objectives"],
+        #     objective_mode=config["direction"],
+        #     # Number of experiments in parallel to perform in this round
+        #     batch=1,
+        #     # Features to be included in the model
+        #     columns_features="all",
+        #     # Initialization method
+        #     init_sampling_method="seed",
+        #     seed=random.randint(0, 2**32 - 1),
+        # )
+        self.venv_worker.run_command(f'''
+from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().run(
+    directory="{experiment_dir}",
+    # Previously generated scope
+    filename="{self._edbop_filename}",
+    # Objectives to be optimized
+    # For example, maximize yield and ee but minimize side_product:
+    # objectives=['yield', 'ee', 'side_product'],
+    # objective_mode=['max', 'max', 'min'],
+    objectives={config["objectives"]},
+    objective_mode={config["direction"]},
+    # Number of experiments in parallel to perform in this round
+    batch=1,
+    # Features to be included in the model
+    columns_features="all",
+    # Initialization method
+    init_sampling_method="seed",
+    seed={random.randint(0, 2**32 - 1)},
+)
+'''
         )
 
         config_path = os.path.join(experiment_dir, "config.json")
@@ -205,7 +237,7 @@ class OptimizerEDBOp(OptimizerABC):
         config = self._config_translate(config)
 
         # Read optimization file with reaction conditions
-        df_edbo = self._imports["pd"].read_csv(
+        df_edbo = pd.read_csv(
             os.path.join(experiment_dir, self._edbop_filename)
         )
 
@@ -233,21 +265,36 @@ class OptimizerEDBOp(OptimizerABC):
                 fout.write("\n")
 
         # Run one EDBO+ prediction
-        self._imports["EDBOplus"]().run(
-            directory=experiment_dir,
-            filename=self._edbop_filename,
-            objectives=config["objectives"],
-            objective_mode=config["direction"],
-            batch=1,
-            columns_features="all",
-            init_sampling_method="seed",
-            seed=random.randint(0, 2**32 - 1),
-            write_extra_data=False,
+        # self._imports["EDBOplus"]().run(
+        #     directory=experiment_dir,
+        #     filename=self._edbop_filename,
+        #     objectives=config["objectives"],
+        #     objective_mode=config["direction"],
+        #     batch=1,
+        #     columns_features="all",
+        #     init_sampling_method="seed",
+        #     seed=random.randint(0, 2**32 - 1),
+        #     write_extra_data=False,
+        # )
+
+        self.venv_worker.run_command(f'''
+from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().run(
+    directory="{experiment_dir}",
+    filename="{self._edbop_filename}",
+    objectives={config["objectives"]},
+    objective_mode={config["direction"]},
+    batch=1,
+    columns_features="all",
+    init_sampling_method="seed",
+    seed={random.randint(0, 2**32 - 1)},
+    write_extra_data=False,
+)
+'''
         )
 
         # After one cycle of prediction, read the reaction condition file to
         # get the next reaction condition
-        df_edbo = self._imports["pd"].read_csv(
+        df_edbo = pd.read_csv(
             os.path.join(experiment_dir, self._edbop_filename)
         )
 
@@ -276,7 +323,7 @@ class OptimizerEDBOp(OptimizerABC):
             upper_bound = config["continuous"]["bounds"][i][1]
             increment = config["continuous"]["resolutions"][i]
 
-            values = self._imports["np"].arange(
+            values = np.arange(
                 low_bound, upper_bound + increment, increment
             )
 
@@ -317,9 +364,9 @@ class OptimizerEDBOp(OptimizerABC):
 
     def _import_deps(self) -> None:
         """Import packages needed to run the optimizer."""
+        pass
+        # import numpy as np  # type: ignore
+        # import pandas as pd  # type: ignore
+        # from edbo.plus.optimizer_botorch import EDBOplus  # type: ignore
 
-        import numpy as np  # type: ignore
-        import pandas as pd  # type: ignore
-        from edbo.plus.optimizer_botorch import EDBOplus  # type: ignore
-
-        self._imports = {"EDBOplus": EDBOplus, "np": np, "pd": pd}
+        # self._imports = {"EDBOplus": EDBOplus, "np": np, "pd": pd}

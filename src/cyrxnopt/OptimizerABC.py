@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from cyrxnopt.NestedVenv import NestedVenv
+from cyrxnopt.VenvWorker import VenvWorker
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,7 @@ class OptimizerABC(ABC):
 
         self._imports: dict[str, Any] = {}  # Populated in self._import_deps()
         self.__venv = venv
+        self.venv_worker = VenvWorker(venv.prefix)
 
     def check_install(self) -> bool:
         """Check if an installation for this optimizer exists or not.
