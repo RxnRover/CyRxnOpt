@@ -251,16 +251,21 @@ class NestedVenv(venv.EnvBuilder):
         package_name: str,
         package_path: Optional[Path] = None,
         editable: bool = False,
+        use_parent: bool = True,
     ) -> None:
         """Install a package to the active virtual environment using
         ``pip install`` for an editable install.
 
         :param package_name: Name of the package
         :type package_name: str
-        :param package_path: Path to the package location
-        :type package_path: Path
-        :param editable: Whether to use an editable install
-        :type editable: bool
+        :param package_path: Path to the package location. Defaults to None
+            (do not use a local path)
+        :type package_path: Optional[Path]
+        :param editable: Whether to use an editable install. Defaults to False
+        :type editable: bool, optional
+        :param use_parent: Whether to consider parent venv packages when
+            determining if the package is already installed. Defaults to True
+        :type use_parent: bool, optional
 
         :raises CalledProcessError: An error occurred when running pip freeze
         """
@@ -273,8 +278,14 @@ class NestedVenv(venv.EnvBuilder):
         #
         # Source: https://docs.python.org/3/library/importlib.html#importlib.__import__
         try:
-            logging.debug(f"Attempting to import {package_name}")
-            __import__(package_name)
+            logger.debug(f"Attempting to import {package_name}")
+
+            if not use_parent and not self.check_package(package_name):
+                raise ModuleNotFoundError
+
+            if use_parent:
+                importlib.import_module(package_name)
+
             logger.debug("Import succeeded")
         except ModuleNotFoundError:
             logger.debug("Import failed; attempting to install via pip")
