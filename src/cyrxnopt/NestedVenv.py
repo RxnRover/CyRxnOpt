@@ -449,7 +449,7 @@ class NestedVenv(venv.EnvBuilder):
             #       For example, a user could specify version ">=1.25" instead
             #       of only matching a specific version.
             if version != "":
-                package_found = True if module.__version__ == version else False
+                package_found = True if importlib.metadata.version(package) == version else False
             logger.debug("Import succeeded.")
         except ModuleNotFoundError:
             logger.debug("Import failed.")
