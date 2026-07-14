@@ -73,6 +73,8 @@ class NestedVenv(venv.EnvBuilder):
 
             # Activates the virtual environment, adding it to sys.path
             site.addsitedir(str(self.site_packages.resolve()))
+            sys.path.insert(0, sys.path.pop())
+
             # NOTE: This sitedir stuff is from the SO answer here:
             #       https://stackoverflow.com/a/68173529, which points
             #       to this in dcreager/virtualenv on GitHub:
@@ -391,7 +393,7 @@ class NestedVenv(venv.EnvBuilder):
         og_sys_path = copy.deepcopy(sys.path)
 
         # Remove other virtual environment site-packages paths temporarily
-        for path in reversed(sys.path):
+        for path in sys.path:
             if "site-packages" in path:
                 sys.path.remove(path)
             else:
@@ -399,7 +401,7 @@ class NestedVenv(venv.EnvBuilder):
 
         # Replace the PATH variable with only the virtual environment
         os.environ["PATH"] = str(self.binary_directory)
-        sys.path.append(str(self.site_packages.resolve()))
+        sys.path.insert(0, str(self.site_packages.resolve()))
 
         importlib.invalidate_caches()
 
