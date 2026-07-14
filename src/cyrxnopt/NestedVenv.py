@@ -71,8 +71,6 @@ class NestedVenv(venv.EnvBuilder):
             # added by this virtual environment
             self._prior_site_packages = site.getsitepackages()
 
-            # TODO: This adds the site to the end of sys.path. It should
-            #       go before any other venv site paths to be the primary venv.
             # Activates the virtual environment, adding it to sys.path
             site.addsitedir(str(self.site_packages.resolve()))
             # NOTE: This sitedir stuff is from the SO answer here:
@@ -265,7 +263,7 @@ class NestedVenv(venv.EnvBuilder):
         :raises CalledProcessError: An error occurred when running pip freeze
         """
 
-        logging.info(f"Installing {package_name}")
+        logger.info(f"Installing {package_name}")
 
         # NOTE: In the 'importlib' package, it is noted that `import_module()`
         #       should be used instead of `__import__()`. Maybe it is better
@@ -275,9 +273,9 @@ class NestedVenv(venv.EnvBuilder):
         try:
             logging.debug(f"Attempting to import {package_name}")
             __import__(package_name)
-            logging.debug("Import succeeded")
+            logger.debug("Import succeeded")
         except ModuleNotFoundError:
-            logging.debug("Import failed; attempting to install via pip")
+            logger.debug("Import failed; attempting to install via pip")
 
             # Decide whether this is a local path or PyPI package
             if package_path is not None:
@@ -296,7 +294,7 @@ class NestedVenv(venv.EnvBuilder):
             cmd.append(package)
             cmd.append("--upgrade")
 
-            logging.debug("Running command: {}".format(cmd))
+            logger.debug("Running command: {}".format(cmd))
 
             completed_process = subprocess.run(
                 cmd,
@@ -328,13 +326,11 @@ class NestedVenv(venv.EnvBuilder):
         :raises CalledProcessError: An error occurred when running ``pip install``
         """
 
-        # TODO: Add logging
-
         # Derive the package name from the package path if a name is not
         # explicitly provided
         if package_name == "":
             package_name = package_path.stem
-            logging.info(
+            logger.info(
                 (
                     f"Defaulting to package name of {package_name}",
                     f"from the package path: {package_path}",
@@ -432,7 +428,7 @@ class NestedVenv(venv.EnvBuilder):
                 venv_modules.append(pkg)
 
         try:
-            # print("Attempting import of", package)
+            logger.debug(f"Attempting import of {package}")
             module = importlib.import_module(package)
 
             # TODO: This version checking could be much more complex
@@ -441,9 +437,9 @@ class NestedVenv(venv.EnvBuilder):
             #       of only matching a specific version.
             if version != "":
                 package_found = True if module.__version__ == version else False
-            # print("Import succeeded.")
+            logger.debug("Import succeeded.")
         except ModuleNotFoundError:
-            # print("Import failed.")
+            logger.debug("Import failed.")
             package_found = False
 
         os.environ["PATH"] = og_env_path
@@ -526,8 +522,6 @@ class NestedVenv(venv.EnvBuilder):
                 sys.modules.pop(pkg)
 
                 venv_modules.append(pkg)
-
-        venv_modules
 
         return venv_modules
 
