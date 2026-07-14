@@ -1,23 +1,19 @@
-import copy
-import importlib
-import importlib.util
 import logging
-import os
+import re
 import shutil
-import site
 import subprocess
 import sys
 import venv
-import re
-from packaging.specifiers import SpecifierSet, InvalidSpecifier
-from packaging.version import Version
-from importlib.machinery import ModuleSpec
 from pathlib import Path
 from subprocess import CalledProcessError
-from typing import Any, Optional, Union, cast
+from typing import Optional, Union
+
+from packaging.specifiers import InvalidSpecifier, SpecifierSet
+from packaging.version import Version
 
 # from cyrxnopt.utilities.reset_module import reset_module
 logger = logging.getLogger(__name__)
+
 
 class VenvWorker:
     def __init__(self, venv_dir: Union[str, Path]) -> None:
@@ -74,7 +70,6 @@ class VenvWorker:
             logger.error("Return code nonzero: {}".format(e))
             logger.error("stdout: {}".format(completed_process.stdout))
             logger.error("stderr: {}".format(completed_process.stderr))
-
 
     def pip_freeze(self) -> list[str]:
         """Returns the list of modules in the virtual environment as
@@ -212,17 +207,15 @@ class VenvWorker:
                     package = line
                     self.pip_install(package)
 
-    def check_package(self, package: str, version: Union[str, ] = "") -> bool:
-        package_found: bool = False
-
+    def check_package(self, package: str, version: Union[str,] = "") -> bool:
         try:
-            expected_version: Union[Version, SpecifierSet] = SpecifierSet(version)
+            expected_version: Union[Version, SpecifierSet] = SpecifierSet(
+                version
+            )
         except InvalidSpecifier:
             expected_version = Version(version)
 
-        logger.debug(
-            f"Checking for '{package}' in venv: {self.prefix}"
-        )
+        logger.debug(f"Checking for '{package}' in venv: {self.prefix}")
 
         pip_show: list[str] = [str(self.python), "-m", "pip", "show"]
         pip_show.append(package)
@@ -245,12 +238,17 @@ class VenvWorker:
 
         # No version to check; we're done
         if version == "":
-            logger.debug(f"Found a package matching \"{package}\"")
+            logger.debug(f'Found a package matching "{package}"')
             return True
 
         # Now check the version of the found package
-        pkg_version_match = re.search(r"Version: ([^\s]+)", completed_process.stdout)
-        assert pkg_version_match is not None, "Pattern matching error for check package version search. Please submit an issue!"
+        pkg_version_match = re.search(
+            r"Version: ([^\s]+)", completed_process.stdout
+        )
+        assert pkg_version_match is not None, (
+            "Pattern matching error for check package version search. "
+            "Please submit an issue!"
+        )
 
         pkg_version = Version(pkg_version_match.group(1))
         logger.debug(f"Found {package} version: {pkg_version}")
@@ -261,7 +259,6 @@ class VenvWorker:
         # have occurred above
         else:
             return expected_version == pkg_version
-
 
     def _get_python_version(self) -> str:
         # TODO: Add logging and docstring!

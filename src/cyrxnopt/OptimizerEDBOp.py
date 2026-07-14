@@ -117,16 +117,15 @@ class OptimizerEDBOp(OptimizerABC):
         #     filename=self._edbop_filename,
         #     check_overwrite=False,
         # )
-        self.venv_worker.run_command(f'''
+        self.venv_worker.run_command(f"""
 from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().generate_reaction_scope(
     components={config["reaction_components"]},
     directory="{experiment_dir}",
     filename="{self._edbop_filename}",
     check_overwrite=False,
 )
-'''
-        )
-        
+""")
+
         # Initialize the EDBO+ file to be used for prediction
         # self._imports["EDBOplus"]().run(
         #     directory=experiment_dir,
@@ -146,7 +145,7 @@ from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().generate_reaction_s
         #     init_sampling_method="seed",
         #     seed=random.randint(0, 2**32 - 1),
         # )
-        self.venv_worker.run_command(f'''
+        self.venv_worker.run_command(f"""
 from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().run(
     directory="{experiment_dir}",
     # Previously generated scope
@@ -165,8 +164,7 @@ from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().run(
     init_sampling_method="seed",
     seed={random.randint(0, 2**32 - 1)},
 )
-'''
-        )
+""")
 
         config_path = os.path.join(experiment_dir, "config.json")
 
@@ -278,7 +276,7 @@ from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().run(
         #     write_extra_data=False,
         # )
 
-        self.venv_worker.run_command(f'''
+        self.venv_worker.run_command(f"""
 from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().run(
     directory="{experiment_dir}",
     filename="{self._edbop_filename}",
@@ -290,8 +288,7 @@ from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().run(
     seed={random.randint(0, 2**32 - 1)},
     write_extra_data=False,
 )
-'''
-        )
+""")
 
         # After one cycle of prediction, read the reaction condition file to
         # get the next reaction condition
@@ -324,9 +321,7 @@ from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().run(
             upper_bound = config["continuous"]["bounds"][i][1]
             increment = config["continuous"]["resolutions"][i]
 
-            values = np.arange(
-                low_bound, upper_bound + increment, increment
-            )
+            values = np.arange(low_bound, upper_bound + increment, increment)
 
             values = [float(x) for x in values]
 

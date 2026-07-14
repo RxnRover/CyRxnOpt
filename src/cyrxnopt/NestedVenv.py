@@ -442,14 +442,17 @@ class NestedVenv(venv.EnvBuilder):
 
         try:
             logger.debug(f"Attempting import of {package}")
-            module = importlib.import_module(package)
 
             # TODO: This version checking could be much more complex
             #       to allow for the full versioning syntax that pip can use.
             #       For example, a user could specify version ">=1.25" instead
             #       of only matching a specific version.
             if version != "":
-                package_found = True if importlib.metadata.version(package) == version else False
+                package_found = (
+                    True
+                    if importlib.metadata.version(package) == version
+                    else False
+                )
             logger.debug("Import succeeded.")
         except ModuleNotFoundError:
             logger.debug("Import failed.")

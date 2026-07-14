@@ -1,12 +1,10 @@
+import subprocess
 import sys
 
 import pytest
 from git import Repo
-import venv
-import subprocess
 
 from cyrxnopt.NestedVenv import NestedVenv
-from cyrxnopt.VenvWorker import VenvWorker
 from cyrxnopt.OptimizerEDBOp import OptimizerEDBOp
 from tests.cyrxnopt.utilities_for_testing.validate_config_description import (
     validate_config_description_pytest,
@@ -46,24 +44,28 @@ def venv_edbop(tmp_path_factory, edboplus_local_path):
     venv_path = tmp_path_factory.mktemp("venv_edbop")
 
     test_venv = NestedVenv(venv_path)
-    venv_worker = VenvWorker(venv_path)
-
-    venv_worker.create()
 
     # Preinstall dependencies
     opt = OptimizerEDBOp(test_venv)
     # opt.install(local_paths={"edboplus": edboplus_local_path})
-    venv_worker.pip_install("setuptools<82.0.0")
-    venv_worker.pip_install_e(edboplus_local_path)
-    assert venv_worker.check_package("setuptools")
-    assert venv_worker.check_package("edbo")
+    opt.venv_worker.create()
+    opt.venv_worker.pip_install("setuptools<82.0.0")
+    opt.venv_worker.pip_install_e(edboplus_local_path)
+    assert opt.venv_worker.check_package("setuptools")
+    assert opt.venv_worker.check_package("edbo")
 
     # Patch out execstack issue with libtorch_cpu.so
-    subprocess.call(["patchelf", "--clear-execstack", venv_path / "lib/python3.9/site-packages/torch/lib/libtorch_cpu.so"])
+    subprocess.call(
+        [
+            "patchelf",
+            "--clear-execstack",
+            venv_path / "lib/python3.9/site-packages/torch/lib/libtorch_cpu.so",
+        ]
+    )
 
     yield test_venv
 
-    venv_worker.delete()
+    opt.venv_worker.delete()
 
 
 def test_get_config_returns_valid_description_list(venv_edbop) -> None:

@@ -1,9 +1,10 @@
-import sys
-from pathlib import Path
-import importlib
-import pytest
-import venv
 import shutil
+import sys
+import venv
+from pathlib import Path
+
+import pytest
+
 from cyrxnopt.VenvWorker import VenvWorker
 
 
@@ -36,6 +37,7 @@ def create_venv(venv_path):
 
     return venv_path
 
+
 def test_pip_install_numpy(test_venv) -> None:
     """This test attempts to install the 'numpy' package from online
     using 'pip'.
@@ -49,11 +51,15 @@ def test_pip_install_numpy(test_venv) -> None:
     assert worker.check_package("numpy")
 
 
-def test_pip_install_test_package_with_path(test_venv, test_assets_path) -> None:
+def test_pip_install_test_package_with_path(
+    test_venv, test_assets_path
+) -> None:
 
     worker = VenvWorker(test_venv)
 
-    worker.pip_install("test_project", package_path=test_assets_path / "test_project")
+    worker.pip_install(
+        "test_project", package_path=test_assets_path / "test_project"
+    )
 
     assert worker.check_package("test_project")
 

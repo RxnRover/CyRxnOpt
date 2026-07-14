@@ -1,5 +1,3 @@
-import sys
-
 from importlib.metadata import (  # pragma: no cover
     PackageNotFoundError,
     version,
