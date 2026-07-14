@@ -20,7 +20,8 @@ logger = logging.getLogger(__name__)
 class OptimizerEDBOp(OptimizerABC):
     # Private static data member to list dependency packages required
     # by this class
-    _packages = ["benchmarking", "edboplus", "pandas"]
+    # _packages = ["benchmarking", "edboplus", "pandas"]
+    _packages = ["setuptools<82.0", "edboplus"]
 
     def __init__(self, venv: NestedVenv) -> None:
         """Optimizer class for the EDBO+ algorithm.
@@ -364,9 +365,6 @@ from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().run(
 
     def _import_deps(self) -> None:
         """Import packages needed to run the optimizer."""
-        pass
-        # import numpy as np  # type: ignore
-        # import pandas as pd  # type: ignore
-        # from edbo.plus.optimizer_botorch import EDBOplus  # type: ignore
 
-        # self._imports = {"EDBOplus": EDBOplus, "np": np, "pd": pd}
+        if not self.venv_worker.check_package("edbo"):
+            raise ModuleNotFoundError
