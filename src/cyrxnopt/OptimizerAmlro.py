@@ -363,7 +363,6 @@ class OptimizerAmlro(OptimizerABC):
         # Get the row counts of the training combos and dataset
         combo_rows = len(training_combos.index)
         dataset_rows = len(training_dataset.index)
-        print(f"DEBUG combo_rows, dataset_rows : {combo_rows}, {dataset_rows}")
 
         # Simple check assuming the dataset only contains the training combos
         # that have been run
