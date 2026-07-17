@@ -35,24 +35,31 @@ class OptimizerSQSnobFit(OptimizerABC):
 
         config: list[dict[str, Any]] = [
             {
-                "name": "direction",
-                "type": "str",
-                "value": ["min", "max"],
-            },
-            {
                 "name": "continuous_feature_names",
-                "type": "list",
+                "type": "list[str]",
                 "value": [],
             },
             {
                 "name": "continuous_feature_bounds",
-                "type": "list[list]",
+                "type": "list[list[float]]",
                 "value": [[]],
+            },
+            {
+                # Not used for this algorithm, but kept for compatibility with
+                # the standard config schema
+                "name": "continuous_feature_resolutions",
+                "type": "list[float]",
+                "value": [],
             },
             {
                 "name": "budget",
                 "type": "int",
                 "value": 100,
+            },
+            {
+                "name": "direction",
+                "type": "str",
+                "value": ["min", "max"],
             },
             {
                 "name": "param_init",
@@ -87,7 +94,12 @@ class OptimizerSQSnobFit(OptimizerABC):
 
         self._import_deps()
 
-        # TODO: config validation should be performed
+        # continuous_feature_resolution not needed for this algorithm, so ignore
+        # it and fill in with placeholder for validation
+        if "continuous_feature_resolutions" not in config:
+            config["continuous_feature_resolutions"] = 0
+
+        self._validate_config(config)
 
         output_file = os.path.join(experiment_dir, "config.json")
 

@@ -104,6 +104,8 @@ class OptimizerEDBOp(OptimizerABC):
         :type config: dict[str, Any]
         """
 
+        self._validate_config(config)
+
         if not os.path.exists(experiment_dir):
             os.makedirs(experiment_dir)
 
