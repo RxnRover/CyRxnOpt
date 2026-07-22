@@ -137,7 +137,10 @@ class OptimizerRandom(OptimizerABC):
         if not os.path.exists(experiment_dir):
             os.makedirs(experiment_dir)
 
-        translated_config = self._config_translate(config)
+        # TODO: Fix larger config translation problem where if applied twice
+        # it will delete most config values
+        # translated_config = self._config_translate(config)
+        translated_config = config
 
         config_path = os.path.join(experiment_dir, "config.json")
 
@@ -149,8 +152,11 @@ class OptimizerRandom(OptimizerABC):
         with open(
             os.path.join(experiment_dir, self._results_filename), "w"
         ) as fout:
-            feature_names = list(translated_config["continuous"]["feature_names"])
-            feature_names.extend(translated_config["categorical"]["feature_names"])
+            # TODO: Fix with above translation fix
+            # feature_names = list(translated_config["continuous"]["feature_names"])
+            # feature_names.extend(translated_config["categorical"]["feature_names"])
+            feature_names = list(translated_config["continuous_feature_names"])
+            feature_names.extend(translated_config["categorical_feature_names"])
 
             # Collect the feature names and objective name as headers
             # TODO: Extend this when we support multi-objective

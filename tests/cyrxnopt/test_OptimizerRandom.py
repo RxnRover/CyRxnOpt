@@ -102,13 +102,13 @@ def test_predict_records_results_in_order(venv_random, tmp_path) -> None:
     opt.set_config(str(tmp_path), config)
 
     next_params: list = []
-    result = 0.0
+    result = 0
     suggestions = []
 
     for _ in range(4):
         next_params = opt.predict(next_params, result, str(tmp_path), config)
         suggestions.append(list(next_params))
-        result = 1.0
+        result += 1
 
     results = pd.read_csv(tmp_path / "results.csv")
 

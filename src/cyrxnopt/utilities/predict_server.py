@@ -5,10 +5,7 @@ from cyrxnopt.OptimizerController import predict
 if TYPE_CHECKING:
     from cyrxnopt.NestedVenv import NestedVenv
 
-problematic_optimizers = [
-    "amlro",
-    "edbop",
-]
+problematic_optimizers = ["amlro", "edbop", "random"]
 
 
 def predict_server(
