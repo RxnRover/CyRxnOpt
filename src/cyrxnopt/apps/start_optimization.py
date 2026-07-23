@@ -124,7 +124,7 @@ def input_server(training_steps: int) -> None:
         #  Wait for ready from the optimizer
         logging.debug("Waiting...")
         request = socket.recv()
-        logging.debug("Received request: %s" % request)
+        logging.debug(f"Received request: {request.decode(encoding='utf-8')}")
 
         reply = b"invalid_request"
 
@@ -151,7 +151,7 @@ def input_server(training_steps: int) -> None:
             steps += 1
             reply = json.dumps(reply).encode("utf-8")
 
-        logging.debug(f"Sending reply: {reply.decode("utf-8")}")
+        logging.debug(f"Sending reply: {reply.decode('utf-8')}")
         socket.send(reply)
 
     print("Training complete!")
