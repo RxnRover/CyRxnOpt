@@ -204,7 +204,6 @@ class OptimizerAmlro(OptimizerABC):
 
         self._import_deps()
 
-        # TODO: Set these as properties?
         training_set_path = os.path.join(
             experiment_dir, "training_set_file.txt"
         )

@@ -242,9 +242,6 @@ from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().run(
             os.path.join(experiment_dir, self._edbop_filename)
         )
 
-        # TODO: Writing the entire dataframe of shape (2085136, 6),
-        #       12,510,816 elements: 8.674756252000407 sec. This can probably
-        #       be optimized quite a bit
         if len(prev_param) != 0:
             # [df_edbo.loc[0,config['objectives'][i]] =
             # yield_value[i] for i in range(len(yield_value))]

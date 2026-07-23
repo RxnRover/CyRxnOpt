@@ -135,14 +135,6 @@ class NestedVenv(venv.EnvBuilder):
             [str(p.resolve()) for p in env_path]
         )
 
-        # TODO: We need to remove the virtual environment from sys.path
-        #       and unimport the packages from it without affecting
-        #       other virtual environments. Troubles might arise from
-        #       venv1 and venv2 both having the same package. How do
-        #       we determine if both venvs have the package?
-        #
-        # Remove module: https://stackoverflow.com/a/57891909
-
         # Remove this venv from the sys.path
         sys.path.remove(str(self.site_packages.resolve()))
 
@@ -207,10 +199,6 @@ class NestedVenv(venv.EnvBuilder):
         in the PATH environment variable. This menas its packages
         will be found first.
 
-        TODO: Recognize other virtual environments to ensure we are
-              the first virtual environment without needing to be the
-              first element in the PATH environment variable.
-
         :return: Whether the venv is primary (True) or not (False).
         :rtype: bool
         """
@@ -229,8 +217,6 @@ class NestedVenv(venv.EnvBuilder):
 
         :raises CalledProcessError: An error occurred when running pip freeze
         """
-
-        # TODO: Add logging
 
         # Run ``pip freeze`` and capture the output
         completed_process = subprocess.run(
@@ -363,8 +349,6 @@ class NestedVenv(venv.EnvBuilder):
             ``pip install`` for a package
         """
 
-        # TODO: Add logging
-
         # Read each line of the requirements file and install the packages
         with open(req_file, "r") as fin:
             lines = fin.readlines()
@@ -385,13 +369,6 @@ class NestedVenv(venv.EnvBuilder):
                     self.pip_install(package)
 
     def check_package(self, package: str, version: str = "") -> bool:
-        # TODO: Should this be allowed even if the venv is inactive at
-        #       the time of calling? I think it can still be checked without
-        #       affecting anything, so I am allowing it on inactive venvs
-        #       for now.
-
-        # TODO: Add logging and docstring!
-
         logger.debug(
             "Checking for '{}' in venv: {}".format(package, self.prefix)
         )
@@ -472,8 +449,6 @@ class NestedVenv(venv.EnvBuilder):
         return package_found
 
     def _get_site_package_path(self) -> Path:
-        # TODO: Add logging and docstring!
-
         if sys.platform == "win32":
             site_package_path = self.prefix / "Lib" / "site-packages"
         else:
@@ -487,8 +462,6 @@ class NestedVenv(venv.EnvBuilder):
         return site_package_path
 
     def _get_python_version(self) -> str:
-        # TODO: Add logging and docstring!
-
         # This grabs the full semver, for example, "3.11.3"
         python_version = sys.version.split(" ")[0]
 
@@ -506,8 +479,6 @@ class NestedVenv(venv.EnvBuilder):
         :return: Names of packages that were unimported by this function.
         :rtype: list[str]
         """
-
-        # TODO: Add logging
 
         venv_modules = []
 

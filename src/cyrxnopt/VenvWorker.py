@@ -186,8 +186,6 @@ class VenvWorker:
             ``pip install`` for a package
         """
 
-        # TODO: Add logging
-
         # Read each line of the requirements file and install the packages
         with open(req_file, "r") as fin:
             lines = fin.readlines()
@@ -261,8 +259,6 @@ class VenvWorker:
             return expected_version == pkg_version
 
     def _get_python_version(self) -> str:
-        # TODO: Add logging and docstring!
-
         # This grabs the full semver, for example, "3.11.3"
         python_version = sys.version.split(" ")[0]
 
