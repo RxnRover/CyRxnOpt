@@ -61,6 +61,8 @@ def main() -> int:
         print("Writing config to file:", config_file)
         json.dump(config_contents, fout, indent=4)
 
+    print("Reminder: You must edit the config file for your experiment!")
+
     return 0
 
 
