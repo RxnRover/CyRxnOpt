@@ -20,36 +20,45 @@ license = "MIT"
 license-files = ["LICENSE.txt"]
 readme = { file = "README.rst", content-type = "text/x-rst" }
 keywords = [
-    "todo",
-    "todos",
-    "todo list",
-    "todotxt",
-    "todotxt-cli",
-    "todo.sh",
-    "todo.txt",
-    "todo.txt-cli",
+    "reaction optimization",
+    "chemistry",
+    "chemical engineering",
+    "bayesian optimization",
+    "black-box optimization",
+    "machine learning",
+    "process optimization",
+    "experiment design",
+    "self-driving lab",
+    "automation",
 ]
+
 classifiers = [
     # TODO: Remove "Private :: Do Not Upload" classifier when ready to publish!
     "Private :: Do Not Upload",
 
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 4 - Beta",
     "Natural Language :: English",
     "Typing :: Typed",
 
     # Intended audience tags and other information about what this project is
-    "Intended Audience :: End Users/Desktop",
-    "Environment :: Plugins",
-    "Topic :: Software Development",
-    "Topic :: Software Development :: Libraries",
+    "Intended Audience :: Science/Research",
+    "Environment :: Console",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Software Development :: Libraries :: Python Modules",
-    "Topic :: Utilities",
 
     # Supported Python versions and operating systems
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3 :: Only",
     "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Operating System :: Microsoft :: Windows :: Windows 11"
+    # Untested, but likely works
+    # "Operating System :: MacOS :: MacOS X"
 ]
 
 [project.urls]
