@@ -10,7 +10,7 @@ authors = [
     { name = "zachcran", email = "zachcran@iastate.edu" },
 ]
 maintainers = [{ name = "zachcran", email = "zachcran@iastate.edu" }]
-dependencies = ["virtualenv", "numpy", "joblib", "pandas"]
+dependencies = ["virtualenv", "numpy", "joblib", "pandas", "zmq"]
 
 dynamic = ["version"]
 # Python 3.9 is the only version that worked for all 4 original optimizers.
