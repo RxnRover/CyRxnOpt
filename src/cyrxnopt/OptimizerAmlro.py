@@ -224,13 +224,6 @@ class OptimizerAmlro(OptimizerABC):
         next_index = self._get_next_training_index_by_length(
             training_combos, training_set
         )
-        # NOTE: Not used due to bug in amlo that causes training_set_file.txt
-        # to have the decoded feature headers, so training_set_file.txt and
-        # training_combo_file.txt will never have the prerequisite matching
-        # column headers.
-        # next_index = self._get_next_training_index_next_combo(
-        #     training_combos, training_set
-        # )
 
         # Exit early if all training points have already been performed
         if next_index == -1:
@@ -373,50 +366,3 @@ class OptimizerAmlro(OptimizerABC):
         # The row count of the dataset will be the next index in the combo
         # list due to zero indexing
         return dataset_rows
-
-    def _get_next_training_index_next_combo(  # type: ignore
-        self, training_combos, training_dataset
-    ) -> int:
-        """Gets the index for the next training condition to be performed.
-
-        This is implemented by checking which training conditions are missing
-        in the training dataset, then giving the index in the training condition
-        list for the first missing condition. Importantly, this means that a
-        training dataset with the correct number of entries, but none matching
-        the training combo file, will still receive indices and not be
-        considered "completed" yet.
-
-        :param training_combos: Training conditions suggested by AMLRO
-        :type training_combos: pd.DataFrame
-        :param training_dataset: Current dataset of performed reactions used to
-                                 train AMLRO
-        :type training_dataset: pd.DataFrame
-
-        :returns: Index in the training combo list of the next conditions
-                  missing from the training dataset. An index of -1 is returned
-                  if no more training conditions are missing from the dataset.
-        :rtype: int
-        """
-
-        # Merge the current training dataset with the training combos suggested
-        # by AMLRO. A left merge is used to only use keys from the training
-        # combos and preserve the row index in the training combos.
-        merged = training_combos.merge(
-            training_dataset, how="left", indicator=True
-        )
-
-        # Determine training combos are missing
-        is_missing = merged["_merge"].eq("left_only")
-
-        # The next line to get the first missing row will return 0 for both
-        # the first row and if no rows are missing, so exit early with -1
-        # if no more training combos are missing
-        if is_missing.eq(False).all():
-            return -1
-
-        # Get the index of the first training combo not found in the provided
-        # training dataset. Apparently between True and False, True is the max
-        # so idxmax() works.
-        first_missing_index = merged["_merge"].eq("left_only").idxmax()
-
-        return first_missing_index
