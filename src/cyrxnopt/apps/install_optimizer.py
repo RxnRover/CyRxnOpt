@@ -2,6 +2,10 @@ import argparse
 import logging
 import os
 
+from cyrxnopt.apps._utilities.common_args import (
+    parser_location,
+    parser_optimizer,
+)
 from cyrxnopt.apps._utilities.gen_logfile import gen_logfile
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerController import check_install, install
@@ -59,21 +63,10 @@ def main() -> int:
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments"""
 
-    parser = argparse.ArgumentParser()
-
-    # parser.add_argument("experiment_dir", help="Location for experiment data.")
-    parser.add_argument("optimizer", help="Optimizer to use.")
-    parser.add_argument(
-        "-l",
-        "--location",
-        dest="location",
-        default=".",
-        type=str,
-        help=(
-            "Location for experiment data. This location must exist! "
-            "Defaults to the current working directory."
-        ),
+    parser = argparse.ArgumentParser(
+        parents=[parser_optimizer(), parser_location()]
     )
+
     parser.add_argument(
         "-f",
         "--force",

@@ -9,6 +9,11 @@ from typing import Any
 
 import zmq
 
+from cyrxnopt.apps._utilities.common_args import (
+    parser_config,
+    parser_location,
+    parser_optimizer,
+)
 from cyrxnopt.apps._utilities.gen_logfile import gen_logfile
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerController import check_install
@@ -179,26 +184,10 @@ def is_quit_request(request: str) -> bool:
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments"""
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        parents=[parser_optimizer(), parser_location(), parser_config()]
+    )
 
-    # parser.add_argument("experiment_dir", help="Location for experiment data.")
-    parser.add_argument("optimizer", help="Optimizer to use.")
-    parser.add_argument(
-        "-l",
-        "--location",
-        dest="location",
-        default=".",
-        type=str,
-        help=("Location for experiment data."),
-    )
-    parser.add_argument(
-        "-c",
-        "--config",
-        dest="config",
-        default="config.json",
-        type=str,
-        help=("Configuration file to use for the given optimizer."),
-    )
     parser.add_argument(
         "-t",
         "--training-steps",

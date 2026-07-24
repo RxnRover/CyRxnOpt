@@ -4,6 +4,11 @@ import logging
 import os
 from pathlib import Path
 
+from cyrxnopt.apps._utilities.common_args import (
+    parser_config,
+    parser_location,
+    parser_optimizer,
+)
 from cyrxnopt.apps._utilities.gen_logfile import gen_logfile
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerController import check_install, get_config
@@ -69,34 +74,16 @@ def main() -> int:
 def parse_args() -> argparse.Namespace:
     """Parse command line arguments"""
 
-    parser = argparse.ArgumentParser()
-
-    # parser.add_argument("experiment_dir", help="Location for experiment data.")
-    parser.add_argument("optimizer", help="Optimizer to use.")
-    parser.add_argument(
-        "-l",
-        "--location",
-        dest="location",
-        default=".",
-        type=str,
-        help=("Location for experiment data."),
+    parser = argparse.ArgumentParser(
+        parents=[parser_config(), parser_location(), parser_optimizer()]
     )
+
     parser.add_argument(
         "-f",
         "--force",
         dest="force",
         action="store_true",
         help=("Forces a fresh configuration file to be created."),
-    )
-    parser.add_argument(
-        "-c",
-        "--config",
-        dest="config",
-        default="config.json",
-        type=str,
-        help=(
-            "Name of the configuration file to create. Defaults to 'config.json'."
-        ),
     )
 
     args = parser.parse_args()
