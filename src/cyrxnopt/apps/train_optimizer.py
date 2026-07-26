@@ -144,23 +144,35 @@ def input_server(training_steps: int) -> None:
 
         if type(json.loads(request)) == list:
             params = json.loads(request)
-            print("Reaction to perform:", params)
-            user_input = input(
-                f"Step {steps}: Enter reaction result ('q' to quit): "
-            )
 
-            if is_quit_request(user_input):
-                logger.info("Received quit input from user. Exitting...")
+            # Empty param list, assume no training on this optimizer
+            if len(params) == 0:
+                print(
+                    (
+                        "Empty parameters received."
+                        " Double-check that this optimizer needs training!"
+                    )
+                )
                 reply = b"quit"
-
-                socket.close()
-                context.term()
-                return
-
             else:
-                reply = str(float(user_input)).encode("utf-8")
+                print("Reaction to perform:", params)
+                user_input = input(
+                    f"Step {steps}: Enter reaction result ('q' to quit): "
+                )
+
+                if is_quit_request(user_input):
+                    logger.info("Received quit input from user. Exitting...")
+                    reply = b"quit"
+
+                else:
+                    reply = str(float(user_input)).encode("utf-8")
 
             steps += 1
+
+        if reply == b"quit":
+            socket.close()
+            context.term()
+            return
 
         logger.debug(f"Sending reply: {reply.decode(encoding='utf-8')}")
         socket.send(reply)
