@@ -2,31 +2,29 @@ import argparse
 import json
 import logging
 import os
-from pathlib import Path
 
-from cyrxnopt.apps._utilities.common_args import (
-    parser_config,
-    parser_location,
-    parser_optimizer,
-)
-from cyrxnopt.apps._utilities.gen_logfile import gen_logfile
+from cyrxnopt.apps._utilities import arg_validation as validate
+from cyrxnopt.apps._utilities import common_args as parsers
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerController import check_install, get_config
+
+logger = logging.getLogger(__name__)
 
 
 def main() -> int:
     args = parse_args()
 
-    logfile = gen_logfile(__file__, args.location)
-    logging.basicConfig(filename=logfile, filemode="w", level=logging.DEBUG)
+    optimizer = validate.optimizer(args.optimizer)
+    location = validate.location(args.location)
+    config_path = validate.config_path(args.config, location)
+
+    logging.basicConfig(level=args.log_level)
 
     # Prepare virtual environment
-    venv_path = os.path.join(args.location, "venv_{}".format(args.optimizer))
+    venv_path = os.path.join(location, "venv_{}".format(optimizer))
     venv = NestedVenv(venv_path)
 
-    if not os.path.exists(venv_path) and not check_install(
-        args.optimizer, venv
-    ):
+    if not os.path.exists(venv_path) and not check_install(optimizer, venv):
         print(
             (
                 "No optimizer install found at the given location. Run "
@@ -35,10 +33,10 @@ def main() -> int:
             )
         )
         return -1
-    logging.debug("Activating virtual environment at: {}".format(venv_path))
+    logger.info("Activating virtual environment at: {}".format(venv_path))
     venv.activate()
 
-    config_descriptions = get_config(args.optimizer, venv)
+    config_descriptions = get_config(optimizer, venv)
 
     config_contents = {}
     for config in config_descriptions:
@@ -50,20 +48,18 @@ def main() -> int:
 
         config_contents[config["name"]] = value
 
-    config_file = os.path.join(args.location, args.config)
-
-    if Path(config_file).exists() and not args.force:
+    if config_path.exists() and not args.force:
         print(
             (
                 "Config file already exists at {}. "
                 "Use the '-f' flag to overwrite this file with a new, "
                 "default config file."
-            ).format(config_file)
+            ).format(config_path)
         )
         return -1
 
-    with open(config_file, "w") as fout:
-        print("Writing config to file:", config_file)
+    with open(config_path, "w") as fout:
+        print("Writing config to file:", config_path)
         json.dump(config_contents, fout, indent=4)
 
     print("Reminder: You must edit the config file for your experiment!")
@@ -75,7 +71,12 @@ def parse_args() -> argparse.Namespace:
     """Parse command line arguments"""
 
     parser = argparse.ArgumentParser(
-        parents=[parser_config(), parser_location(), parser_optimizer()]
+        parents=[
+            parsers.optimizer(),
+            parsers.config(),
+            parsers.location(),
+            parsers.logging(),
+        ]
     )
 
     parser.add_argument(

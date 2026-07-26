@@ -2,51 +2,40 @@ import argparse
 import logging
 import os
 
-from cyrxnopt.apps._utilities.common_args import (
-    parser_location,
-    parser_optimizer,
-)
-from cyrxnopt.apps._utilities.gen_logfile import gen_logfile
+from cyrxnopt.apps._utilities import arg_validation as validate
+from cyrxnopt.apps._utilities import common_args as parsers
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerController import check_install, install
 
+logger = logging.getLogger(__name__)
+
 
 def main() -> int:
-    """Program entry point.
-
-    Return codes::
-
-       0 - Program ran successfully.
-       1 - An error occurred.
-       2 - Optimizer already installed.
-
-    :return: Return code as detailed in description
-    :rtype: int
-    """
     args = parse_args()
 
-    logfile = gen_logfile(__file__, args.location)
-    logging.basicConfig(filename=logfile, filemode="w", level=logging.DEBUG)
+    optimizer = validate.optimizer(args.optimizer)
+    location = validate.location(args.location)
 
-    logging.debug("Argparse arguments: {}".format(args))
+    logging.basicConfig(level=args.log_level)
 
     # Prepare virtual environment
-    venv_path = os.path.join(args.location, "venv_{}".format(args.optimizer))
+    venv_path = os.path.join(location, f"venv_{optimizer}")
     venv = NestedVenv(venv_path)
 
     if not os.path.exists(venv_path) or args.force:
-        print("Creating virtual environment at:", venv_path)
+        print(f"Creating virtual environment at: {venv_path}")
         venv.create()
-    logging.debug("Activating virtual environment at: {}".format(venv_path))
+    logger.info(f"Activating virtual environment at: {venv_path}")
     venv.activate()
 
     # Install the optimizer if it is not already installed
-    if not check_install(args.optimizer, venv):
+    if not check_install(optimizer, venv):
         install(
-            args.optimizer,
+            optimizer,
             venv,
             local_paths={"amlro": "../amlo", "edboplus": "deps/edbop"},
         )
+        print(f'Optimizer "{optimizer}" installed in venv at {venv_path}')
     else:
         print(
             (
@@ -64,7 +53,7 @@ def parse_args() -> argparse.Namespace:
     """Parse command line arguments"""
 
     parser = argparse.ArgumentParser(
-        parents=[parser_optimizer(), parser_location()]
+        parents=[parsers.optimizer(), parsers.location(), parsers.logging()]
     )
 
     parser.add_argument(

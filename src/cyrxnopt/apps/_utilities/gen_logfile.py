@@ -1,7 +1,9 @@
 import os
+from pathlib import Path
+from typing import Union
 
 
-def gen_logfile(filename: str, location: str) -> str:
+def gen_logfile(filename: str, location: Union[Path, str]) -> str:
     """Converts the name of a file to a log file name, replacing the extension
     with '.log' and prepending the new path in a platform-independent way.
 

@@ -1,14 +1,19 @@
 import argparse
 
 
-def parser_optimizer() -> argparse.ArgumentParser:
+def optimizer() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument("optimizer", help="Optimizer to use.")
 
     return parser
 
 
-def parser_location() -> argparse.ArgumentParser:
+def location() -> argparse.ArgumentParser:
+    """Provides an argument parser for a root experiment/operating location.
+
+    :return: Parser providing arguments for root experiment/operating location.
+    :rtype: argparse.ArgumentParser
+    """
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument(
         "-l",
@@ -17,7 +22,7 @@ def parser_location() -> argparse.ArgumentParser:
         default=".",
         type=str,
         help=(
-            "Location for experiment data. This location must exist! "
+            "Root location for experiment data. This location must exist! "
             "Defaults to the current working directory."
         ),
     )
@@ -25,7 +30,12 @@ def parser_location() -> argparse.ArgumentParser:
     return parser
 
 
-def parser_config() -> argparse.ArgumentParser:
+def config() -> argparse.ArgumentParser:
+    """Provides an argument parser for getting a config file.
+
+    :return: Parser providing arguments for getting a config file.
+    :rtype: argparse.ArgumentParser
+    """
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument(
         "-c",
@@ -37,6 +47,26 @@ def parser_config() -> argparse.ArgumentParser:
             "Configuration file to use for the given optimizer. "
             "Defaults to <location>/config.json"
         ),
+    )
+
+    return parser
+
+
+def logging() -> argparse.ArgumentParser:
+    """Provides an argument parser for common logging capabilities.
+
+    :return: Parser providing arguments for logging capabilities.
+    :rtype: argparse.ArgumentParser
+    """
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument(
+        "--log-level",
+        dest="log_level",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        default="WARNING",
+        # Make choices case insensitive
+        type=str.upper,
+        help=("Set the log level. Defaults to WARNING"),
     )
 
     return parser

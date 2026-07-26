@@ -1,32 +1,30 @@
 import argparse
 import json
 import logging
-import os
-from pathlib import Path
+import traceback
 
-from cyrxnopt.apps._utilities.common_args import (
-    parser_config,
-    parser_location,
-    parser_optimizer,
-)
-from cyrxnopt.apps._utilities.gen_logfile import gen_logfile
+from cyrxnopt.apps._utilities import arg_validation as validate
+from cyrxnopt.apps._utilities import common_args as parsers
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerController import check_install, set_config
+
+logger = logging.getLogger(__name__)
 
 
 def main() -> int:
     args = parse_args()
 
-    logfile = gen_logfile(__file__, args.location)
-    logging.basicConfig(filename=logfile, filemode="w", level=logging.DEBUG)
+    optimizer = validate.optimizer(args.optimizer)
+    location = validate.location(args.location)
+    config_path = validate.config_path(args.config, location)
+
+    logging.basicConfig(level=args.log_level)
 
     # Prepare virtual environment
-    venv_path = os.path.join(args.location, "venv_{}".format(args.optimizer))
+    venv_path = location / f"venv_{optimizer}"
     venv = NestedVenv(venv_path)
 
-    if not os.path.exists(venv_path) and not check_install(
-        args.optimizer, venv
-    ):
+    if not venv_path.exists() and not check_install(optimizer, venv):
         print(
             (
                 "No optimizer install found at the given location. Run "
@@ -35,23 +33,39 @@ def main() -> int:
             )
         )
         return -1
-    logging.debug("Activating virtual environment at: {}".format(venv_path))
+    logger.debug(f"Activating virtual environment at: {venv_path}")
     venv.activate()
 
-    # TODO: Make args.config relative to args.location
-
     # Make sure the config file exists
-    if not Path(args.config).exists():
-        print("Config file not found at {}.".format(args.config))
+    if not config_path.exists():
+        print(f"Config file not found at {config_path}.")
         return -1
 
-    with open(args.config, "r") as fin:
-        logging.debug("Reading config to file: {}".format(args.config))
+    with open(config_path, "r") as fin:
+        logger.debug(f"Reading config to file: {config_path}")
         config_contents = json.load(fin)
 
-    print("Configuring optimizer: {}".format(args.optimizer))
+    print(f"Configuring optimizer: {optimizer}")
     print("Potential output from the optimizer:")
-    set_config(args.optimizer, venv, config_contents, args.location)
+    try:
+        set_config(optimizer, venv, config_contents, str(location))
+    except Exception:
+        # Print error message to stdout
+        print(
+            (
+                "Configuring the optimizer failed! "
+                "See log output for more details."
+            )
+        )
+        # As well as in the logs
+        logger.critical(
+            (
+                "Exception occurred while configuring the optimizer:\n"
+                f"{traceback.format_exc()}"
+            )
+        )
+
+        return -1
 
     return 0
 
@@ -60,7 +74,12 @@ def parse_args() -> argparse.Namespace:
     """Parse command line arguments"""
 
     parser = argparse.ArgumentParser(
-        parents=[parser_optimizer(), parser_config(), parser_location()]
+        parents=[
+            parsers.optimizer(),
+            parsers.config(),
+            parsers.location(),
+            parsers.logging(),
+        ]
     )
     args = parser.parse_args()
 

@@ -2,41 +2,48 @@ import argparse
 import json
 import logging
 import os
+import sys
 import threading
 import time
-from pathlib import Path
 from typing import Any
+
+# On POSIX systems, input() prompts may be redirected to stderr instead of
+# stdout due to an underlying C implementation from like 1993. Importing readline
+# explicitly should resolve this, but a reliable readline doesn't exist on Windows,
+# so we had to exclude it.
+#
+# See this Python discussion for more details:
+# https://discuss.python.org/t/builtin-function-input-writes-its-prompt-to-sys-stderr-and-not-to-sys-stdout/12955
+if sys.platform != "win32":
+    import readline  # noqa: F401
 
 import zmq
 
-from cyrxnopt.apps._utilities.common_args import (
-    parser_config,
-    parser_location,
-    parser_optimizer,
-)
-from cyrxnopt.apps._utilities.gen_logfile import gen_logfile
+from cyrxnopt.apps._utilities import arg_validation as validate
+from cyrxnopt.apps._utilities import common_args as parsers
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerController import check_install
 from cyrxnopt.utilities.predict_server import predict_server
 from cyrxnopt.utilities.zmq import zmq_helpers
 from cyrxnopt.utilities.zmq.zmq_obj_function import zmq_obj_function
 
+logger = logging.getLogger(__name__)
+
 
 def main() -> int:
     args = parse_args()
 
-    logfile = gen_logfile(__file__, args.location)
-    logging.basicConfig(filename=logfile, filemode="w", level=logging.DEBUG)
+    optimizer = validate.optimizer(args.optimizer)
+    location = validate.location(args.location)
+    config_path = validate.config_path(args.config, location)
 
-    logging.debug("Argparse arguments: {}".format(args))
+    logging.basicConfig(level=args.log_level)
 
     # Prepare virtual environment
-    venv_path = os.path.join(args.location, "venv_{}".format(args.optimizer))
+    venv_path = os.path.join(location, f"venv_{optimizer}")
     venv = NestedVenv(venv_path)
 
-    if not os.path.exists(venv_path) and not check_install(
-        args.optimizer, venv
-    ):
+    if not os.path.exists(venv_path) and not check_install(optimizer, venv):
         print(
             (
                 "No optimizer install found at the given location. Run "
@@ -45,18 +52,16 @@ def main() -> int:
             )
         )
         return -1
-    logging.debug("Activating virtual environment at: {}".format(venv_path))
+    logging.info(f"Activating virtual environment at: {venv_path}")
     venv.activate()
 
-    # TODO: Make args.config relative to args.location
-
     # Make sure the config file exists
-    if not Path(args.config).exists():
-        print("Config file not found at {}.".format(args.config))
+    if not config_path.exists():
+        print(f"Config file not found at {config_path}.")
         return -1
 
-    with open(args.config, "r") as fin:
-        logging.debug("Reading config to file: {}".format(args.config))
+    with open(config_path, "r") as fin:
+        logging.debug(f"Reading config to file: {config_path}")
         config_contents = json.load(fin)
 
     # address = config["ip_address"] + ":" + config["port"]
@@ -72,7 +77,7 @@ def main() -> int:
     print("Beginning optimization...")
     # The optimization thread is never used here after being spun up
     _ = start_optimization_thread(
-        args.optimizer, [], 0, args.location, config_contents, venv, obj_func
+        optimizer, [], 0, location, config_contents, venv, obj_func
     )
     user_input_thread = start_user_input_thread(config_contents["budget"])
     while user_input_thread.is_alive():
@@ -117,7 +122,7 @@ def input_server(training_steps: int) -> None:
     context = zmq.Context(1)
     socket = context.socket(zmq.REP)
 
-    logging.debug("Binding to {}".format(SERVER_ENDPOINT))
+    logging.debug(f"Binding to {SERVER_ENDPOINT}")
     socket.bind(SERVER_ENDPOINT)
 
     # Register the socket with a poller
@@ -137,13 +142,11 @@ def input_server(training_steps: int) -> None:
             params = json.loads(request)
             print("Reaction to perform:", params)
             user_input = input(
-                "Step {}: Enter reaction result ('q' to quit): ".format(steps)
+                f"Step {steps}: Enter reaction result ('q' to quit): "
             )
 
             if is_quit_request(user_input):
-                logging.debug(
-                    "Received quit input from user. Exitting..."
-                )  # DEBUG
+                logging.info("Received quit input from user. Exitting...")
                 reply = b"quit"
 
                 socket.close()
@@ -154,7 +157,6 @@ def input_server(training_steps: int) -> None:
                 reply = str(float(user_input)).encode("utf-8")
 
             steps += 1
-            reply = json.dumps(reply).encode("utf-8")
 
         logging.debug(f"Sending reply: {reply.decode('utf-8')}")
         socket.send(reply)
@@ -184,7 +186,12 @@ def parse_args() -> argparse.Namespace:
     """Parse command line arguments"""
 
     parser = argparse.ArgumentParser(
-        parents=[parser_optimizer(), parser_config(), parser_location()]
+        parents=[
+            parsers.optimizer(),
+            parsers.config(),
+            parsers.location(),
+            parsers.logging(),
+        ]
     )
 
     args = parser.parse_args()
