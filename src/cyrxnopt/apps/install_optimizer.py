@@ -33,7 +33,6 @@ def main() -> int:
         install(
             optimizer,
             venv,
-            local_paths={"amlro": "../amlo", "edboplus": "deps/edbop"},
         )
         print(f'Optimizer "{optimizer}" installed in venv at {venv_path}')
     else:
