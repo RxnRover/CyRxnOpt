@@ -32,19 +32,31 @@ def train_server(
             venv,
             obj_func,
         )
-    # TODO: Once we find an algorithm that uses this, we'll have to fix
-    #       whatever it is returning
-    # else:
-    #     results = train(
-    #         optimizer_name,
-    #         prev_param,
-    #         yield_value,
-    #         training_steps,
-    #         output_dir,
-    #         config,
-    #         venv,
-    #         obj_func,
-    #     )
+    else:
+        prev_param = train(
+            optimizer_name,
+            venv,
+            prev_param,
+            yield_value,
+            output_dir,
+            config,
+            obj_func=obj_func,
+        )
+
+        # Algorithm doesn't support training
+        if len(prev_param) == 0:
+            yield_value = 0
+        else:
+            # TODO: Support grabbing the last yield value when an algorithm
+            # behaves like this
+            raise RuntimeError(
+                (
+                    "Algorithms with internal training loops are not yet "
+                    f"supported by {__name__}. Please submit an issue "
+                    "requesting this feature if you have an optimizer that"
+                    " requires this."
+                )
+            )
 
     return prev_param, yield_value
 
