@@ -130,6 +130,12 @@ class OptimizerNMSimplex(OptimizerABC):
         :rtype: list[Any]
         """
 
+        # If an objective function is provided, assume that the user is trying
+        # to train this algorithm and send a signal that there is no training
+        # to be done.
+        if obj_func is not None:
+            obj_func([])
+
         return []
 
     def predict(
