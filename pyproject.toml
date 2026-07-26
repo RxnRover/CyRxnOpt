@@ -69,11 +69,7 @@ Download = "https://github.com/RxnRover/CyRxnOpt/archive/refs/heads/main.zip"
 Changelog = "https://github.com/RxnRover/CyRxnOpt/releases/latest"
 
 [project.scripts]
-install_optimizer = "cyrxnopt.apps.install_optimizer:main"
-create_config = "cyrxnopt.apps.create_config:main"
-configure_optimizer = "cyrxnopt.apps.configure_optimizer:main"
-train_optimizer = "cyrxnopt.apps.train_optimizer:main"
-start_optimization = "cyrxnopt.apps.start_optimization:main"
+cyrxnopt = "cyrxnopt.apps.cyrxnopt:run"
 
 # Install these optional development dependencies with pip's --group flag while
 # in the project root directory.
