@@ -118,16 +118,13 @@ def start_user_input_thread(*args: Any, **kwargs: Any) -> threading.Thread:
     return thread
 
 
-def input_server(training_steps: int) -> None:
-    SERVER_ENDPOINT = "tcp://*:5555"
-
+def input_server(training_steps: int, endpoint: str = "tcp://*:5555") -> None:
     # Create the context and socket
     context = zmq.Context(1)
     socket = context.socket(zmq.REP)
 
-    # TODO: Accept server endpoint argument
-    logger.debug(f"Binding to {SERVER_ENDPOINT}")
-    socket.bind(SERVER_ENDPOINT)
+    logger.debug(f"Binding to {endpoint}")
+    socket.bind(endpoint)
 
     # Register the socket with a poller
     poll = zmq.Poller()
