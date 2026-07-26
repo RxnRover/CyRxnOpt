@@ -45,6 +45,13 @@ def main(args: argparse.Namespace) -> int:
 
         return 2
 
+    print(
+        (
+            "Reminder: Generate a config file for your optimizer now with "
+            "'cyrxnopt config-init'."
+        )
+    )
+
     return 0
 
 

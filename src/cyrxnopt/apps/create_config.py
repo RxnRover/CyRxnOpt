@@ -62,7 +62,12 @@ def main(args: argparse.Namespace) -> int:
         print("Writing config to file:", config_path)
         json.dump(config_contents, fout, indent=4)
 
-    print("Reminder: You must edit the config file for your experiment!")
+    print(
+        (
+            "Reminder: You must edit the config file for your experiment! "
+            "Then, run 'cyrxnopt config' for your optimizer."
+        )
+    )
 
     return 0
 

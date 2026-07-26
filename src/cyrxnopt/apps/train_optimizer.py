@@ -84,6 +84,13 @@ def main(args: argparse.Namespace) -> int:
     while user_input_thread.is_alive():
         time.sleep(1)
 
+    print(
+        (
+            "Reminder: After training, you can start an optimization with "
+            "'cyrxnopt predict'."
+        )
+    )
+
     return 0
 
 

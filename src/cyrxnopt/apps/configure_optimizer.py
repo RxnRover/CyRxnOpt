@@ -67,6 +67,13 @@ def main(args: argparse.Namespace) -> int:
 
         return -1
 
+    print(
+        (
+            "Reminder: You may need to train your optimizer now with "
+            "'cyrxnopt train' or you can go straight to 'cyrxnopt predict'."
+        )
+    )
+
     return 0
 
 
