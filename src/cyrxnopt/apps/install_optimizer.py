@@ -1,6 +1,8 @@
 import argparse
 import logging
 import os
+import sys
+from typing import Callable
 
 from cyrxnopt.apps._utilities import arg_validation as validate
 from cyrxnopt.apps._utilities import common_args as parsers
@@ -10,9 +12,7 @@ from cyrxnopt.OptimizerController import check_install, install
 logger = logging.getLogger(__name__)
 
 
-def main() -> int:
-    args = parse_args()
-
+def main(args: argparse.Namespace) -> int:
     optimizer = validate.optimizer(args.optimizer)
     location = validate.location(args.location)
 
@@ -48,10 +48,12 @@ def main() -> int:
     return 0
 
 
-def parse_args() -> argparse.Namespace:
-    """Parse command line arguments"""
-
-    parser = argparse.ArgumentParser(
+def get_parser(
+    create_lambda: Callable[
+        ..., argparse.ArgumentParser
+    ] = argparse.ArgumentParser,
+) -> argparse.ArgumentParser:
+    parser = create_lambda(
         parents=[parsers.optimizer(), parsers.location(), parsers.logging()]
     )
 
@@ -65,10 +67,19 @@ def parse_args() -> argparse.Namespace:
         ),
     )
 
-    args = parser.parse_args()
+    return parser
 
-    return args
+
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments"""
+    parser = get_parser()
+
+    return parser.parse_args()
+
+
+def run() -> int:
+    return main(parse_args())
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(run())

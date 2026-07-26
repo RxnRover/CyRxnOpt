@@ -5,7 +5,7 @@ import os
 import sys
 import threading
 import time
-from typing import Any
+from typing import Any, Callable
 
 # On POSIX systems, input() prompts may be redirected to stderr instead of
 # stdout due to an underlying C implementation from like 1993. Importing readline
@@ -30,9 +30,7 @@ from cyrxnopt.utilities.zmq.zmq_obj_function import zmq_obj_function
 logger = logging.getLogger(__name__)
 
 
-def main() -> int:
-    args = parse_args()
-
+def main(args: argparse.Namespace) -> int:
     optimizer = validate.optimizer(args.optimizer)
     location = validate.location(args.location)
     config_path = validate.config_path(args.config, location)
@@ -180,10 +178,12 @@ def is_quit_request(request: str) -> bool:
     return is_quit
 
 
-def parse_args() -> argparse.Namespace:
-    """Parse command line arguments"""
-
-    parser = argparse.ArgumentParser(
+def get_parser(
+    create_lambda: Callable[
+        ..., argparse.ArgumentParser
+    ] = argparse.ArgumentParser,
+) -> argparse.ArgumentParser:
+    parser = create_lambda(
         parents=[
             parsers.optimizer(),
             parsers.config(),
@@ -192,10 +192,20 @@ def parse_args() -> argparse.Namespace:
         ]
     )
 
-    args = parser.parse_args()
+    return parser
 
-    return args
+
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments"""
+
+    parser = get_parser()
+
+    return parser.parse_args()
+
+
+def run() -> int:
+    return main(parse_args())
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(run())
