@@ -20,8 +20,10 @@ logger = logging.getLogger(__name__)
 class OptimizerEDBOp(OptimizerABC):
     # Private static data member to list dependency packages required
     # by this class
-    # _packages = ["benchmarking", "edboplus", "pandas"]
-    _packages = ["setuptools<82.0", "edboplus"]
+    _packages = [
+        "setuptools<82.0",
+        "git+https://github.com/zachcran/edboplus@performance_improvements",
+    ]
 
     def __init__(self, venv: NestedVenv) -> None:
         """Optimizer class for the EDBO+ algorithm.
