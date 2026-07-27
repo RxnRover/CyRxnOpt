@@ -13,19 +13,40 @@ problematic_optimizers = [
 
 def train_server(
     optimizer_name: str,
-    prev_param: list[Any],
-    yield_value: float,
     training_steps: int,
     output_dir: str,
     config: dict[str, Any],
     venv: "NestedVenv",
     obj_func: Callable[[list[float]], float],
 ) -> Tuple[list[Any], float]:
+    """Unified behavioral interface for training all supported optimizers.
+
+    This interface unifies the behavior of all supported optimizers to be
+    internal training loops accepting an objective function, wrapping
+    algorithms with one-call-at-a-time training behavior with
+    :func:`train_faux_server` to emulate an internal training loop.
+
+    :param optimizer_name: Name of the supported optimizer to use
+    :type optimizer_name: str
+    :param training_steps: Number of training steps to perform
+    :type training_steps: int
+    :param output_dir: Output directory for saving data files
+    :type output_dir: str
+    :param config: CyRxnOpt-level config for the optimizer
+    :type config: dict[str, Any]
+    :param venv: Virtual environment to use
+    :type venv: NestedVenv
+    :param obj_func: Objective function to optimize
+    :type obj_func: Callable[[list[float]], float]
+
+    :raises RuntimeError: Internal training loop algorithms are not yet supported.
+
+    :return: Final training parameters and resulting objective value
+    :rtype: Tuple[list[Any], float]
+    """
     if optimizer_name.lower() in problematic_optimizers:
         prev_param, yield_value = train_faux_server(
             optimizer_name,
-            prev_param,
-            yield_value,
             training_steps,
             output_dir,
             config,
@@ -36,8 +57,8 @@ def train_server(
         prev_param = train(
             optimizer_name,
             venv,
-            prev_param,
-            yield_value,
+            [],
+            0,
             output_dir,
             config,
             obj_func=obj_func,
@@ -63,14 +84,35 @@ def train_server(
 
 def train_faux_server(
     optimizer_name: str,
-    prev_param: list[Any],
-    yield_value: float,
     training_steps: int,
     output_dir: str,
     config: dict[str, Any],
     venv: "NestedVenv",
     obj_func: Callable[[list[float]], float],
 ) -> Tuple[list[Any], float]:
+    """Wrapper for one-call-at-a-time training behavior to unify the
+    training behavior interface for all supported algorithms as internal
+    training loops
+
+    :param optimizer_name: Name of the supported optimizer to use
+    :type optimizer_name: str
+    :param training_steps: Number of training steps to perform
+    :type training_steps: int
+    :param output_dir: Output directory for saving data files
+    :type output_dir: str
+    :param config: CyRxnOpt-level config for the optimizer
+    :type config: dict[str, Any]
+    :param venv: Virtual environment to use
+    :type venv: NestedVenv
+    :param obj_func: Objective function to optimize
+    :type obj_func: Callable[[list[float]], float]
+
+    :return: Final training parameters and resulting objective value
+    :rtype: Tuple[list[Any], float]
+    """
+    prev_param: list[float] = []
+    yield_value = 0.0
+
     for i in range(training_steps):
         prev_param = train(
             optimizer_name,
