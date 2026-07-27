@@ -101,7 +101,7 @@ class OptimizerSQSnobFit(OptimizerABC):
 
         self._validate_config(config)
 
-        output_file = os.path.join(experiment_dir, "config.json")
+        output_file = os.path.join(experiment_dir, self._config_filename)
 
         # Write the configuration to a file for later use
         with open(output_file, "w") as fout:

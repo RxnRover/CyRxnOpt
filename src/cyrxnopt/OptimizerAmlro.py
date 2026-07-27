@@ -30,6 +30,11 @@ class OptimizerAmlro(OptimizerABC):
 
         super().__init__(venv)
 
+        self._full_combo_filename = "full_combo_file.txt"
+        self._training_combo_filename = "training_combo_file.txt"
+        self._training_set_filename = "training_set_file.txt"
+        self._training_set_decoded_filename = "training_set_decoded_file.txt"
+
     def get_config(self) -> list[dict[str, Any]]:
         """Gets the configuration options available for this optimizer.
 
@@ -133,19 +138,21 @@ class OptimizerAmlro(OptimizerABC):
 
         full_combo_df.columns = feature_names_list
 
-        full_combo_path = os.path.join(experiment_dir, "full_combo_file.txt")
+        full_combo_path = os.path.join(
+            experiment_dir, self._full_combo_filename
+        )
         training_combo_path = os.path.join(
-            experiment_dir, "training_combo_file.txt"
+            experiment_dir, self._training_combo_filename
         )
 
         full_combo_df.to_csv(full_combo_path, index=False)
         training_combo_df.to_csv(training_combo_path, index=False)
 
         training_set_path = os.path.join(
-            experiment_dir, "training_set_file.txt"
+            experiment_dir, self._training_set_filename
         )
         training_set_decoded_path = os.path.join(
-            experiment_dir, "training_set_decoded_file.txt"
+            experiment_dir, self._training_set_decoded_filename
         )
 
         # Write the reaction conditions for training dataset into files
@@ -158,7 +165,7 @@ class OptimizerAmlro(OptimizerABC):
             feature_names = ",".join([str(elem) for elem in feature_names_list])
             file_object.write(feature_names + ",Yield" + "\n")
 
-        config_path = os.path.join(experiment_dir, "config.json")
+        config_path = os.path.join(experiment_dir, self._config_filename)
 
         with open(config_path, "w") as fout:
             json.dump(config, fout, indent=4)
@@ -205,13 +212,13 @@ class OptimizerAmlro(OptimizerABC):
         self._import_deps()
 
         training_set_path = os.path.join(
-            experiment_dir, "training_set_file.txt"
+            experiment_dir, self._training_set_filename
         )
         training_set_decoded_path = os.path.join(
-            experiment_dir, "training_set_decoded_file.txt"
+            experiment_dir, self._training_set_decoded_filename
         )
         training_combo_path = os.path.join(
-            experiment_dir, "training_combo_file.txt"
+            experiment_dir, self._training_combo_filename
         )
 
         if config["direction"].lower() == "min":
@@ -294,12 +301,14 @@ class OptimizerAmlro(OptimizerABC):
         self._import_deps()
 
         training_set_path = os.path.join(
-            experiment_dir, "training_set_file.txt"
+            experiment_dir, self._training_set_filename
         )
         training_set_decoded_path = os.path.join(
-            experiment_dir, "training_set_decoded_file.txt"
+            experiment_dir, self._training_set_decoded_filename
         )
-        full_combo_path = os.path.join(experiment_dir, "full_combo_file.txt")
+        full_combo_path = os.path.join(
+            experiment_dir, self._full_combo_filename
+        )
 
         if config["direction"].lower() == "min":
             yield_value = -yield_value

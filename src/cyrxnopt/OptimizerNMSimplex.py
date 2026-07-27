@@ -25,6 +25,8 @@ class OptimizerNMSimplex(OptimizerABC):
 
         super().__init__(venv)
 
+        self._results_filename = "results.csv"
+
     def get_config(self) -> list[dict[str, Any]]:
         """Gets the configuration options available for this optimizer.
 
@@ -110,7 +112,7 @@ class OptimizerNMSimplex(OptimizerABC):
 
         self._validate_config(config)
 
-        output_file = os.path.join(experiment_dir, "config.json")
+        output_file = os.path.join(experiment_dir, self._config_filename)
 
         # Write the configuration to a file for later use
         with open(output_file, "w") as fout:
@@ -188,10 +190,6 @@ class OptimizerNMSimplex(OptimizerABC):
 
         self._import_deps()
 
-        # Load the config file
-        # with open(os.path.join(experiment_dir, "config.json")) as fout:
-        #     config = json.load(fout)
-
         # Convert initial parameters to tuple
         param_init = tuple(config["param_init"])
 
@@ -218,7 +216,7 @@ class OptimizerNMSimplex(OptimizerABC):
         )
 
         raw_results: list = []
-        with open(os.path.join(experiment_dir, "results.csv")) as fin:
+        with open(os.path.join(experiment_dir, self._results_filename)) as fin:
             for row in fin.readlines():
                 row_list = row.split(",")
                 row_list_float = [float(x) for x in row_list]
@@ -254,8 +252,9 @@ class OptimizerNMSimplex(OptimizerABC):
             :type intermediate_result: scipy.optimize.OptimizeResult.OptimizeResult
             """
 
-            # TODO: Make this file name a constant for the package
-            results_path = os.path.join(str(experiment_dir), "results.csv")
+            results_path = os.path.join(
+                str(experiment_dir), self._results_filename
+            )
 
             # Create results list with parameters before results.
             # This will be the next row in the results file

@@ -170,7 +170,7 @@ from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().run(
 )
 """)
 
-        config_path = os.path.join(experiment_dir, "config.json")
+        config_path = os.path.join(experiment_dir, self._config_filename)
 
         with open(config_path, "w") as fout:
             json.dump(config, fout, indent=4, cls=NpEncoder)

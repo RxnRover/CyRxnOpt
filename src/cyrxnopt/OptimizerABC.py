@@ -30,6 +30,8 @@ class OptimizerABC(ABC):
         self.__venv = venv
         self.venv_worker = VenvWorker(venv.prefix)
 
+        self._config_filename = "config.json"
+
     def check_install(self) -> bool:
         """Check if an installation for this optimizer exists or not.
 

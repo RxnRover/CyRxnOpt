@@ -142,7 +142,7 @@ class OptimizerRandom(OptimizerABC):
         # translated_config = self._config_translate(config)
         translated_config = config
 
-        config_path = os.path.join(experiment_dir, "config.json")
+        config_path = os.path.join(experiment_dir, self._config_filename)
 
         with open(config_path, "w") as fout:
             json.dump(translated_config, fout, indent=4)
