@@ -17,6 +17,32 @@ def predict_server(
     venv: "NestedVenv",
     obj_func: Callable[[list[float]], float],
 ) -> Union[list[Any], dict[str, Any]]:
+    """Unified behavioral interface for prediction on all supported optimizers.
+
+    This interface unifies the behavior of all supported optimizers to be
+    internal optimization loops accepting an objective function, wrapping
+    algorithms with one-call-at-a-time optimization behavior with
+    :func:`predict_faux_server` to emulate an internal optimization loop.
+
+    :param optimizer_name: Name of the supported optimizer to use
+    :type optimizer_name: str
+    :param prev_param: Parameters provided from the previous prediction
+        or from the final call to training.
+    :type prev_param: list[Any]
+    :param yield_value: Result from the previous suggested conditions
+    :type yield_value: float
+    :param output_dir: Output directory for saving data files
+    :type output_dir: str
+    :param config: CyRxnOpt-level config for the optimizer
+    :type config: dict[str, Any]
+    :param venv: Virtual environment to use
+    :type venv: NestedVenv
+    :param obj_func: Objective function to optimize
+    :type obj_func: Callable[[list[float]], float]
+
+    :return: Final optimization loop results
+    :rtype: Union[list[Any], dict[str, Any]]
+    """
     if optimizer_name.lower() in problematic_optimizers:
         results = predict_faux_server(
             optimizer_name,
@@ -50,6 +76,29 @@ def predict_faux_server(
     venv: "NestedVenv",
     obj_func: Callable[[list[float]], float],
 ) -> Union[list[Any], dict[str, Any]]:
+    """Wrapper for one-call-at-a-time prediction behavior to unify the
+    optimization behavior interface for all supported algorithms as internal
+    optimization loops
+
+    :param optimizer_name: Name of the supported optimizer to use
+    :type optimizer_name: str
+    :param prev_param: Parameters provided from the previous prediction
+        or from the final call to training.
+    :type prev_param: list[Any]
+    :param yield_value: Result from the previous suggested conditions
+    :type yield_value: float
+    :param output_dir: Output directory for saving data files
+    :type output_dir: str
+    :param config: CyRxnOpt-level config for the optimizer
+    :type config: dict[str, Any]
+    :param venv: Virtual environment to use
+    :type venv: NestedVenv
+    :param obj_func: Objective function to optimize
+    :type obj_func: Callable[[list[float]], float]
+
+    :return: Final optimization loop results
+    :rtype: Union[list[Any], dict[str, Any]]
+    """
     results = {
         "total_iter": config["budget"],
         "best_coords": None,
