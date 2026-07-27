@@ -54,9 +54,25 @@ workflows.
 
 .. _cyrxnopt_overview_install:
 
-************************
- Installation and Usage
-************************
+**************
+ Installation
+**************
+
+Prerequisites
+=============
+
+- Python 3.9 to operate with all supported optimizers. Some algorithms may
+  function on higher Python versions as well.
+- Project dependencies, as well as other project details, can be found in the
+  ``pyproject.toml`` file's ``dependencies`` list of the ``[project]`` section,
+  typically automatically installed with the package.
+- Optional dependency groups for development-related activities like building
+  documentation and running tests can be found in the ``[dependency-groups]``
+  section of ``pyproject.toml``, installed with ``pip install --group
+  <group_name>``.
+
+Installation
+============
 
 CyRxnOpt is a Python-based library available for installation from *PyPI* using
 ``pip``:
@@ -65,8 +81,17 @@ CyRxnOpt is a Python-based library available for installation from *PyPI* using
 
     pip install cyrxnopt
 
+Or manually inside the cloned repository with:
+
+.. code-block:: bash
+
+    pip install .
+
 Further instructions can be found in `the documentation
 <https://rxnrover.github.io/CyRxnOpt/overview/installation.html>`__.
+
+Usage
+-----
 
 .. _cyrxnopt_overview_cli_install:
 
