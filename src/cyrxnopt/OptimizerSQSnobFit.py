@@ -136,8 +136,14 @@ class OptimizerSQSnobFit(OptimizerABC):
         experiment_dir: str,
         config: dict[str, Any],
         obj_func: Optional[Callable[..., float]] = None,
-    ) -> list[Any]:
+    ) -> Any:
         """Find the desired optimum of the provided objective function.
+
+        .. note::
+
+            **Behavior Note:** This method operates with an internal optimization
+            loop, not a one-call-at-a-time approach. For a unified behavioral
+            interface, please use :func:`cyrxnopt.utilities.predict_server`.
 
         :param prev_param: Parameters provided from the previous prediction,
                            provide an empty list for the first call
@@ -148,12 +154,23 @@ class OptimizerSQSnobFit(OptimizerABC):
         :type experiment_dir: str
         :param config: CyRxnOpt-level config for the optimizer
         :type config: dict[str, Any]
-        :param obj_func: Objective function to optimize, defaults to None
-        :type obj_func: Optional[Callable[..., float]], optional
+        :param obj_func: Objective function to optimize, defaults to None. Due
+            to the alternative behavior of this method, this is *required*.
+        :type obj_func: Optional[Callable[..., float]]
 
         :returns: The next suggested reaction to perform
-        :rtype: list[Any]
+        :rtype: `SQCommon.Result
+            <https://github.com/scikit-quant/scikit-quant/blob/master/opt/common/python/SQCommon/_result.py#L6>`__
         """
+
+        if obj_func is None:
+            raise RuntimeError(
+                (
+                    "Objective function is required for this implementation of "
+                    "SQSnobFit (SNOBFIT), as it does not support "
+                    "one-call-at-a-time approach."
+                )
+            )
 
         self._import_deps()
 
@@ -188,7 +205,6 @@ class OptimizerSQSnobFit(OptimizerABC):
 
         result.history = history
 
-        # TODO: This is returning a result object, not the next suggested params
         return result
 
     def _import_deps(self) -> None:

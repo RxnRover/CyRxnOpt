@@ -183,7 +183,7 @@ class OptimizerABC(ABC):
         experiment_dir: str,
         config: dict[str, Any],
         obj_func: Optional[Callable] = None,
-    ) -> list[Any]:
+    ) -> Any:
         """Abstract optimizer prediction function.
 
         :param prev_param: Previous suggested reaction conditions
@@ -197,8 +197,10 @@ class OptimizerABC(ABC):
         :param obj_func: Objective function to optimize, defaults to None
         :type obj_func: Optional[Callable], optional
 
-        :returns: The next suggested conditions to perform
-        :rtype: list[Any]
+        :returns: The results of the prediction. Check function documentation
+            for potential behavioral notes and specific return values of each
+            optimization class.
+        :rtype: Any
         """
 
         pass

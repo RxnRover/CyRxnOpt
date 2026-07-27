@@ -254,8 +254,15 @@ class OptimizerAmlro(OptimizerABC):
         experiment_dir: str,
         config: dict[str, Any],
         obj_func: Optional[Callable[..., float]] = None,
-    ) -> list[Any]:
+    ) -> Any:
         """Searches for the best parameters and records results from prior steps.
+
+        .. note::
+
+            **Behavior Note:** This method operates with a one-call-at-a-time
+            approach, not with an internal optimization loop. For a unified
+            behavioral interface, please use
+            :func:`cyrxnopt.utilities.predict_server`.
 
         :py:meth:`OptimizerAmlro.set_config` and :py:meth:`OptimizerAmlro.train`
         must be called prior to this method to generate the necessary files and

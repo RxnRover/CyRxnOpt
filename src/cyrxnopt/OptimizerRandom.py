@@ -192,6 +192,13 @@ class OptimizerRandom(OptimizerABC):
         """Draws a new set of reaction conditions and records results from
         the previous step.
 
+        .. note::
+
+            **Behavior Note:** This method operates with a one-call-at-a-time
+            approach, not with an internal optimization loop. For a unified
+            behavioral interface, please use
+            :func:`cyrxnopt.utilities.predict_server`.
+
         :py:meth:`OptimizerRandom.set_config` must be called prior to this
         method to generate the necessary files.
 
