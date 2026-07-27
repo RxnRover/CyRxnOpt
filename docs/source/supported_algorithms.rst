@@ -85,6 +85,18 @@ References
     Minimization. *The Computer Journal* **1965**, *7* (4), 308--313. DOI:
     `10.1093/comjnl/7.4.308 <https://doi.org/10.1093/comjnl/7.4.308>`__.
 
+********
+ Random
+********
+
+:term:`CyRxnOpt ID`: ``random``
+
+A random sampling optimizer has been provided to use as a baseline comparison
+for other optimization algorithms in situations like performance benchmarking.
+This algorithm samples from a uniform distribution of the search space and
+supports categorical variables. This optimizer is implemented using only
+standard library functions and has no third-party dependencies.
+
 ***********
  SQSnobFit
 ***********
