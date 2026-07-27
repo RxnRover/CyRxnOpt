@@ -47,6 +47,28 @@ identify new experiments that are most informative. EDBO+ has been successfully
 applied to **global, multi-objective optimization** of reaction yields,
 selectivity, and sustainability metrics.
 
+Compatibility
+=============
+
+If on Linux, it is likely that you will run into an error with the execstack
+when running run_client with the edbop optimizer if you have glibc >=2.40.
+[pytorchcpuissue]_
+
+We were able to resolve this by running the following commands manually after
+`cyrxnopt install edbop` completed:
+
+.. code-block:: bash
+
+    # Find the problematic libtorch_cpu.so path in your venv_edbop created from
+    # running 'cyrxnopt install edbop' the first time
+    find <path_to_venv_edbop> -name \*.so -print | grep "libtorch_cpu.so"
+
+    # Reset the execstack to fix the issue
+    # Solution from: https://github.com/conda-forge/pytorch-cpu-feedstock/issues/350#issuecomment-4712140412
+    # Note: You may need to install or enable patchelf first
+    patchelf --clear-execstack
+    <path>/<to>/libtorch_cpu.so
+
 References
 ==========
 
@@ -61,6 +83,9 @@ References
     Multi-Objective Active Learning Platform and Web App for Reaction
     Optimization. *J. Am. Chem. Soc.* **2022**, *144* (43), 19999--20007. DOI:
     `10.1021/jacs.2c08592 <https://doi.org/10.1021/jacs.2c08592>`__.
+
+.. [pytorchcpuissue]
+    https://github.com/conda-forge/pytorch-cpu-feedstock/issues/350
 
 *********************
  Nelder-Mead Simplex
