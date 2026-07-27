@@ -93,6 +93,10 @@ Further instructions can be found in `the documentation
 Usage
 -----
 
+CyRxnOpt provides the ``cyrxnopt`` command with a collection of subcommands to
+perform the different steps listed below. After installation, use ``cyrxnopt
+--help`` to learn more about behavior and options available for each command.
+
 .. _cyrxnopt_overview_cli_install:
 
 Installing an Optimizer
