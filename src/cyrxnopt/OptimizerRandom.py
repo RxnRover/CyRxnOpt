@@ -175,9 +175,21 @@ class OptimizerRandom(OptimizerABC):
     ) -> list[Any]:
         """No training step for this algorithm.
 
+        .. note::
+
+            **Behavior Note:** If an objective function is provided, it will be
+            called once with an empty list to indicate that training is not
+            needed.
+
         :returns: List will always be empty.
         :rtype: list[Any]
         """
+
+        # If an objective function is provided, assume that the user is trying
+        # to train this algorithm and send a signal that there is no training
+        # to be done.
+        if obj_func is not None:
+            obj_func([])
 
         return []
 

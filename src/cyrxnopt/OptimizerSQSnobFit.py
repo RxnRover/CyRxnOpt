@@ -117,6 +117,12 @@ class OptimizerSQSnobFit(OptimizerABC):
     ) -> list[Any]:
         """No training step for this algorithm.
 
+        .. note::
+
+            **Behavior Note:** If an objective function is provided, it will be
+            called once with an empty list to indicate that training is not
+            needed.
+
         :returns: List will always be empty.
         :rtype: list[Any]
         """
