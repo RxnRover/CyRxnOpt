@@ -135,14 +135,13 @@ class OptimizerNMSimplex(OptimizerABC):
         :returns: List will always be empty.
         :rtype: list[Any]
         """
-
-        # If an objective function is provided, assume that the user is trying
-        # to train this algorithm and send a signal that there is no training
-        # to be done.
-        if obj_func is not None:
-            obj_func([])
-
-        return []
+        return super().train(
+            prev_param,
+            yield_value,
+            experiment_dir,
+            config,
+            obj_func,
+        )
 
     def predict(
         self,

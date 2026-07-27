@@ -156,6 +156,9 @@ class OptimizerABC(ABC):
     ) -> list[Any]:
         """Abstract optimizer training function.
 
+        If an optimizer does not support/need training, the default behavior
+        returning an empty list can be used.
+
         :param prev_param: Parameters provided from the previous prediction or
                            training step.
         :type prev_param: list[Any]
@@ -172,8 +175,13 @@ class OptimizerABC(ABC):
         :returns: The next suggested reaction to perform
         :rtype: list[Any]
         """
+        # If an objective function is provided, assume that the user is trying
+        # to train this algorithm and send a signal that there is no training
+        # to be done.
+        if obj_func is not None:
+            obj_func([])
 
-        pass
+        return []
 
     @abstractmethod
     def predict(
