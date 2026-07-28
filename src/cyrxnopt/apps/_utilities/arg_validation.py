@@ -1,9 +1,31 @@
 from pathlib import Path
 from typing import Optional
 
+# Basic list of supported optimizers. In the future, hopefully we can
+# dynamically populate this.
+SUPPORTED_OPTIMIZERS: list[str] = [
+    "amlro",
+    "edbop",
+    "nmsimplex",
+    "random",
+    "sqsnobfit",
+]
+
 
 def optimizer(arg_value: str) -> str:
-    # TODO: Check against supported optimizers
+    """Validates the optimizer argument provided, checking against supported
+    optimizer identifiers.
+
+    :param arg_value: Optimizer argument value
+    :type arg_value: str
+    :raises ValueError: Invalid optimizer
+    :return: Optimizer argument value that was provided (unedited)
+    :rtype: str
+    """
+
+    if arg_value not in SUPPORTED_OPTIMIZERS:
+        raise ValueError(f"Invalid optimizer identifier: {arg_value}")
+
     return arg_value
 
 
