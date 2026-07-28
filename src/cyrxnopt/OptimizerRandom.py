@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import random
+import sys
 from collections.abc import Callable
 from typing import Any, Optional
 
@@ -87,6 +88,7 @@ class OptimizerRandom(OptimizerABC):
                 "name": "budget",
                 "type": "int",
                 "value": 100,
+                "range": [1, sys.maxsize],
             },
             {
                 "name": "objective",

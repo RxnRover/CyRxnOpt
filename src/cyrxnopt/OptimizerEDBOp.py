@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import random
+import sys
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any, Optional
@@ -78,6 +79,7 @@ class OptimizerEDBOp(OptimizerABC):
                 "name": "budget",
                 "type": "int",
                 "value": 100,
+                "range": [1, sys.maxsize],
             },
             {
                 "name": "objectives",

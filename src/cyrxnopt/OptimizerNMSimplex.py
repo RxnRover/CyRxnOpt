@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import sys
 from collections.abc import Callable
 from typing import Any, Optional
 
@@ -61,6 +62,7 @@ class OptimizerNMSimplex(OptimizerABC):
                 "name": "budget",
                 "type": "int",
                 "value": 100,
+                "range": [1, sys.maxsize],
             },
             {
                 "name": "direction",

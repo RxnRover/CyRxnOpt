@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import sys
 from collections.abc import Callable
 from typing import Any, Optional
 
@@ -76,6 +77,7 @@ class OptimizerAmlro(OptimizerABC):
                 "name": "budget",
                 "type": "int",
                 "value": 100,
+                "range": [1, sys.maxsize],
             },
             {
                 "name": "objectives",
@@ -89,11 +91,6 @@ class OptimizerAmlro(OptimizerABC):
                 "range": ["min", "max"],
             },
         ]
-        # TODO: Budget should be constrained to numbers greater than
-        #       zero once that format is solidified.
-        # TODO: Should the value of this "config" variable be moved into
-        #       a JSON file to make it easier to modify without changing
-        #       the code?
 
         return config
 

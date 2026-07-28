@@ -115,16 +115,13 @@ class OptimizerABC(ABC):
         - "description" is an optional description of the purpose of a config
           option, along with any caveats that may come with it.
 
-        .. TODO::
+        .. note::
 
-           Think about how to define number bounds in only one direction,
-           like saying "this integer must be >0 or >=0.
-
-        .. TODO::
-
-           Write a page in the documentation describing this, as well as
-           expected mappings to traditional user interface widgets, like text
-           inputs, combo boxes, and number sliders.
+           For number bounds that are only in one direction, such as >0 or <=0,
+           define a "range" using typical max/min values of the data type as
+           appropriate, a very large/small number, or define a reasonable bound
+           for the specific application. For example, >0 on an integer could be
+           [1, sys.maxsize], or <=0 could be [-sys.maxsize + 1, 0]
         """
 
         pass
