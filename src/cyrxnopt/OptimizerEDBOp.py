@@ -115,12 +115,6 @@ class OptimizerEDBOp(OptimizerABC):
         config = self._config_translate(config)
 
         # generate reaction scope for EDBO+
-        # self._imports["EDBOplus"]().generate_reaction_scope(
-        #     components=config["reaction_components"],
-        #     directory=experiment_dir,
-        #     filename=self._edbop_filename,
-        #     check_overwrite=False,
-        # )
         self.venv_worker.run_command(f"""
 from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().generate_reaction_scope(
     components={config["reaction_components"]},
@@ -131,24 +125,6 @@ from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().generate_reaction_s
 """)
 
         # Initialize the EDBO+ file to be used for prediction
-        # self._imports["EDBOplus"]().run(
-        #     directory=experiment_dir,
-        #     # Previously generated scope
-        #     filename=self._edbop_filename,
-        #     # Objectives to be optimized
-        #     # For example, maximize yield and ee but minimize side_product:
-        #     # objectives=['yield', 'ee', 'side_product'],
-        #     # objective_mode=['max', 'max', 'min'],
-        #     objectives=config["objectives"],
-        #     objective_mode=config["direction"],
-        #     # Number of experiments in parallel to perform in this round
-        #     batch=1,
-        #     # Features to be included in the model
-        #     columns_features="all",
-        #     # Initialization method
-        #     init_sampling_method="seed",
-        #     seed=random.randint(0, 2**32 - 1),
-        # )
         self.venv_worker.run_command(f"""
 from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().run(
     directory="{experiment_dir}",
@@ -258,8 +234,6 @@ from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().run(
         )
 
         if len(prev_param) != 0:
-            # [df_edbo.loc[0,config['objectives'][i]] =
-            # yield_value[i] for i in range(len(yield_value))]
             df_edbo.loc[0, config["objectives"][0]] = yield_value
             df_edbo.to_csv(
                 os.path.join(experiment_dir, self._edbop_filename), index=False
@@ -276,19 +250,6 @@ from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().run(
                 line = [str(element) for element in line]
                 fout.write(",".join(line))
                 fout.write("\n")
-
-        # Run one EDBO+ prediction
-        # self._imports["EDBOplus"]().run(
-        #     directory=experiment_dir,
-        #     filename=self._edbop_filename,
-        #     objectives=config["objectives"],
-        #     objective_mode=config["direction"],
-        #     batch=1,
-        #     columns_features="all",
-        #     init_sampling_method="seed",
-        #     seed=random.randint(0, 2**32 - 1),
-        #     write_extra_data=False,
-        # )
 
         self.venv_worker.run_command(f"""
 from edbo.plus.optimizer_botorch import EDBOplus; EDBOplus().run(
