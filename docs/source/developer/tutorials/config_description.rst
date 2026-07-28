@@ -5,11 +5,11 @@
 ######################################
 
 Every optimizer class implements
-:py:meth:`~OptimizerABC.OptimizerABC.get_config`, which describes the
+:py:meth:`~cyrxnopt.OptimizerABC.OptimizerABC.get_config`, which describes the
 configuration options an optimizer accepts. A user-facing program (CLI, web UI,
 desktop app, etc.) can call this method to discover what options exist for a
 given optimizer, present them to a user, and then pass the user's choices back
-to :py:meth:`~OptimizerABC.OptimizerABC.set_config`.
+to :py:meth:`~cyrxnopt.OptimizerABC.OptimizerABC.set_config`.
 
 This page explains the shape of the data returned by ``get_config()`` and
 suggests how each option shape can be mapped to a traditional UI widget when
