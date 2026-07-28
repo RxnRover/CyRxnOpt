@@ -90,8 +90,9 @@ Or manually inside the cloned repository with:
 Further instructions can be found in `the documentation
 <https://rxnrover.github.io/CyRxnOpt/overview/installation.html>`__.
 
-Usage
------
+*******
+ Usage
+*******
 
 CyRxnOpt provides the ``cyrxnopt`` command with a collection of subcommands to
 perform the different steps listed below. After installation, use ``cyrxnopt

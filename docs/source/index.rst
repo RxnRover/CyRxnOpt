@@ -11,6 +11,7 @@ This is the documentation of the **cyrxnopt** package.
 .. toctree::
     :maxdepth: 1
 
+     Quick Start <readme>
      Overview <overview/index>
      Supported Algorithms <supported_algorithms>
      Contributions & Help <contributing>
