@@ -424,7 +424,7 @@ class NestedVenv(venv.EnvBuilder):
             #       to allow for the full versioning syntax that pip can use.
             #       For example, a user could specify version ">=1.25" instead
             #       of only matching a specific version.
-            #       Since NestedVenv will likely be phased out in the next major
+            # NOTE: Since NestedVenv will likely be phased out in the next major
             #       release, this will not be implemented here.
             if version != "":
                 package_found = (
