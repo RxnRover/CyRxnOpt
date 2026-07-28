@@ -157,13 +157,14 @@ def test_predict_is_reproducible_with_seed(
 
 def test_predict_categorical_only(venv_random, tmp_path) -> None:
     opt = OptimizerRandom(venv_random)
-    config = {
-        "categorical_feature_names": ["catalyst"],
-        "categorical_feature_values": [["A", "B", "C"]],
-        "direction": "min",
-        "budget": 5,
-        "objective": "yield",
-    }
+    config = _base_config()
+    # Clear continuous settings
+    config["continuous_feature_names"] = []
+    config["continuous_feature_bounds"] = []
+    config["continuous_feature_resolutions"] = []
+    # Add categorial settings
+    config["categorical_feature_names"] = ["catalyst"]
+    config["categorical_feature_values"] = [["A", "B", "C"]]
 
     opt.set_config(str(tmp_path), config)
 
