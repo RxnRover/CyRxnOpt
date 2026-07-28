@@ -18,3 +18,4 @@ This is documentation relevant to developers of CyRxnOpt.
     :maxdepth: 1
 
     tutorials/add_new_optimizer
+    tutorials/config_description
