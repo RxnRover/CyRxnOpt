@@ -116,12 +116,14 @@ def test_predict_records_results_in_order(venv_random, tmp_path) -> None:
     # 4th suggestion has not been performed yet, so it isn't recorded).
     assert len(results) == 3
 
+    expected_result = 1
     for i in range(3):
         row = results.iloc[i]
         assert row["f1"] == pytest.approx(suggestions[i][0])
         assert row["f2"] == pytest.approx(suggestions[i][1])
         assert row["f3"] == suggestions[i][2]
-        assert row["yield"] == pytest.approx(1.0)
+        assert row["yield"] == pytest.approx(expected_result)
+        expected_result += 1
 
 
 def test_predict_is_reproducible_with_seed(
@@ -131,7 +133,7 @@ def test_predict_is_reproducible_with_seed(
     opt_2 = OptimizerRandom(venv_random)
 
     def run(opt, location) -> list:
-        config = _base_config(seed=1234)
+        config = _base_config(seed=42)
         opt.set_config(str(location), config)
 
         next_params: list = []
