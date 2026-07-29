@@ -1,3 +1,4 @@
+import copy
 import json
 import logging
 import os
@@ -8,7 +9,6 @@ from typing import Any, Optional
 
 from cyrxnopt.NestedVenv import NestedVenv
 from cyrxnopt.OptimizerABC import OptimizerABC
-from cyrxnopt.utilities.config.transforms import use_subkeys
 
 logger = logging.getLogger(__name__)
 
@@ -139,10 +139,7 @@ class OptimizerRandom(OptimizerABC):
         if not os.path.exists(experiment_dir):
             os.makedirs(experiment_dir)
 
-        # TODO: Fix larger config translation problem where if applied twice
-        # it will delete most config values
-        # translated_config = self._config_translate(config)
-        translated_config = config
+        translated_config = self._config_translate(config)
 
         config_path = os.path.join(experiment_dir, self._config_filename)
 
@@ -154,9 +151,6 @@ class OptimizerRandom(OptimizerABC):
         with open(
             os.path.join(experiment_dir, self._results_filename), "w"
         ) as fout:
-            # TODO: Fix with above translation fix
-            # feature_names = list(translated_config["continuous"]["feature_names"])
-            # feature_names.extend(translated_config["categorical"]["feature_names"])
             feature_names = list(translated_config["continuous_feature_names"])
             feature_names.extend(translated_config["categorical_feature_names"])
 
@@ -258,14 +252,14 @@ class OptimizerRandom(OptimizerABC):
 
         next_combo: list[Any] = []
 
-        continuous_bounds = translated_config["continuous"]["bounds"]
+        continuous_bounds = translated_config["continuous_feature_bounds"]
         for bounds in continuous_bounds:
             low_bound = float(bounds[0])
             upper_bound = float(bounds[1])
 
             next_combo.append(rng.uniform(low_bound, upper_bound))
 
-        categorical_values = translated_config["categorical"]["values"]
+        categorical_values = translated_config["categorical_feature_values"]
         for values in categorical_values:
             next_combo.append(rng.choice(values))
 
@@ -281,7 +275,7 @@ class OptimizerRandom(OptimizerABC):
         :rtype: dict[str, Any]
         """
 
-        translated_config = use_subkeys(config)
+        translated_config = copy.deepcopy(config)
 
         # Random sampling supports multi-objective configuration in the
         # sense that it does not use the objective(s) to decide what to
