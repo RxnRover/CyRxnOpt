@@ -66,14 +66,20 @@ def main(args: argparse.Namespace) -> int:
     address = "tcp://localhost:5555"
     socket = zmq_helpers.init_socket(address)
 
-    obj_func = zmq_obj_function(socket, config_contents["direction"])
+    # TODO: Update handling of directions when expanding to multi-objective
+    obj_func = zmq_obj_function(
+        socket,
+        (
+            config_contents["direction"][0]
+            if isinstance(config_contents["direction"], list)
+            else config_contents["direction"]
+        ),
+    )
 
     print("Beginning training...")
     # The training thread is never used here after being spun up
     _ = start_training_thread(
         optimizer,
-        [],
-        0,
         args.training_steps,
         location,
         config_contents,
