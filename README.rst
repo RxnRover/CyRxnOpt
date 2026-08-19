@@ -1,3 +1,7 @@
+.. image:: https://img.shields.io/pypi/pyversions/CyRxnOpt.svg
+    :alt: Supported Python versions
+    :target: https://pypi.python.org/pypi/CyRxnOpt
+
 .. image:: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml/badge.svg
     :alt: Build Status
     :target: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml
@@ -10,13 +14,13 @@
     :alt: ChemRxiv Preprint DOI
     :target: https://doi.org/10.26434/chemrxiv.15001645/v1
 
+.. image:: https://img.shields.io/badge/DOE_CODE-1B6688
+   :alt: DOE CODE DOI
+   :target: https://doi.org/10.11578/dc.20251119.1
+
 .. image:: https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold
     :alt: Project generated with PyScaffold
     :target: https://pyscaffold.org/
-
-.. image:: https://img.shields.io/badge/Python-3.9-blue
-    :alt: Documentation link
-    :target: https://rxnrover.github.io/CyRxnOpt/
 
 ..
     These are examples of badges you might want to add to your README:
