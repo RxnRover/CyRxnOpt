@@ -246,9 +246,9 @@ project automation. Please make sure to install these before making any changes.
 A list of useful commands are provided via tox (run with ``tox r -e
 <command>``), and can be listed at any time using ``tox l`` in a terminal.
 
-******************
- Citing this Work
-******************
+****************
+ Cite this Work
+****************
 
 Please cite preprint as:
 
