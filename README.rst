@@ -250,7 +250,7 @@ A list of useful commands are provided via tox (run with ``tox r -e
  Cite this Work
 ****************
 
-Please cite preprint as:
+Please cite this work using the Digital Discovery paper as:
 
 Zachery Crandall, Dulitha P. Kulathunga, Lun An, Jie Zhang, Austin J. Thompson,
 Tyler B. Hall, Hailey M. Bates, Long Qi, Theresa L. Windus; CyRxnOpt:
