@@ -246,25 +246,33 @@ project automation. Please make sure to install these before making any changes.
 A list of useful commands are provided via tox (run with ``tox r -e
 <command>``), and can be listed at any time using ``tox l`` in a terminal.
 
-*******
- Paper
-*******
+******************
+ Citing this Work
+******************
 
-Comprehensive comparisons of optimization algorithms are crucial for researchers
-to make informed decisions about which algorithm will perform best for their
-process, but there is little information comparing how each algorithm performs
-on differing chemical processes. To demonstrate the use and flexibility of
-CyRxnOpt, it was used to access four optimization algorithms and benchmark their
-performance on standard optimization functions and reaction models built from
-experimental datasets, providing a benchmarking framework which we plan to
-expand to more optimization algorithms.
+Please cite preprint as:
 
-ChemRxiv Preprint: https://doi.org/10.26434/chemrxiv.15001645/v1
+Zachery Crandall, Dulitha P. Kulathunga, Lun An, Jie Zhang, Austin J. Thompson,
+Tyler B. Hall, Hailey M. Bates, Long Qi, Theresa L. Windus; CyRxnOpt:
+generalized reaction optimization interface for autonomous laboratories and
+benchmarking. *Digital Discovery* 2026; https://doi.org/10.1039/d6dd00180g
 
-Please cite preprint as: Zachery Crandall, Dulitha P. Kulathunga, Lun An, et al.
-CyRxnOpt: Generalized Interface for Benchmarking Reaction Optimization
-Algorithms. *ChemRxiv*. 06 April 2026. DOI:
-https://doi.org/10.26434/chemrxiv.15001645/v1
+Or, include it using the following Bibtex:
+
+.. code-block:: Bibtex
+
+    @article{10.1039/d6dd00180g,
+        author = {Crandall, Zachery and Kulathunga, Dulitha P. and An, Lun and Zhang, Jie and Thompson, Austin J. and Hall, Tyler B. and Bates, Hailey M. and Qi, Long and Windus, Theresa L.},
+        title = {CyRxnOpt: generalized reaction optimization interface for autonomous laboratories and benchmarking},
+        journal = {Digital Discovery},
+        year = {2026},
+        month = {10},
+        abstract = {Numerous cutting-edge machine learning algorithms have been developed in recent years for efficiently optimizing chemical processes. While many are open-source, evaluating and applying them to chemical processes remains challenging due to varying, non-standard implementations and interfaces. Additionally, comprehensive comparisons of optimization algorithms are crucial for researchers to make informed decisions about which algorithm will perform best for their process, but there is little information comparing how each algorithm performs on differing chemical processes. CyRxnOpt has been developed as a general, Python-based interface to install, use, and switch between reaction optimization algorithms under a single software interface. By integrating optimizers with the CyRxnOpt interface, many state-of-the-art reaction optimization algorithms can be more easily used in other software and workflows. To demonstrate the use and flexibility of CyRxnOpt, it was used to access four optimization algorithms and benchmark their performance on standard optimization functions and reaction models built from experimental datasets, providing a foundation of optimizer support and performance comparison which we plan to expand to more optimization algorithms and experimental datasets. The initial benchmarking for this limited set of models show that EDBO+ and AMLRO demonstrate robust performance.},
+        issn = {2635-098X},
+        doi = {10.1039/d6dd00180g},
+        url = {https://doi.org/10.1039/d6dd00180g},
+        eprint = {https://pubs.rsc.org/dd/article-pdf/doi/10.1039/d6dd00180g/14938964/d6dd00180g.pdf},
+    }
 
 .. _pyscaffold-note:
 
