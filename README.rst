@@ -6,9 +6,13 @@
     :alt: Documentation link
     :target: https://rxnrover.github.io/CyRxnOpt/
 
-.. image:: https://img.shields.io/badge/ChemRxiv-Preprint-lightgray
-    :alt: ChemRxiv Preprint DOI
-    :target: https://doi.org/10.26434/chemrxiv.15001645/v1
+.. image:: https://img.shields.io/badge/Paper-10.1039/d6dd00180g-blue
+    :alt: Paper
+    :target: https://doi.org/10.1039/d6dd00180g
+
+.. .. image:: https://img.shields.io/badge/ChemRxiv-Preprint-lightgray
+..     :alt: ChemRxiv Preprint DOI
+..     :target: https://doi.org/10.26434/chemrxiv.15001645/v1
 
 .. image:: https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold
     :alt: Project generated with PyScaffold
