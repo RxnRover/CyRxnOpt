@@ -2,6 +2,9 @@
  CyRxnOpt
 ##########
 
+    CyRxnOpt provides a single interface to use many reaction optimization
+    algorithms.
+
 .. image:: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml/badge.svg
     :alt: Build Status
     :target: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml
@@ -27,11 +30,6 @@
 .. image:: https://img.shields.io/badge/Python-3.9-blue
     :alt: Documentation link
     :target: https://rxnrover.github.io/CyRxnOpt/
-
-..
-
-    CyRxnOpt provides a single interface to use many reaction optimization
-    algorithms.
 
 Numerous cutting-edge machine learning algorithms have been developed in recent
 years for efficiently optimizing chemical processes. While many are open-source,
