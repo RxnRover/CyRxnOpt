@@ -1,3 +1,10 @@
+##########
+ CyRxnOpt
+##########
+
+    CyRxnOpt provides a single interface to use many reaction optimization
+    algorithms.
+
 .. image:: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml/badge.svg
     :alt: Build Status
     :target: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml
@@ -6,9 +13,15 @@
     :alt: Documentation link
     :target: https://rxnrover.github.io/CyRxnOpt/
 
-.. image:: https://img.shields.io/badge/ChemRxiv-Preprint-lightgray
-    :alt: ChemRxiv Preprint DOI
-    :target: https://doi.org/10.26434/chemrxiv.15001645/v1
+.. image:: https://img.shields.io/badge/Paper-10.1039/d6dd00180g-blue
+    :alt: Paper
+    :target: https://doi.org/10.1039/d6dd00180g
+
+.. .. image:: https://img.shields.io/badge/ChemRxiv-Preprint-lightgray
+
+.. :alt: ChemRxiv Preprint DOI
+
+.. :target: https://doi.org/10.26434/chemrxiv.15001645/v1
 
 .. image:: https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold
     :alt: Project generated with PyScaffold
@@ -17,30 +30,6 @@
 .. image:: https://img.shields.io/badge/Python-3.9-blue
     :alt: Documentation link
     :target: https://rxnrover.github.io/CyRxnOpt/
-
-..
-    These are examples of badges you might want to add to your README:
-    please update the URLs accordingly
-
-     .. image:: https://img.shields.io/coveralls/github/<USER>/cyrxnopt/main.svg
-         :alt: Coveralls
-         :target: https://coveralls.io/r/<USER>/cyrxnopt
-     .. image:: https://img.shields.io/pypi/v/cyrxnopt.svg
-         :alt: PyPI-Server
-         :target: https://pypi.org/project/cyrxnopt/
-     .. image:: https://img.shields.io/conda/vn/conda-forge/cyrxnopt.svg
-         :alt: Conda-Forge
-         :target: https://anaconda.org/conda-forge/cyrxnopt
-     .. image:: https://pepy.tech/badge/cyrxnopt/month
-         :alt: Monthly Downloads
-         :target: https://pepy.tech/project/cyrxnopt
-
-##########
- CyRxnOpt
-##########
-
-    CyRxnOpt provides a single interface to use many reaction optimization
-    algorithms.
 
 Numerous cutting-edge machine learning algorithms have been developed in recent
 years for efficiently optimizing chemical processes. While many are open-source,
@@ -257,25 +246,32 @@ project automation. Please make sure to install these before making any changes.
 A list of useful commands are provided via tox (run with ``tox r -e
 <command>``), and can be listed at any time using ``tox l`` in a terminal.
 
-*******
- Paper
-*******
+****************
+ Cite this Work
+****************
 
-Comprehensive comparisons of optimization algorithms are crucial for researchers
-to make informed decisions about which algorithm will perform best for their
-process, but there is little information comparing how each algorithm performs
-on differing chemical processes. To demonstrate the use and flexibility of
-CyRxnOpt, it was used to access four optimization algorithms and benchmark their
-performance on standard optimization functions and reaction models built from
-experimental datasets, providing a benchmarking framework which we plan to
-expand to more optimization algorithms.
+Please cite this work using the Digital Discovery paper as:
 
-ChemRxiv Preprint: https://doi.org/10.26434/chemrxiv.15001645/v1
+Zachery Crandall, Dulitha P. Kulathunga, Lun An, Jie Zhang, Austin J. Thompson,
+Tyler B. Hall, Hailey M. Bates, Long Qi, Theresa L. Windus; CyRxnOpt:
+generalized reaction optimization interface for autonomous laboratories and
+benchmarking. *Digital Discovery* 2026; https://doi.org/10.1039/d6dd00180g
 
-Please cite preprint as: Zachery Crandall, Dulitha P. Kulathunga, Lun An, et al.
-CyRxnOpt: Generalized Interface for Benchmarking Reaction Optimization
-Algorithms. *ChemRxiv*. 06 April 2026. DOI:
-https://doi.org/10.26434/chemrxiv.15001645/v1
+Or, include it using the following Bibtex:
+
+.. code-block:: Bibtex
+
+    @article{10.1039/d6dd00180g,
+        author = {Crandall, Zachery and Kulathunga, Dulitha P. and An, Lun and Zhang, Jie and Thompson, Austin J. and Hall, Tyler B. and Bates, Hailey M. and Qi, Long and Windus, Theresa L.},
+        title = {CyRxnOpt: generalized reaction optimization interface for autonomous laboratories and benchmarking},
+        journal = {Digital Discovery},
+        year = {2026},
+        month = {10},
+        issn = {2635-098X},
+        doi = {10.1039/d6dd00180g},
+        url = {https://doi.org/10.1039/d6dd00180g},
+        eprint = {https://pubs.rsc.org/dd/article-pdf/doi/10.1039/d6dd00180g/14938964/d6dd00180g.pdf},
+    }
 
 .. _pyscaffold-note:
 
