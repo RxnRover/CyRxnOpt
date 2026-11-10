@@ -1,3 +1,7 @@
+##########
+ CyRxnOpt
+##########
+
 .. image:: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml/badge.svg
     :alt: Build Status
     :target: https://github.com/RxnRover/CyRxnOpt/actions/workflows/unit_testing.yml
@@ -25,25 +29,6 @@
     :target: https://rxnrover.github.io/CyRxnOpt/
 
 ..
-    These are examples of badges you might want to add to your README:
-    please update the URLs accordingly
-
-     .. image:: https://img.shields.io/coveralls/github/<USER>/cyrxnopt/main.svg
-         :alt: Coveralls
-         :target: https://coveralls.io/r/<USER>/cyrxnopt
-     .. image:: https://img.shields.io/pypi/v/cyrxnopt.svg
-         :alt: PyPI-Server
-         :target: https://pypi.org/project/cyrxnopt/
-     .. image:: https://img.shields.io/conda/vn/conda-forge/cyrxnopt.svg
-         :alt: Conda-Forge
-         :target: https://anaconda.org/conda-forge/cyrxnopt
-     .. image:: https://pepy.tech/badge/cyrxnopt/month
-         :alt: Monthly Downloads
-         :target: https://pepy.tech/project/cyrxnopt
-
-##########
- CyRxnOpt
-##########
 
     CyRxnOpt provides a single interface to use many reaction optimization
     algorithms.
